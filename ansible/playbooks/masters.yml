@@ -1,0 +1,40 @@
+- hosts: masters
+  become: yes
+  tasks:
+    - name: initialize the cluster
+      # here we need to advertise the apiserver's address with the extra
+      # option because we are not using the default gateway. (we are instead
+      # using a tap interface)
+      # pod-network-cidr is needed for the flannel pod network to work
+      shell: kubeadm init --apiserver-advertise-address={{ master_node_ip }} --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+#        creates: cluster_initialized.txt
+
+    - name: create .kube directory
+      become: yes
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+    - name: upload kube-flannel.yml to host
+      copy:
+        src: ../kube-flannel.yml
+        dest: /home/ubuntu/kube-flannel.yml
+
+    - name: install Pod network
+      become: yes
+      become_user: ubuntu
+      shell: kubectl apply -f /home/ubuntu/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+#        creates: pod_network_setup.txt

@@ -2,7 +2,8 @@
 
 this is our repo for everything involving our kubernetes cluster
 
-### test setup
+### 
+### Cluster Development
 
-a cluster of vms set up in a vagrant file to test deployments and different
-setups
+We created a development [cluster of vms](./dev-env) using vagrant that is nice
+for testing stuff without having it on the main cluster.

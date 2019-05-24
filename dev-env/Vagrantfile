@@ -1,0 +1,51 @@
+# adapted from:
+# https://medium.com/@lizrice/kubernetes-in-vagrant-with-kubeadm-21979ded6c63
+
+
+# number of workers. There will be one additional master
+N = 2
+# the ip prefix to use for the node ips
+ip_prefix = "192.168.99."
+
+Vagrant.configure("2") do |config|
+
+  # do the same thing for each node
+  (0..N).each do |node_id|
+    config.vm.define "node#{node_id}" do |node|
+
+      # base image ubuntu 18.04
+      node.vm.box = "ubuntu/bionic64"
+      # set up network to connect tap interface
+      node.vm.network "public_network", ip: ip_prefix + "#{20+node_id}", bridge: "tap0"
+      # Set up the hostname
+      node.vm.hostname = "node#{node_id}"
+
+      # provision enough vms
+      node.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 2
+      end
+
+      # Only execute once the Ansible provisioner,
+      # when all the machines are up and ready.
+      # this allows ansible to provision multiple nodes in parallel
+      if node_id == N
+        node.vm.provision :ansible do |ansible|
+          # Disable default limit to connect to all the machines
+          ansible.limit = "all"
+          ansible.playbook = "playbooks/main.yml"
+          ansible.groups = {
+            "masters" => ["node0"],
+            "workers" => ["node[1:#{N}]"],
+            "all:vars" => {
+              "ansible_python_interpreter" => "/usr/bin/python3"
+            }
+          }
+          ansible.extra_vars = {
+            "master_node_ip" => ip_prefix + "20"
+          }
+        end
+      end
+    end # config.vm...
+  end # (0..N).each
+end # configure

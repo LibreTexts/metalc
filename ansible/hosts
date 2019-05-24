@@ -1,0 +1,17 @@
+# this is a debugging hosts file adaped from the one that vagrant generates
+# in `.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`
+#
+# This is so you can run ansible commands without running `vagrant provision`
+
+node0 ansible_host=node0 ansible_port=22 ansible_user='ubuntu' #ansible_ssh_private_key_file='/home/kkrausse/projects/vag/.ubuntu/machines/node0/virtualbox/private_key'
+node1 ansible_host=node1 ansible_port=22 ansible_user='ubuntu' #ansible_ssh_private_key_file='/home/kkrausse/projects/vag/.ubuntu/machines/node1/virtualbox/private_key'
+node2 ansible_host=node2 ansible_port=22 ansible_user='ubuntu' #ansible_ssh_private_key_file='/home/kkrausse/projects/vag/.ubuntu/machines/node2/virtualbox/private_key'
+
+[masters]
+node0
+
+[workers]
+node[1:2]
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
