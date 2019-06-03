@@ -1,23 +1,29 @@
-# Networking
+# Hardware
 
-This will be where we put all the network info.
+where we will put all our hardware setup info
 
-## public network
+## Networking
+
+Here is our basic setup for the nodes (not pods yet): ![our networking setup basically](./images/network.svg)
+(taken from LibreTexts/Documentation/network_drawing as a saved svg)
+
+### k8s network
 
 This is how all the computers will communicate with each other using kubernetes and how they will
-access the internet.
+access the internet indirectly though the manager. The manager will be a load balancer, dhcp server,
+router with NAT, and our way assign IP addresses to services.
 
 blue ethernet cables. Plugged into the smart switch.
 
 manager is at 128.120.136.26
 
-enp1s0 on all the machines (the one on the left)
+enp1s0 on all the machines (the one on the left) except the manager.
 
 log into the switch with `screen /dev/ttyS0` on the management node
   - use username: manager
         password: friend
 
-## Management Network
+### Management Network
 
 We will have one management node and one dumb switch for this network. The management node
 will connect to it on its enp2s0(the ethernet port on the right) and its management
