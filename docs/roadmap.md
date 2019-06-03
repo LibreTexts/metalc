@@ -14,6 +14,9 @@ This is stuff that needs to be done before all work can be done remotely.
 - wiring for the networking
 - networking -- though this technically can be done remotely, we might break
   something while doing it so we should do it on-premis.
+  - write down the MAC addresses for the interfaces we use on all the nodes.
+    We might also want to assign each node a static IP in our private network
+    by changing the dhcp configuration on our management node.
   - pod network fabric
   - metallb (metal load balancer. See below)
 
