@@ -26,74 +26,119 @@ management network.
 
 ### steps on rooster:
 
-  1. `sudo apt install isc-dhcp-server`
+1. `sudo apt install isc-dhcp-server`
 
-  2. to `/etc/default/isc-dhcp-server` I added the line:
-    ```
-    INTERFACESv4="enp3s0"
-    ```
-    since enp3s0 is the interface that is hooked up to the management network.
-    Here, we assume enp3s0 is the interface on the manager node that faces the
-    internal kubernetes network.
+1. to `/etc/default/isc-dhcp-server` I added the line:
+  ```
+  INTERFACESv4="enp3s0"
+  ```
+  since enp3s0 is the interface that is hooked up to the management network.
+  Here, we assume enp3s0 is the interface on the manager node that faces the
+  internal kubernetes network.
 
-  3. to `/etc/netplan/01-netcfg.yaml` or whatever the netplan file is I added
-    the following under ethernets
-    ```
-              enp3s0:
-                  addresses: [192.168.0.1/24]
-                  gateway4: 128.120.136.1
-                  dhcp4: no
-                  nameservers:
-                          addresses: [192.168.0.1]
-    ```
-    so we get that management interface up
+1. to `/etc/netplan/01-netcfg.yaml` or whatever the netplan file is I added
+  the following under ethernets:
 
-  4. `netplan apply`
+  ```
+            enp3s0:
+                addresses: [192.168.0.1/24]
+                gateway4: 128.120.136.1
+                dhcp4: no
+                nameservers:
+                        addresses: [192.168.0.1]
+  ```
 
-  5. `systemctl restart isc-dhcp-server` to get the dhcp server making
-    repsjournalctl -fu isc-dhcp-server
+  so we get that management interface up
 
-  6. checked the logs with `grep DHCP /var/log/syslog` and there were some
-    requests and handouts, so thats good.
+1. `netplan apply`
 
-  7. `sudo apt install tftpd-hpa`
+1. before changing `/etc/dhcp/dhcpd.conf` copy the current one to
+  `/etc/dhcp/dhcpd.conf.backup` and set it to this
+  ```conf
+# the following is adapted from
+# https://wiki.debian.org/PXEBootInstall#Preface
+#
+default-lease-time 600;
+max-lease-time 7200;
 
-  8. changed `/etc/default/tftpd-hpa` to have these two defaults:
-    ```
-    TFTP_DIRECTORY="/srv/tftp"
-    TFTP_OPTIONS="--secure -vvv"
-    ```
-    so we listen on our management net and not on the internet.
-       ^- changed this, need to change it back after testing
+allow booting;
+allow bootp;
 
-  9. `sudo mkdir /srv/tftp`
+# in this example, we serve DHCP requests from 10.0.0.(3 to 253)
+# and we have a router at 10.0.0.1
+# these will be the name of the nodes.
+subnet 10.0.0.0 netmask 255.255.255.0 {
+  range 10.0.0.3 10.0.0.253;
+  option broadcast-address 10.0.0.255;
+  option routers 10.0.0.1;
+  option domain-name-servers 8.8.8.8; # our router, again
+  filename "pxelinux.0";
+}
 
-  10. `systemctl restart tftpd-hpa` and then test it
+group {
+  next-server 128.120.136.1;                # our Server. was previously 128.120.136.1
+  host tftpclient {
+    filename "pxelinux.0"; # (this we will provide later)
+  }
+}
 
-  11. `wget http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/netboot.tar.gz`
+  ```
 
-  12. move netboot.tar.gz into `/srv/tftp` and run `tar xvzf netboot.tar.gz` and make the contents readable with `chmod -R a+r *`
+1. `systemctl restart isc-dhcp-server` to get the dhcp server making
+  repsjournalctl -fu isc-dhcp-server
 
-  13. `systemctl restart tftpd-hpa`
+1. checked the logs with `grep DHCP /var/log/syslog` and there were some
+  requests and handouts, so thats good.
 
-  14. start up the client machine and it should get to a boot screen.
+1. `sudo apt install tftpd-hpa`
+
+1. changed `/etc/default/tftpd-hpa` to have these two defaults:
+  ```
+  TFTP_DIRECTORY="/srv/tftp"
+  TFTP_OPTIONS="--secure -vvv"
+  ```
+  so we listen on our management net and not on the internet.
+     ^- changed this, need to change it back after testing
+
+1. `sudo mkdir /srv/tftp`
+
+1. `systemctl restart tftpd-hpa` and then test it
+
+1. `wget http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/netboot.tar.gz`
+
+1. move netboot.tar.gz into `/srv/tftp` and run `tar xvzf netboot.tar.gz` and make the contents readable with `chmod -R a+r *`
+
+1. `systemctl restart tftpd-hpa`
+
+1. start up the client machine and it should get to a boot screen.
 
 ### configure NAT
 
-  15. `apt get ufw`
+1. `apt get ufw`
 
-  16. add the following to `/etc/ufw/before.rules`
-    ```
-    *nat
-    :POSTROUTING ACCEPT [0:0]
-    # send stuff out of the eth2 iface
-    -A POSTROUTING -o enp2s0 -j MASQUERADE
-    COMMIT
-    ```
-    note that enp2s0 is the interface that faces the public internet
+1. add the following to `/etc/ufw/before.rules`
+  ```
+  *nat
+  :POSTROUTING ACCEPT [0:0]
+  # send stuff out of the eth2 iface
+  -A POSTROUTING -o enp2s0 -j MASQUERADE
+  COMMIT
+  ```
 
-  17. uncomment `net/ipv4/ip_forward=1` in `/etc/ufw/sysctl.conf`
+  note that enp2s0 is the interface that faces the public internet
 
-  18. `systemctl restart ufw`
+1. uncomment `net/ipv4/ip_forward=1` in `/etc/ufw/sysctl.conf`
 
-  19. `sudo ufw allow tftp` so it can use the images
+1. `systemctl restart ufw`
+
+1. `sudo ufw allow tftp` so it can use the images
+
+
+# steps on chicks
+
+just press enters for the first part till you get to hostname then you put `chick{i}`
+where i is the chick. enp1s0 is the internet so use that for that
+
+first loading screen ends quickly. then put spicy logon and configure disks.
+
+when its configuring the disks it installs base sys right after so you can bail because this takes like an hour
