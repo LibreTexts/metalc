@@ -29,25 +29,23 @@ management network.
 1. `sudo apt install isc-dhcp-server`
 
 1. to `/etc/default/isc-dhcp-server` I added the line:
-  ```
-  INTERFACESv4="enp3s0"
-  ```
+
+    INTERFACESv4="enp3s0"
+
   since enp3s0 is the interface that is hooked up to the management network.
   Here, we assume enp3s0 is the interface on the manager node that faces the
   internal kubernetes network.
 
-1. to `/etc/netplan/01-netcfg.yaml` or whatever the netplan file is I added
+1. to `/etc/netplan/01-netcfg.yaml`, or whatever the netplan file is I added
   the following under ethernets:
-
-  ```
-            enp3s0:
-                addresses: [192.168.0.1/24]
-                gateway4: 128.120.136.1
-                dhcp4: no
-                nameservers:
-                        addresses: [192.168.0.1]
-  ```
-
+    
+              enp3s0:
+                  addresses: [192.168.0.1/24]
+                  gateway4: 128.120.136.1
+                  dhcp4: no
+                  nameservers:
+                          addresses: [192.168.0.1]
+    
   so we get that management interface up
 
 1. `netplan apply`
