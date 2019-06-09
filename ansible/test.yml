@@ -1,12 +1,7 @@
 ---
 - hosts: masters
   tasks:
-    - copy:
-        src: ../dev-env/mayer.txt
-        dest: /home/ubuntu/spayer.txt
-
-    - shell: cat spayer.txt
-      register: shell_result
-
-    - debug:
-        var: shell_result.stdout_lines
+      - name: spare rare mayer
+        debug:
+          msg: "dev env is... {{ dev_env }}"
+        when: dev_env

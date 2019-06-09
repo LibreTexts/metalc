@@ -1,7 +1,14 @@
-#!python3
+#!/usr/bin/python3
 #
-# pass in the chicks csv. This looks at the ip field for each row and adds
-# rows for enp1s0 and enp2s0 and fills in their mac address
+# Run `./get_macs.py chicks.csv` and then enter the password for spicy.
+#
+# This looks at the ip field for each row and updates the
+# columns for enp1s0 and enp2s0 or adds them if they dont already exist
+# by sshing in and running `ip addr` and extracting the mac addresses
+# for the interfaces.
+#
+# so you can put anything in chicks.csv as long as there is an ip field to
+# use, this will just update the mac addresses
 import sys
 import csv
 import paramiko
@@ -12,6 +19,8 @@ from getpass import getpass
 # gives the 'link/ether' of the given iface_name
 def get_ether(ip_out, iface_name):
     beg = ip_out.find(iface_name)
+    if beg < 0:
+        return None
     start = ip_out.find('link/ether', beg)
     end = ip_out.find('\n', start)
     return ip_out[start:end].split()[1]

@@ -3,15 +3,25 @@
 #
 # This is so you can run ansible commands without running `vagrant provision`
 
-node0 ansible_host=node0 ansible_port=22 ansible_user='ubuntu' #ansible_ssh_private_key_file='/home/kkrausse/projects/vag/.ubuntu/machines/node0/virtualbox/private_key'
-node1 ansible_host=node1 ansible_port=22 ansible_user='ubuntu' #ansible_ssh_private_key_file='/home/kkrausse/projects/vag/.ubuntu/machines/node1/virtualbox/private_key'
-node2 ansible_host=node2 ansible_port=22 ansible_user='ubuntu' #ansible_ssh_private_key_file='/home/kkrausse/projects/vag/.ubuntu/machines/node2/virtualbox/private_key'
+chick0 ansible_host=10.0.0.100 ansible_port=22 ansible_user='spicy' 
+chick1 ansible_host=10.0.0.101 ansible_port=22 ansible_user='spicy' 
+chick2 ansible_host=10.0.0.102 ansible_port=22 ansible_user='spicy' 
+chick3 ansible_host=10.0.0.103 ansible_port=22 ansible_user='spicy' 
+chick4 ansible_host=10.0.0.104 ansible_port=22 ansible_user='spicy' 
+chick5 ansible_host=10.0.0.105 ansible_port=22 ansible_user='spicy' 
+chick6 ansible_host=10.0.0.106 ansible_port=22 ansible_user='spicy' 
+chick7 ansible_host=10.0.0.107 ansible_port=22 ansible_user='spicy' 
+chick8 ansible_host=10.0.0.108 ansible_port=22 ansible_user='spicy' 
+chick9 ansible_host=10.0.0.109 ansible_port=22 ansible_user='spicy' 
+chick10 ansible_host=10.0.0.110 ansible_port=22 ansible_user='spicy' 
 
 [masters]
-node0
+chick0
 
 [workers]
-node[1:2]
+chick[1:10]
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
+dev_env=false
+master_node_ip=10.0.0.100

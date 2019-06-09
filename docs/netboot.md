@@ -23,8 +23,10 @@ management network.
   or something already configured that would cause unexpected behavior. You also
   need to make sure you are doing this on a private network where the manager is
   the only dhcp server.
+  After they were initially booted, I was able to switch them all over to the
+  smart switch and there were no problems.
 
-### steps on rooster:
+### steps on rooster (i.e. commands to run on rooster to get netboot to work):
 
 1. `sudo apt install isc-dhcp-server`
 
@@ -132,11 +134,18 @@ group {
 1. `sudo ufw allow tftp` so it can use the images
 
 
-# steps on chicks
+# steps on chicks (i.e. things you need to do to boot a node on the network)
 
-just press enters for the first part till you get to hostname then you put `chick{i}`
-where i is the chick. enp1s0 is the internet so use that for that
+1. have it connected to enp1s0 which is the left ethernet port on the right side
 
-first loading screen ends quickly. then put spicy logon and configure disks.
+1. power it on with the disks in. The install screen should come on. If not, you
+  may have to change the boot priority order
 
-when its configuring the disks it installs base sys right after so you can bail because this takes like an hour
+1. go through the installation steps. Once it says "installing base system,"
+  that part takes like an hour so you can go do something else. After that its
+  mostly done.
+
+1. after completing the installation, to get it to boot from disk, you have to
+  turn off the network boot on the manager (rooster). So on rooster, run
+  `systemctl stop tftpd-hpa` before rebooting your newly installed machine.
+  After it boots, you can turn tftp back on.

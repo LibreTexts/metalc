@@ -13,7 +13,7 @@
 
     - name: create .kube directory
       become: yes
-      become_user: ubuntu
+      become_user: spicy
       file:
         path: $HOME/.kube
         state: directory
@@ -22,19 +22,22 @@
     - name: copy admin.conf to user's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/ubuntu/.kube/config
+        dest: /home/spicy/.kube/config
         remote_src: yes
-        owner: ubuntu
+        owner: spicy
 
+# install flannel for the dev environment
     - name: upload kube-flannel.yml to host
       copy:
-        src: ../kube-flannel.yml
-        dest: /home/ubuntu/kube-flannel.yml
+        src: {{ '../dev-env/kube-flannel.yml' if dev_env else '../../calico.yml' }}
+        dest: /home/spicy/{{ 'kube-flannel.yml' if dev_env else 'calico.yml' }}
+      when: dev_env
 
     - name: install Pod network
       become: yes
-      become_user: ubuntu
-      shell: kubectl apply -f /home/ubuntu/kube-flannel.yml >> pod_network_setup.txt
+      become_user: spicy
+      shell: kubectl apply -f /home/spicy/{{ 'kube-flannel.yml' if dev_env else 'calico.yml' }} >> pod_network_setup.txt
       args:
         chdir: $HOME
+      when: dev_env
 #        creates: pod_network_setup.txt

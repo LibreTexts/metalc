@@ -49,10 +49,12 @@
 
 # this is required because the nodeip was incorrect by default and the apiserver
 # was unable to locate worker pods.
+# only execute this for the development environment (the when statement)
    - name: set the kubelet node port in the default
      copy:
        content: "KUBELET_EXTRA_ARGS=--node-ip={{ansible_enp0s8.ipv4.address}}"
        dest: /etc/default/kubelet
+     when: dev_env
 
 - hosts: masters
   become: yes
