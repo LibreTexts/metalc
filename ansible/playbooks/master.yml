@@ -26,18 +26,16 @@
         remote_src: yes
         owner: spicy
 
-# install flannel for the dev environment
+# install flannel for the dev environment or calico for the legit one
     - name: upload pod network manifest to host
       copy:
-        src: "{{ '../dev-env/kube-flannel.yml' if dev_env else '../../calico.yml' }}"
-        dest: /home/spicy/{{ 'kube-flannel.yml' if dev_env else 'calico.yml' }}
-      when: dev_env
+        src: "{{ '../../dev-env/kube-flannel.yml' if (dev_env == true) else '../../calico.yml' }}"
+        dest: /home/spicy/{{ 'kube-flannel.yml' if (dev_env == true) else 'calico.yml' }}
 
     - name: install Pod network
       become: yes
       become_user: spicy
-      shell: kubectl apply -f /home/spicy/{{ 'kube-flannel.yml' if dev_env else 'calico.yml' }} >> pod_network_setup.txt
+      shell: kubectl apply -f /home/spicy/{{ 'kube-flannel.yml' if (dev_env == true) else 'calico.yml' }} >> pod_network_setup.txt
       args:
         chdir: $HOME
-      when: dev_env
 #        creates: pod_network_setup.txt

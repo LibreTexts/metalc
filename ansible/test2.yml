@@ -1,0 +1,26 @@
+---
+- hosts: all
+  tasks:
+      - name: test lest
+        debug:
+                msg: "current is: {{ 'development' if (dev_env == true) else 'not development' }}"
+
+        # this is the task to run netplan on all the hosts
+#      - name: netplan apply to get the default gateway reset
+#        shell: netplan apply
+#        become: true
+#        become_user: root
+#
+# install flannel for the dev environment
+#    - name: upload pod network manifest to host
+#      copy:
+#        src: "{{ '../../dev-env/kube-flannel.yml' if (dev_env == true) else '../../calico.yml' }}"
+#        dest: /home/spicy/{{ 'kube-flannel.yml' if (dev_env == true) else 'calico.yml' }}
+
+#   - name: install Pod network
+#      become: yes
+#      become_user: spicy
+#      shell: kubectl apply -f /home/spicy/{{ 'kube-flannel.yml' if (dev_env == true) else 'calico.yml' }} >> pod_network_setup.txt
+#      args:
+#        chdir: $HOME
+#        creates: pod_network_setup.txt

@@ -25,6 +25,11 @@
        name: nfs-common
        state: present
 
+   - name: get the gnupg package
+     apt:
+       name: gnupg
+       state: present
+
    - name: add Kubernetes apt-key
      apt_key:
        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
