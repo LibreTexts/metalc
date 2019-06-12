@@ -70,7 +70,8 @@ allow bootp;
 subnet 10.0.0.0 netmask 255.255.255.0 {
   range 10.0.0.3 10.0.0.253;
   option broadcast-address 10.0.0.255;
-  option routers 10.0.0.1;
+  option routers 10.0.0.1;     # this ends up being the default gateway router
+                               # on the hosts. Set to the manager so we can NAT
   option domain-name-servers 128.120.136.129,128.120.136.133,128.120.136.134;
   filename "pxelinux.0";
 }
