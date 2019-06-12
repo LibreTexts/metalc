@@ -15,8 +15,13 @@ chick8 ansible_host=10.0.0.108 ansible_port=22 ansible_user='spicy'
 chick9 ansible_host=10.0.0.109 ansible_port=22 ansible_user='spicy' 
 chick10 ansible_host=10.0.0.110 ansible_port=22 ansible_user='spicy' 
 
-[masters]
+# only 1 master master. This stuff executes stuff that is only done
+# once for the entire cluster
+[master]
 chick0
+
+# for all the other masters when we configure HA masters
+[masters]
 
 [workers]
 chick[1:10]

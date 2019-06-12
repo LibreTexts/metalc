@@ -2,6 +2,16 @@
 
 Where we document how we get the cluster setup and working.
 
+## Pod Network
+
+pod CIDR is 10.244.0.0/16
+
+Choosing calico. The manifest is in the home directory of the repo `calico.yaml`.
+In this we changed:
+
+    CALICO_IPV4_IPIP: "Never"
+    CALICO_IPV4POOL_CIDER: "10.244.0.0/16"
+
 ## Rooster (management node)
 
 Not going to be part of the kubernetes cluster. It

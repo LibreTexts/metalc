@@ -1,4 +1,4 @@
-- hosts: masters
+- hosts: master
   become: yes
   tasks:
     - name: initialize the cluster
@@ -27,9 +27,9 @@
         owner: spicy
 
 # install flannel for the dev environment
-    - name: upload kube-flannel.yml to host
+    - name: upload pod network manifest to host
       copy:
-        src: {{ '../dev-env/kube-flannel.yml' if dev_env else '../../calico.yml' }}
+        src: "{{ '../dev-env/kube-flannel.yml' if dev_env else '../../calico.yml' }}"
         dest: /home/spicy/{{ 'kube-flannel.yml' if dev_env else 'calico.yml' }}
       when: dev_env
 

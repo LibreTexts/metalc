@@ -1,5 +1,5 @@
 ---
 - import_playbook: init.yml
 - import_playbook: kube-deps.yml
-- import_playbook: masters.yml
+- import_playbook: master.yml
 - import_playbook: workers.yml

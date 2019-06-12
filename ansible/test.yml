@@ -1,7 +1,12 @@
 ---
-- hosts: masters
+- hosts: all
   tasks:
-      - name: spare rare mayer
+      - name: test lest
         debug:
           msg: "dev env is... {{ dev_env }}"
-        when: dev_env
+        when: not dev_env
+
+      - name: netplan apply to get the default gateway reset
+        shell: netplan apply
+        become: true
+        become_user: root

@@ -71,12 +71,12 @@ subnet 10.0.0.0 netmask 255.255.255.0 {
   range 10.0.0.3 10.0.0.253;
   option broadcast-address 10.0.0.255;
   option routers 10.0.0.1;
-  option domain-name-servers 8.8.8.8; # our router, again
+  option domain-name-servers 128.120.136.129,128.120.136.133,128.120.136.134;
   filename "pxelinux.0";
 }
 
 group {
-  next-server 128.120.136.1;                # our Server. was previously 128.120.136.1
+  next-server 10.0.0.1;                # our Server. was previously 128.120.136.1
   host tftpclient {
     filename "pxelinux.0"; # (this we will provide later)
   }
@@ -117,13 +117,12 @@ group {
 1. `apt get ufw`
 
 1. add the following to `/etc/ufw/before.rules`
-  ```
-  *nat
-  :POSTROUTING ACCEPT [0:0]
-  # send stuff out of the eth2 iface
-  -A POSTROUTING -o enp2s0 -j MASQUERADE
-  COMMIT
-  ```
+
+    *nat
+    :POSTROUTING ACCEPT [0:0]
+    # send stuff out of the eth2 iface
+    -A POSTROUTING -o enp2s0 -j MASQUERADE
+    COMMIT
 
   note that enp2s0 is the interface that faces the public internet
 

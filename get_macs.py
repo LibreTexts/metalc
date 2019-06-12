@@ -25,11 +25,13 @@ def get_ether(ip_out, iface_name):
     end = ip_out.find('\n', start)
     return ip_out[start:end].split()[1]
 
-def get_ip_output(ip_addr, passwd):
+# executes the command on the given ip with the given ssh password to user spicy
+# and returns the standard output of that command
+def get_output(ip_addr, passwd, cmd):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(ip_addr, username='spicy', password=passwd)
-    inp, outp, errp = ssh.exec_command('ip addr')
+    inp, outp, errp = ssh.exec_command(cmd)
     return outp.read().decode('utf-8')
 
 if __name__ == "__main__":
@@ -46,7 +48,7 @@ if __name__ == "__main__":
                 fieldnames.append(iface)
         rows = []
         for row in reader:
-            ip_output = get_ip_output(row['ip'], passwd)
+            ip_output = get_output(row['ip'], passwd, 'ip addr')
             for iface in ifaces:
                 row[iface] = get_ether(ip_output, iface)
             rows.append(row)
