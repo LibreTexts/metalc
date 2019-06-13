@@ -23,8 +23,8 @@ the manager has it on enp3s0 which is the one as shown in the diagram above.
 log into the switch with `screen /dev/ttyS0` on the management node
   - use username: manager
         password: friend
-        
-#### Metting the k8s [Network Policy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
+#### Meeting the k8s [Network Policy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 
 To do this we are trying to use Calico because it is faster than flannel. Alternatively, we could do it by hand
 like is done in [k8s the hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/11-pod-network-routes.md)
