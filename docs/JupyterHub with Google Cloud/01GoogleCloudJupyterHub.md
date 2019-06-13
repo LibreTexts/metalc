@@ -6,36 +6,6 @@ using Kubernetes. All steps needed will be talked about in detail plus all the i
 through going through the process will be talked about for the benefit of the reader. Most of the
 setup was accomplished by following the ​Zero to JupyterHub with Kubernetes​ guide.
 
-## Updating config.yaml(Read before changing config.yaml)
-
-Most of the configurations for the cluster are made in the config.yaml file that we created in the
-the previous steps. ​[Zero to JupyterHub with Kubernetes​](https://zero-to-jupyterhub.readthedocs.io/en/latest/index.html) contains a lot of documentation on all
-kinds of possible configurations for a cluster. ​ **Important: when indenting in the config.yaml
-file, don’t use tabs, always use two spaces.**
-
-### Potential Errors:
-<ul>
-<li>If helm is missing, run: 
-curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash
-<li>If ‘client versions don’t match’, run: helm init --upgrade
-</ul>
-
-### Steps for updating config.yaml:
-
-1. After changing the config.yaml file we need to update the cluster with a helm command.
-2. Run: RELEASE=jhub in the cloud shell. (This step is only needed if the shell was
-    restarted after the initial setup)
-3. Run: helm upgrade $RELEASE jupyterhub/jupyterhub --version=0.8.0 --values
-    config.yaml
-4. Wait for the command to finish, this might take a couple of minutes.
-
-
-5. Run: kubectl get pod --namespace jhub (​ **this is assuming we are using the jhub**
-    **namespcae, the one used in the tutorial** ​)
-6. Wait for all the pods to be in the ‘RUNNING’ status before checking JupyterHub in the
-    browser for the changes.
-7. Done!
-
 ## Setting up Kubernetes on Google Cloud
 
 One can mostly follow the tutorial on the [​website​](https://zero-to-jupyterhub.readthedocs.io/en/latest/google/step-zero-gcp.html).
@@ -105,7 +75,7 @@ working yet.
 The ​[website](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-environment.html)​ is the place to look at for available customizations.
 #### Notes:
 <ul>
-<li>Near the bottom of this [page​](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/running.html#using-binder) there seems to be the possibility of running a user server <br>
+<li>Near the bottom of this ​[page](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/running.html#using-binder)​ there seems to be the possibility of running a user server <br>
 with binder? Needs more research to confirm this.
 <li>The main way used for JupyterHub to customize a user environment is the use of <br>
 Docker images for building user servers when someone logs in. At the bottom of the <br>
@@ -115,3 +85,32 @@ environment to use when starting their server.
 JupyterHub url to ​ **/lab** ​. It is also possible to make JupyterLab the default interface for <br>
 when a user logs in.
 </ul>
+
+## Updating config.yaml(Read before changing config.yaml)
+
+Most of the configurations for the cluster are made in the config.yaml file that we created in the
+the previous steps. ​[Zero to JupyterHub with Kubernetes​](https://zero-to-jupyterhub.readthedocs.io/en/latest/index.html) contains a lot of documentation on all
+kinds of possible configurations for a cluster. ​ **Important: when indenting in the config.yaml
+file, don’t use tabs, always use two spaces.**
+
+### Potential Errors:
+<ul>
+<li>If helm is missing, run: 
+curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash
+<li>If ‘client versions don’t match’, run: helm init --upgrade
+</ul>
+
+### Steps for updating config.yaml:
+
+1. After changing the config.yaml file we need to update the cluster with a helm command.
+2. Run: RELEASE=jhub in the cloud shell. (This step is only needed if the shell was
+    restarted after the initial setup)
+3. Run: helm upgrade $RELEASE jupyterhub/jupyterhub --version=0.8.0 --values
+    config.yaml
+4. Wait for the command to finish, this might take a couple of minutes.
+
+5. Run: kubectl get pod --namespace jhub (​ **this is assuming we are using the jhub**
+    **namespcae, the one used in the tutorial** ​)
+6. Wait for all the pods to be in the ‘RUNNING’ status before checking JupyterHub in the
+    browser for the changes.
+7. Done!
