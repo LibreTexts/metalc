@@ -75,7 +75,7 @@ working yet.
 The ​[website](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-environment.html)​ is the place to look at for available customizations.
 #### Notes:
 <ul>
-<li>Near the bottom of this ​[page](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/running.html#using-binder)​ there seems to be the possibility of running a user server <br>
+<li>Near the bottom of this [page](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/running.html#using-binder) there seems to be the possibility of running a user server <br>
 with binder? Needs more research to confirm this.
 <li>The main way used for JupyterHub to customize a user environment is the use of <br>
 Docker images for building user servers when someone logs in. At the bottom of the <br>
