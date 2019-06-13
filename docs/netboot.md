@@ -118,12 +118,13 @@ group {
 1. `apt get ufw`
 
 1. add the following to `/etc/ufw/before.rules`
-
-    *nat
-    :POSTROUTING ACCEPT [0:0]
-    # send stuff out of the eth2 iface
-    -A POSTROUTING -o enp2s0 -j MASQUERADE
-    COMMIT
+```
+*nat
+:POSTROUTING ACCEPT [0:0]
+# send stuff out of the eth2 iface
+-A POSTROUTING -o enp2s0 -j MASQUERADE
+COMMIT
+```
 
   note that enp2s0 is the interface that faces the public internet
 
