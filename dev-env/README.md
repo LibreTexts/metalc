@@ -131,6 +131,15 @@ helm delete nfs-client-release --purge
 You should now be able to run the jupyterhub [Helm chart](
 https://zero-to-jupyterhub.readthedocs.io/en/latest/setup-jupyterhub.html) on this cluster
 
+
+### Tearing it down
+To delete the virtual machines and cluster, run
+```
+vagrant destroy -f node2
+vagrant destory -f node1
+vagrant destory -f node0
+```
+
 ### Vocabulary
 
 - when I say "host machine," I am talking about the machine that vagrant and
