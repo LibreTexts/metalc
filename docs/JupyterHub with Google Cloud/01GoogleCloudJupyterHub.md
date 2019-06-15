@@ -30,9 +30,7 @@ regarding Helm can be found too.
 the last step.
 <li>Closing or disconnecting from the console will remove helm ​, and one has to <br>
 reinstall it again with <br>
-```
-curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash
-``` <br>
+```curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash``` <br>
 to use helm commands to control the cluster.
 </ul>
 
