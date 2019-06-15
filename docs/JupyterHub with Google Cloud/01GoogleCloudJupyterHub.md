@@ -14,7 +14,7 @@ One can mostly follow the tutorial on the [​website​](https://zero-to-jupyte
 <ul>
 <li>On step 7, creating a node pool for users. The command won’t run unless either --region <br>
 or --zone option was specified. I chose --region us-central1-b, the region that I used was <br>
-the same one used in step 4.
+the same one used in step 4 in the Kubernetes guide.
 </ul>
 
 ## Setting up Helm
@@ -30,7 +30,7 @@ regarding Helm can be found too.
 the last step.
 <li>Closing or disconnecting from the console will remove helm ​, and one has to <br>
 reinstall it again with <br>
-curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash <br>
+`curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash` <br>
 to use helm commands to control the cluster.
 </ul>
 
@@ -95,7 +95,7 @@ file, don’t use tabs, always use two spaces.**
 
 ### Potential Errors:
 <ul>
-<li>If helm is missing, run: 
+<li>If helm is missing, run:
 curl https:​//​raw​.​githubusercontent​.​com​/​kubernetes​/​helm​/​master​/​scripts​/​get ​|​ bash
 <li>If ‘client versions don’t match’, run: helm init --upgrade
 </ul>
