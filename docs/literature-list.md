@@ -11,3 +11,5 @@ intents and purposes. Also, check out the [/dev-env](https://github.com/LibreTex
 to give yourself a kubernetes cluster to mess with while learning.
 
 good intro blog on basics like containers and kubernetes: [what is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/)
+
+A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/
