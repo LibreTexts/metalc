@@ -512,6 +512,10 @@ RAID arrays already in place of each chick.
 In order to use preseeding, type in the command `cli` after boot when pxelinux
 shows up from booting from the network.
 
+In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";` 
+to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
+you could type in `cli hostname=<HOSTNAME>` when booting each chick.
+
 # Kube Literature
 
 Place for us to add some useful reading we find
@@ -529,6 +533,6 @@ good intro blog on basics like containers and kubernetes: [what is a kubelet](ht
 A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/
 
 # Useful commands
-`kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
-`kubectl get po -A` lists all pods in the cluster.
+* `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
+* `kubectl get po -A` lists all pods in the cluster.
 
