@@ -7,12 +7,11 @@ cluster.
 
 1. [Introduction](#Introduction)
 1. [Roadmap](#Roadmap)
-1. [Cluster Setup Params](#Cluster Setup)
 1. [Networking](#Networking)
-1. [Publishing Services (LoadBalancer / metallb)](#Publishing Services)
-1. [Adding Nodes](#Adding Nodes)
+1. [Publishing Services](#PublishingServices)
+1. [Adding Nodes](#AddingNodes)
 1. [Netbooting](#Netbooting)
-1. [Literature List](#Kube Literature) for learning resources.
+1. [Literature List](#KubeLiterature) for learning resources.
 
 # Introduction
 
