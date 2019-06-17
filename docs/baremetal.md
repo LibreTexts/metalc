@@ -496,14 +496,31 @@ group {
   turn off the network boot on the manager (rooster). So on rooster, run
   `systemctl stop tftpd-hpa` before rebooting your newly installed machine.
   After it boots, you can turn tftp back on.
+  
+## Alternative route: preseeding
+With preseeding, you can install Ubuntu Server 18.04 using a preconfiguration file,
+without going through each installation step manually.
 
+The preconfiguration file is located in the tftp server: `/srv/tftp/pxelinux.cfg/default`.
+Under `label cli` lists the tasks and boot parameters needed to automate most of the
+configuration.
 
+The file `srv/tftp/preseed.cfg` lists the preconfiguration options. We removed the
+partitioning section of the preconfiguration file because we wanted to keep the 
+RAID arrays already in place of each chick.
+
+In order to use preseeding, type in the command `cli` after boot when pxelinux
+shows up from booting from the network.
+
+In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";` 
+to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
+you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
 # Kube Literature
 
 Place for us to add some useful reading we find
 
-### general kubernetes
+### General Kubernetes
 
 Obviously, the [concepts section](https://kubernetes.io/docs/concepts/) is
 probably the most valueable resource for learning about kubernetes. Services,
@@ -513,4 +530,15 @@ to give yourself a kubernetes cluster to mess with while learning.
 
 good intro blog on basics like containers and kubernetes: [what is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/)
 
-A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/
+### Networking
+Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
+
+### Installation
+A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [Ubuntu 18.04 Unattended Setup](https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/)
+
+
+
+# Useful commands
+* `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
+* `kubectl get po -A` lists all pods in the cluster.
+
