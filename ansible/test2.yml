@@ -2,10 +2,10 @@
 - hosts: all
   tasks:
       - name: test lest
-        #debug: #msg: "current is: {{ 'development' if (dev_env == true) else 'not development' }}"
-        #        msg: "dev_env is false"
-        shell: echo "dev_env is false"
-        when: not(dev_env) 
+        debug: #msg: "current is: {{ 'development' if (dev_env == true) else 'not development' }}"
+                msg: "dev_env is false"
+        #shell: echo "dev_env is false"
+        when: dev_env|bool == false 
 
         # this is the task to run netplan on all the hosts
 #      - name: netplan apply to get the default gateway reset
