@@ -358,9 +358,8 @@ and a little bit of
 https://linuxhint.com/pxe_boot_ubuntu_server/
 
 
-For no good reason other than they used that in the tutorial above, I'm using
-192.169.0.0/24 as the subnet and 192.168.0.1 as the manager node for the
-management network.
+Using `10.0.0.0/24` for all the node IPs (chicks) so we have the manager as the
+dhcp server also at `10.0.0.1`.
 
 ### quick word on hardaware
 
@@ -514,3 +513,5 @@ intents and purposes. Also, check out the [/dev-env](https://github.com/LibreTex
 to give yourself a kubernetes cluster to mess with while learning.
 
 good intro blog on basics like containers and kubernetes: [what is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/)
+
+A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/
