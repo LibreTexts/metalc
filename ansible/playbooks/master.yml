@@ -39,3 +39,16 @@
       args:
         chdir: $HOME
 #        creates: pod_network_setup.txt
+
+# install metalLB
+     - name: install metalLB
+       shell: kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+     - debug:
+       when: dev_env == false
+
+# apply metalLB configuration file
+     - name: applying metalLB configuration file
+       shell: kubectl apply -f ../../metallb-config.yml 
+     - debug: 
+       when: dev_env == false
+ 
