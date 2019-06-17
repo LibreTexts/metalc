@@ -3,7 +3,7 @@
 This document lays out the steps needed to setup a BinderHub deployment on Google Cloud
 using Kubernetes. All steps needed will be talked about in detail plus all insight i’ve gained
 through going through the process will be talked about for the benefit of the reader. Most of the
-setup was accomplished by following the ​Zero to BinderHub with guide.
+setup was accomplished by following the ​Zero to BinderHub guide.
 
 ## Setting up Kubernetes on Google Cloud
 
@@ -38,4 +38,15 @@ to use helm commands to control the cluster.
 BinderHub builds Docker images out of Git repositories, and then pushes them to a Docker
 registry so that JupyterHub can launch user servers based on these images. There are several
 options available to use as a container registry, the one that will be used for this tutorial
-is DockerHub. One can follow the tutorial for DockerHub on the [website](https://binderhub.readthedocs.io/en/latest/setup-registry.html).
+is DockerHub. One can follow the tutorial for DockerHub on the [website](https://binderhub.readthedocs.io/en/latest/setup-registry.html). It also seems possible to run your own server as a Container Registry.
+
+## Setting up BinderHub
+
+In this step, we setup BinderHub on the Kubernetes cluster using Helm. One can mostly use
+the ​[website](https://binderhub.readthedocs.io/en/latest/setup-binderhub.html)​.
+
+#### Notes:
+<ul>
+<li>BinderHub uses JupyterHub to run the user servers, looking into the possibility of using <br>
+the JupyterHub underlying BinderHub directly.
+</ul>
