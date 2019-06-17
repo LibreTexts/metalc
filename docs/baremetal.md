@@ -520,7 +520,7 @@ you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
 Place for us to add some useful reading we find
 
-### general kubernetes
+### General Kubernetes
 
 Obviously, the [concepts section](https://kubernetes.io/docs/concepts/) is
 probably the most valueable resource for learning about kubernetes. Services,
@@ -530,7 +530,13 @@ to give yourself a kubernetes cluster to mess with while learning.
 
 good intro blog on basics like containers and kubernetes: [what is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/)
 
-A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/
+### Networking
+Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
+
+### Installation
+A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [Ubuntu 18.04 Unattended Setup](https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/)
+
+
 
 # Useful commands
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
