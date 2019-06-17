@@ -496,8 +496,21 @@ group {
   turn off the network boot on the manager (rooster). So on rooster, run
   `systemctl stop tftpd-hpa` before rebooting your newly installed machine.
   After it boots, you can turn tftp back on.
+  
+## Alternative route: preseeding
+With preseeding, you can install Ubuntu Server 18.04 using a preconfiguration file,
+without going through each installation step manually.
 
+The preconfiguration file is located in the tftp server: `/srv/tftp/pxelinux.cfg/default`.
+Under `label cli` lists the tasks and boot parameters needed to automate most of the
+configuration.
 
+The file `srv/tftp/preseed.cfg` lists the preconfiguration options. We removed the
+partitioning section of the preconfiguration file because we wanted to keep the 
+RAID arrays already in place of each chick.
+
+In order to use preseeding, type in the command `cli` after boot when pxelinux
+shows up from booting from the network.
 
 # Kube Literature
 
