@@ -516,6 +516,10 @@ In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";`
 to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
+## NFS
+Allows anything from chicks to talk to rooster:
+`ufw allow from 10.0.0.0/8 to 10.0.0.1`
+
 # Kube Literature
 
 Place for us to add some useful reading we find
