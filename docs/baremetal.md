@@ -517,8 +517,31 @@ to each host. This is for dhcp to replace the hostname of the computer. Alternat
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
 ## NFS
-Allows anything from chicks to talk to rooster:
-`ufw allow from 10.0.0.0/8 to 10.0.0.1`
+NFS is needed to handle persistent volume claims. It allows persistence of files made by
+the nodes.
+
+(Credit to [Kevin's kube-dev-env](https://github.com/kkrausse/kube-dev-env))
+
+In rooster, run `sudo apt install nfs-kernel-server` to install the NFS server on the
+host system. We will use `/export` on rooster as the shared directory which the chicks 
+can access.
+
+Add the following line to `/etc/exports`:
+```
+/export 10.0.0.0/8(rw,fsid=0,async,no_subtree_check,no_auth_nlm,insecure,no_root_squash)
+```
+and run `exportfs -a`.
+
+To make sure the NFS mount is successful, run this command on rooster to allow anything 
+from the network of chicks to talk to rooster: `ufw allow from 10.0.0.0/8 to 10.0.0.1`.
+Without this command, the firewall won't allow you to mount NFS.
+
+We want each chick to mount `10.0.0.1:/export` (on rooster) to `/nfs` (locally on the chick
+node). Therefore, run the command `sudo mount 10.0.0.1:/export /nfs` on each chick node.
+Later, we want to add this command to fstabs via the Ansible Playbook so this could be
+done automatically.
+
+Even later, we will have a physical NFS server.
 
 # Kube Literature
 
@@ -547,4 +570,4 @@ A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [U
 # Useful commands
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
 * `kubectl get po -A` lists all pods in the cluster.
-
+* `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
