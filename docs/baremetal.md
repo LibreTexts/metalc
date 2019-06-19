@@ -572,6 +572,19 @@ for setting up JupyterHub.
 
 Later, we will have a physical NFS server.
 
+# Getting into the cluster
+Ssh into rooster on putty.
+On putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels** 
+to add a new port forwarding rule.
+For **Source port**, type `4545`.
+Select `Dynamic`. Click **Add**.
+
+In Mozilla Firefox, go to **Tools**, then **Options**.
+Under **Network Settings**, click **Settings**.
+Select **Manual proxy configuration**. In SOCKS Host, enter `localhost`. In Port, enter `4545`. Select **SOCKSv4**.
+
+Now, open http://10.0.1.54.
+
 # Kube Literature
 
 Place for us to add some useful reading we find
