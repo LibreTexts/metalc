@@ -344,6 +344,26 @@ node functioning in the kubernetes cluster after the os is already installed.
   just adding one host and not provisioning the whole cluster, add the `--limit "chick{i}`
   flag.
  
+## Adding Individual Nodes
+  
+If you are adding a completely new node, add the `--limit "chick{i}` flag, 
+then run the playbook `workers.yml` with both the master and new chick node. 
+  
+The first task will give you a fatal error for the task, `join cluster`; this
+is expected. (We can probably write another playbook for adding nodes, but would involve
+a lot of copying and pasting.)
+```
+ansible-playbook -i hosts playbooks/main.yml --ask-become-pass --limit "chick{i}"
+ansible-playbook -i hosts playbooks/workers.yml --ask-become-pass --limit "chick{i},master"
+```
+If you are adding a wiped node whose name is still in the cluster, i.e. the name of
+the node still appears when running `kubectl get nodes`, then delete the node first
+by running `kubectl delete node <node-name>` and completely wipe the node again.
+Then follow the steps as if you were adding a completely new node.
+  
+If you are adding a node that has been detached (e.g. you restarted the system
+on the node), then run `sudo systemctl restart kubelet.service`. If you still have
+trouble, this may help: [Troubleshooting](https://github.com/libretexts/metalc/docs/BareMetalTroubleshooting/AddingNotReadyNode.md)
 
 # Netbooting
 
