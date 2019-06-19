@@ -100,10 +100,10 @@ https://kubernetes.github.io/ingress-nginx/deploy/baremetal/)
 ## HA masters
 
 Down the road, we need to configure high availability masters so we aren't as vulnerable to a master
-failing. The setup is outlined in the [kubeadm docs](
-The https://kubernetes.io/docs/setup/independent/high-availability/). We can use either [HA proxy](
-http://www.haproxy.org/#desc), which Richard is familiar with, or maybe some sort of nginx proxy. Either
-way, we have to do this manually since this proxying must exist before kubectl is operational. 
+failing. The setup is outlined in the [kubeadm docs](https://kubernetes.io/docs/setup/independent/high-availability/). 
+We can use either [HA proxy](http://www.haproxy.org/#desc), which Richard is familiar with, 
+or maybe some sort of nginx proxy. Either way, we have to do this manually since this proxying 
+must exist before kubectl is operational. 
 
 ## Cluster Helm chart
 
@@ -557,11 +557,20 @@ from the network of chicks to talk to rooster: `ufw allow from 10.0.0.0/8 to 10.
 Without this command, the firewall won't allow you to mount NFS.
 
 We want each chick to mount `10.0.0.1:/export` (on rooster) to `/nfs` (locally on the chick
-node). Therefore, run the command `sudo mount 10.0.0.1:/export /nfs` on each chick node.
-Later, we want to add this command to fstabs via the Ansible Playbook so this could be
-done automatically.
+node). The Ansible Playbook already auto-mounts rooster to each chick by editing the
+`/etc/fstab` file, so you don't have to do this manually. If you do want to do it manually, 
+run the command `sudo mount 10.0.0.1:/export /nfs` on each chick node.
 
-Even later, we will have a physical NFS server.
+The `nfs-client-vals.yml` describes the values used for running the NFS client provisioner.
+Run
+```
+helm install --name nfs-client-release stable/nfs-client-provisioner -f nfs-client-vals.yml
+```
+
+Then follow [these instructions](https://zero-to-jupyterhub.readthedocs.io/en/latest/setup-helm.html)
+for setting up JupyterHub.
+
+Later, we will have a physical NFS server.
 
 # Kube Literature
 
@@ -582,10 +591,15 @@ Building a Kubernetes cluster using Ansible Playbooks: [How to Build a Kubernete
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
+Some info on NFS server setup: [Install NFS Server and Client on Ubuntu 18.04](https://vitux.com/install-nfs-server-and-client-on-ubuntu/)
+
 ### Installation
 A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [Ubuntu 18.04 Unattended Setup](https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/)
 
 
+### Reference Repositories
+[NFS Client Provisioner](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner)
+for setting up an automatic provisioner after you have the NFS server set up.
 
 # Useful commands
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
