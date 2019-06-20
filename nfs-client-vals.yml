@@ -1,0 +1,15 @@
+# values as specified in this:
+# https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner
+#
+# # set the nfs server to the host you are running on
+nfs:
+  server: 128.120.136.26
+# note that path can be '/' because we use the "fsid=0" param in `/etc/exports`
+  path: /
+
+# create a storage class with this provisioner and make it the default class
+# reclaim policy Retain means people can sign back in and still have their
+# stuff there
+storageClass:
+  defaultClass: true
+  reclaimPolicy: Retain
