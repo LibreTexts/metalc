@@ -38,9 +38,9 @@ to use helm commands to control the cluster.
 
 In this step, we setup JupyterHub on the Kubernetes cluster using Helm. One can mostly use
 the ​[website](https://zero-to-jupyterhub.readthedocs.io/en/latest/setup-jupyterhub.html#setup-jupyterhub)​.
+An example [configuration](https://github.com/LibreTexts/metalc/blob/master/docs/JupyterHub-on-GCloud/config-template.yaml) file is included in the folder fore reference.
 #### Notes:
 <ul>
-<li>An example [configuration](https://github.com/LibreTexts/metalc/blob/master/docs/JupyterHub-on-GCloud/config-template.yaml) file is included in the folder fore reference.
 <li>The commands in this tutorial should be run from the same Google Cloud Shell used in <br>
 the last steps.
 <li>Check that we can connect to JupyterHub in the browser.
