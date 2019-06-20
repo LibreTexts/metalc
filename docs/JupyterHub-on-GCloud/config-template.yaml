@@ -1,3 +1,5 @@
+# Unused parts can be commented out or deleted.
+
 proxy:
   secretToken: "<output of `openssl rand -hex 32`>"
   # Setup https with letsencrypt, the certificate renewel is automatic.
