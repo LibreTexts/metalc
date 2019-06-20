@@ -47,6 +47,6 @@ the ​[website](https://binderhub.readthedocs.io/en/latest/setup-binderhub.html
 
 #### Notes:
 <ul>
-<li>BinderHub uses JupyterHub to run the user servers, looking into the possibility of using <br>
-the JupyterHub underlying BinderHub directly.
+<li>At the '1.2.2 Initialization' section, the command at step 2 has to be run in order for <br>
+steps further in the installation to work.
 </ul>

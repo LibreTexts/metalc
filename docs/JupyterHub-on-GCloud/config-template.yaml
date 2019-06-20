@@ -1,0 +1,96 @@
+proxy:
+  secretToken: "<output of `openssl rand -hex 32`>"
+  # Setup https with letsencrypt, the certificate renewel is automatic.
+  # A domain name is required for letsencrypt to work.
+  https:
+    hosts:
+      - <your domain name, eg. 'example.com'>
+    letsencrypt:
+      contactEmail: <contact email of administrator>
+
+# Setup a specific type of authentication other than the standard one, here we use OAuth by google.
+# Credentials need to be setup on https://console.cloud.google.com/apis/credentials
+auth:
+  type: google
+  google:
+    clientId: "<Client ID>"
+    clientSecret: "<Client secret>"
+    callbackUrl: "https://<your domain name>/hub/oauth_callback"
+    hostedDomain: "<restric to specific domain, eg. 'ucdavis.com'>"
+    loginService: "<name that will appear on sign in button for OAuth>"
+
+# The resources requested is very important to consider in
+# relation to your machine type. Are they mostly
+# writing and reading or are they mostly executing code?
+singleuser:
+  cpu:
+    # The 'limit' parameter specifies what percentage of CPU computing power is
+    # available per user. The number can be more than 1 if there is more than 1
+    # core available. For example, if there are 2 cores, one could set the limit
+    # to 1.5(use 1 full core and a half).
+    limit: 2
+    # The 'guarantee' parameter specifies what percentage of CPU computing power
+    # each user gets for sure. This parameter could also be more than 1 if there
+    # is more than 1 core.
+    guarantee: 0.05
+  memory:
+    # The 'limit' parameter specifies how much RAM a user can use up to if there
+    # is more RAM available than their guaranteed amount. Default is 1G.
+    limit: 1G
+    # The 'guarantee' parameter specifies how much RAM each user gets for sure.
+    guarantee: 187M
+  # Defines the default image
+  image:
+    name: jupyter/minimal-notebook
+    tag: 2343e33dec46
+  # We can create a list of profiles that the user can choose from when logging in.
+  # The environments are built docker images hosted on a image registry, for example DockerHub.
+  # A lot of good environments can be found at https://hub.docker.com/u/jupyter/ .
+  # One can also build their own image and host it on a registry for use.
+  profileList:
+    - display_name: "Minimal environment"
+      description: "To avoid too much bells and whistles: Python."
+      default: true
+    - display_name: "Datascience environment" # Title of profile.
+      description: "If you want the additional bells and whistles: Python, R, and Julia." # Description of the profile.
+      kubespawner_override:
+        image: jupyter/datascience-notebook:2343e33dec46 # Specify a docker image to use for the environment.
+    - display_name: "Spark environment"
+      description: "The Jupyter Stacks spark image!"
+      kubespawner_override:
+        image: jupyter/all-spark-notebook:2343e33dec46
+    - display_name: "Tensorflow Environment"
+      description: "Jupyter Notebook Scientific Python Stack w/ Tensorflow."
+      kubespawner_override:
+        image: jupyter/tensorflow-notebook:latest
+    - display_name: "Custom Environment" # Custom built environment exampe
+      description: "Custom environment built from GitHub repo for specific use."
+      kubespawner_override:
+        image: <your custom built image address>
+
+# Optimation for the cluster
+scheduling:
+  userScheduler:
+    enabled: true
+  podPriority:
+    enabled: true
+  # Enables 'ghost' users that serve as placeholders for real users, to scale up
+  # nodes ahead of real users' arrivals.
+  userPlaceholder:
+    enabled: true
+    replicas: 1 # Number of placeholder users.
+  userPods:
+    nodeAffinity:
+      matchNodePurpose: require
+# Kills idle user servers to free up resources.
+cull:
+  enabled: true
+  timeout: 3600
+  every: 300
+
+# Pre-pulls user container images to a fresh node, so that when users are shceduled on that node
+# they don't have to wait 5-10 mins to pull user container images.
+prePuller:
+  continuous:
+    # NOTE: if used with a Cluster Autoscaler, also add user-placeholders
+    enabled: true
