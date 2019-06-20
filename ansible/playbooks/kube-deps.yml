@@ -46,6 +46,8 @@
        name: kubelet=1.14.0-00
        state: present
        update_cache: true
+     tags:
+             - kubelet
 
    - name: install kubeadm
      apt:
@@ -59,6 +61,28 @@
        state: directory
        mode: 0755
 
+   - name: comment out swap in fstab
+     replace:
+       path: /etc/fstab
+       regexp: '/swapfile'
+       replace: '#/swapfile'
+     tags:
+       - nfs
+
+   - name: create /nfs directory
+     file:
+       path: /nfs
+       state: directory
+     tags:
+       - nfs
+
+   - name: mount nfs
+     lineinfile:
+       path: /etc/fstab
+       line: '10.0.0.1:/export        /nfs    nfs     defaults 0 0'
+     tags:
+       - nfs
+ 
 # this is required because the nodeip was incorrect by default and the apiserver
 # was unable to locate worker pods.
 # only execute this for the development environment (the when statement)
