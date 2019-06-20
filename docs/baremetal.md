@@ -9,9 +9,10 @@ cluster.
 1. [Roadmap](#Roadmap)
 1. [Networking](#Networking)
 1. [Publishing Services](#Publishing-Services)
-1. [Adding Nodes](#Adding-Nodes)
 1. [Netbooting](#Netbooting)
-1. [Literature List](#Kube-Literature) for learning resources.
+1. [Adding Nodes](#Adding-Nodes)
+1. [Literature List](#Literature-List) for learning resources.
+1. [Useful Commands](#Useful-Commands)
 
 # Introduction
 
@@ -196,175 +197,6 @@ The rest of the nodes will connect to this dumb switch only on their management 
 
 Use green ethernet cables.
 
-# Publishing Services
-
-These are notes about how services of type `LoadBalancer` will be handled on our cluster.
-
-## Metallb
-
-[MetalLB](https://metallb.universe.tf) is a way to assign IPs to services from
-a pool of IP addresses.
-
-Config is at `metallb-config.yml` in the root of the project.
-
-CELINE: we probably need to add a play in the ansible playbook on the master
-group so it can [install metallb](https://metallb.universe.tf/installation/)
-and also run `kubectl apply metallb-config.yml` for the config.
-
-our pool of public ips open on ports 80 and 443 are as follows:
-
-    128.120.136.32
-    128.120.136.54
-    128.120.136.55
-    128.120.136.56
-    128.120.136.61
-
-## Notes on Layer 2
-
-We must use the layer 2 for metallb because calico is already using BGP to
-communicate its own routes. This problem is talked about [here](
-https://metallb.universe.tf/configuration/calico/).
-
-We still have a problem with getting IPs requests for any of the above public IPs
-forwarded through the manager node and to our switch. (once it gets to the switch,
-it should be fine since within this network, the ip will be correctly assigned with
-ARP by metalc).
-
-## Possible Solutions
-
-### Plug all the chicks into the 128.120.136 network
-
-The problem with this is that we need dhcp within this cluster and are running
-netboot on this network. So it might be best for it to be on an alternate interface
-and maybe we could do that later.
-
-### Have a separate set of "public ips"
-
-In this solution, each public IP above has a corresponding IP within the k8s
-network so that the manager can accept requests on the public network for all
-of the above public IPs and then forward them to the corresponding k8s "public"
-ip on the internal k8s network. Then MetalLB will use these internal k8s "public"
-ips to assign to services. This will allow the services to be publicly accessible.
-
-This is the solution currently implemented and it works right now.
-
-We have `128.120.136.{i}` forward to `10.0.1.{i}` internally.
-
-On rooster, we listen on the public
-network for all of the above public IPs. This is done by modifying
-`/etc/netplan/01-netcrg.yaml` as follows:
-
-
-          # public network
-          enp2s0:
-                  addresses:
-                   # IP assigned for rooster
-                          - 128.120.136.26/24
-
-                   # public ips that richard gave us to publish services
-                          - 128.120.136.32/24
-                          - 128.120.136.54/24
-                          - 128.120.136.55/24
-                          - 128.120.136.56/24
-                          - 128.120.136.61/24
-                  gateway4: 128.120.136.1
-                  dhcp4: no
-                  nameservers:
-                          addresses: [128.120.136.129,128.120.136.133,128.120.136.134]
-
-
-Then for the forwarding, we use nginx and forward from public to private. The following
-is part of `/etc/nginx/nginx.conf` forwarding:
-
-```
-
-# this is where we forward to the "public" ips internally
-# only did the first 3. 
-	server {
-		listen 128.120.136.32;
-
-		location / {
-			proxy_pass http://10.0.1.32;
-
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header Host $host;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-			proxy_set_header X-NginX-Proxy true;
-		}
-	}
-
-	server {
-		listen 128.120.136.54;
-
-		location / {
-			proxy_pass http://10.0.1.54;
-
-			proxy_set_header X-Real-IP $remote_addr;
-			proxy_set_header Host $host;
-			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-			proxy_set_header X-NginX-Proxy true;
-		}
-	}
-
-```
-
-Finally, `on metallb-config.yml` the pool of IPs are the internal "public" ips
-beginning with `10.0.1.`.
-
-# Adding Nodes
-
-First, check out [Netbooting](#Netbooting) to get the OS installed.
-This section will cover what you have to do to get the
-node functioning in the kubernetes cluster after the os is already installed.
-
-1. figure out the ip address that was assigned by the manager's dhcp server by
-  checking out the logs on rooster. Logs are in `/var/log/syslog` for dhcp, so
-  run something like `grep dhcp /var/log/syslog` and there will be mention of
-  what ip it was assigned.
-
-1. Add the node to `chicks.csv` by manually adding the hostname and the ip address
-  and other fields. Then, on rooster run `./get_macs.py`
-  and this will automatically fill in the `enp1s0` and `enp2s0` fields with the
-  mac address on those interfaces. See the comments at `get_macs.py`.
-
-1. Optionally assign a static ip address to the host by changing
-  `/etc/dhcp/dhcpd.conf` on the master and adding the mac address and the ip
-  address you want. See the comments and other examples in that file.
-  Then run `systemctl restart isc-dhcp-server`. It will
-  take a little while for the node's current ip lease to expire and for it to
-  recieve the new IP, or you can run `netplan apply` and the host will reload
-  its ip info from the router.
-
-1. Add it to the `hosts` file under the ansible directory.
-
-1. Provision all of them using the ansible playbook. From the `ansible/`
-  directory, run `anisble-playbook -i hosts playbooks/main.yml --ask-become-pass`.
-  You sometimes have to change it to `--ask-pass` and change it back. I dont know why.
-  It might be a bug. If you are
-  just adding one host and not provisioning the whole cluster, add the `--limit "chick{i}`
-  flag.
- 
-## Adding Individual Nodes
-  
-If you are adding a completely new node, add the `--limit "chick{i}` flag, 
-then run the playbook `workers.yml` with both the master and new chick node. 
-  
-The first task will give you a fatal error for the task, `join cluster`; this
-is expected. (We can probably write another playbook for adding nodes, but would involve
-a lot of copying and pasting.)
-```
-ansible-playbook -i hosts playbooks/main.yml --ask-become-pass --limit "chick{i}"
-ansible-playbook -i hosts playbooks/workers.yml --ask-become-pass --limit "chick{i},master"
-```
-If you are adding a wiped node whose name is still in the cluster, i.e. the name of
-the node still appears when running `kubectl get nodes`, then delete the node first
-by running `kubectl delete node <node-name>` and completely wipe the node again.
-Then follow the steps as if you were adding a completely new node.
-  
-If you are adding a node that has been detached (e.g. you restarted the system
-on the node), then run `sudo systemctl restart kubelet.service`. If you still have
-trouble, this may help: [Troubleshooting](https://github.com/libretexts/metalc/docs/BareMetalTroubleshooting/AddingNotReadyNode.md)
-
 # Netbooting
 
 otp on the manager node
@@ -486,11 +318,13 @@ group {
 
 1. add the following to `/etc/ufw/before.rules`
 
+```
     *nat
     :POSTROUTING ACCEPT [0:0]
     # send stuff out of the eth2 iface
     -A POSTROUTING -o enp2s0 -j MASQUERADE
     COMMIT
+```
 
   note that enp2s0 is the interface that faces the public internet
 
@@ -501,7 +335,7 @@ group {
 1. `sudo ufw allow tftp` so it can use the images
 
 
-# steps on chicks (i.e. things you need to do to boot a node on the network)
+### steps on chicks (i.e. things you need to do to boot a node on the network)
 
 1. have it connected to enp1s0 which is the left ethernet port on the right side
 
@@ -510,14 +344,16 @@ group {
 
 1. go through the installation steps. Once it says "installing base system,"
   that part takes like an hour so you can go do something else. After that its
-  mostly done.
+  mostly done. Alternatively, you could use the preseed file to  
+  install the OS onto each chick with very little intervention. Check the next section
+  on how to go about this.
 
 1. after completing the installation, to get it to boot from disk, you have to
   turn off the network boot on the manager (rooster). So on rooster, run
   `systemctl stop tftpd-hpa` before rebooting your newly installed machine.
   After it boots, you can turn tftp back on.
   
-## Alternative route: preseeding
+#### Alternative route: preseeding
 With preseeding, you can install Ubuntu Server 18.04 using a preconfiguration file,
 without going through each installation step manually.
 
@@ -529,12 +365,182 @@ The file `srv/tftp/preseed.cfg` lists the preconfiguration options. We removed t
 partitioning section of the preconfiguration file because we wanted to keep the 
 RAID arrays already in place of each chick.
 
-In order to use preseeding, type in the command `cli` after boot when pxelinux
+In order to use preseeding, type in the command `cli` after the `boot:` prompt when pxelinux
 shows up from booting from the network.
 
 In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";` 
 to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
+
+# Adding Nodes
+
+First, check out [Netbooting](#Netbooting) to get the OS installed.
+This section will cover what you have to do to get the
+node functioning in the kubernetes cluster after the os is already installed.
+
+1. figure out the ip address that was assigned by the manager's dhcp server by
+  checking out the logs on rooster. Logs are in `/var/log/syslog` for dhcp, so
+  run something like `grep dhcp /var/log/syslog` and there will be mention of
+  what ip it was assigned.
+
+1. Add the node to `chicks.csv` by manually adding the hostname and the ip address
+  and other fields. Then, on rooster run `./get_macs.py`
+  and this will automatically fill in the `enp1s0` and `enp2s0` fields with the
+  mac address on those interfaces. See the comments at `get_macs.py`.
+
+1. Optionally assign a static ip address to the host by changing
+  `/etc/dhcp/dhcpd.conf` on the master and adding the mac address and the ip
+  address you want. See the comments and other examples in that file.
+  Then run `systemctl restart isc-dhcp-server`. It will
+  take a little while for the node's current ip lease to expire and for it to
+  recieve the new IP, or you can run `netplan apply` and the host will reload
+  its ip info from the router.
+
+1. Add it to the `hosts` file under the ansible directory.
+
+1. Provision all of them using the ansible playbook. From the `ansible/`
+  directory, run `anisble-playbook -i hosts playbooks/main.yml --ask-become-pass`.
+  You sometimes have to change it to `--ask-pass` and change it back. I dont know why.
+  It might be a bug. If you are
+  just adding one host and not provisioning the whole cluster, add the `--limit "chick{i}`
+  flag.
+ 
+## Adding Individual Nodes
+  
+If you are adding a completely new node, add the `--limit "chick{i}` flag, 
+then run the playbook `workers.yml` with both the master and new chick node. 
+  
+The first task will give you a fatal error for the task, `join cluster`; this
+is expected. (We can probably write another playbook for adding nodes, but would involve
+a lot of copying and pasting.)
+```
+ansible-playbook -i hosts playbooks/main.yml --ask-become-pass --limit "chick{i}"
+ansible-playbook -i hosts playbooks/workers.yml --ask-become-pass --limit "chick{i},master"
+```
+If you are adding a wiped node whose name is still in the cluster, i.e. the name of
+the node still appears when running `kubectl get nodes`, then delete the node first
+by running `kubectl delete node <node-name>` and completely wipe the node again.
+Then follow the steps as if you were adding a completely new node.
+  
+If you are adding a node that has been detached (e.g. you restarted the system
+on the node), then run `sudo systemctl restart kubelet.service`. If you still have
+trouble, this may help: [Troubleshooting](https://github.com/libretexts/metalc/docs/BareMetalTroubleshooting/AddingNotReadyNode.md)
+
+# Publishing Services
+
+These are notes about how services of type `LoadBalancer` will be handled on our cluster.
+
+## Metallb
+
+[MetalLB](https://metallb.universe.tf) is a way to assign IPs to services from
+a pool of IP addresses.
+
+Config is at `metallb-config.yml` in the root of the project.
+
+CELINE: we probably need to add a play in the ansible playbook on the master
+group so it can [install metallb](https://metallb.universe.tf/installation/)
+and also run `kubectl apply metallb-config.yml` for the config.
+
+our pool of public ips open on ports 80 and 443 are as follows:
+
+    128.120.136.32
+    128.120.136.54
+    128.120.136.55
+    128.120.136.56
+    128.120.136.61
+
+## Notes on Layer 2
+
+We must use the layer 2 for metallb because calico is already using BGP to
+communicate its own routes. This problem is talked about [here](
+https://metallb.universe.tf/configuration/calico/).
+
+We still have a problem with getting IPs requests for any of the above public IPs
+forwarded through the manager node and to our switch. (once it gets to the switch,
+it should be fine since within this network, the ip will be correctly assigned with
+ARP by metalc).
+
+## Possible Solutions
+
+### Plug all the chicks into the 128.120.136 network
+
+The problem with this is that we need dhcp within this cluster and are running
+netboot on this network. So it might be best for it to be on an alternate interface
+and maybe we could do that later.
+
+### Have a separate set of "public ips"
+
+In this solution, each public IP above has a corresponding IP within the k8s
+network so that the manager can accept requests on the public network for all
+of the above public IPs and then forward them to the corresponding k8s "public"
+ip on the internal k8s network. Then MetalLB will use these internal k8s "public"
+ips to assign to services. This will allow the services to be publicly accessible.
+
+This is the solution currently implemented and it works right now.
+
+We have `128.120.136.{i}` forward to `10.0.1.{i}` internally.
+
+On rooster, we listen on the public
+network for all of the above public IPs. This is done by modifying
+`/etc/netplan/01-netcrg.yaml` as follows:
+
+
+          # public network
+          enp2s0:
+                  addresses:
+                   # IP assigned for rooster
+                          - 128.120.136.26/24
+
+                   # public ips that richard gave us to publish services
+                          - 128.120.136.32/24
+                          - 128.120.136.54/24
+                          - 128.120.136.55/24
+                          - 128.120.136.56/24
+                          - 128.120.136.61/24
+                  gateway4: 128.120.136.1
+                  dhcp4: no
+                  nameservers:
+                          addresses: [128.120.136.129,128.120.136.133,128.120.136.134]
+
+
+Then for the forwarding, we use nginx and forward from public to private. The following
+is part of `/etc/nginx/nginx.conf` forwarding:
+
+```
+
+# this is where we forward to the "public" ips internally
+# only did the first 3. 
+	server {
+		listen 128.120.136.32;
+
+		location / {
+			proxy_pass http://10.0.1.32;
+
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header Host $host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-NginX-Proxy true;
+		}
+	}
+
+	server {
+		listen 128.120.136.54;
+
+		location / {
+			proxy_pass http://10.0.1.54;
+
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header Host $host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-NginX-Proxy true;
+		}
+	}
+
+```
+
+Finally, `on metallb-config.yml` the pool of IPs are the internal "public" ips
+beginning with `10.0.1.`.
+
 
 ## NFS
 NFS is needed to handle persistent volume claims. It allows persistence of files made by
@@ -572,7 +578,7 @@ for setting up JupyterHub.
 
 Later, we will have a physical NFS server.
 
-# Getting into the cluster
+# Accessing the Cluster
 Ssh into rooster on putty.
 On putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels** 
 to add a new port forwarding rule.
@@ -585,7 +591,7 @@ Select **Manual proxy configuration**. In SOCKS Host, enter `localhost`. In Port
 
 Now, open http://10.0.1.54.
 
-# Kube Literature
+# Literature List
 
 Place for us to add some useful reading we find
 
@@ -616,7 +622,7 @@ A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [U
 [NFS Client Provisioner](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner)
 for setting up an automatic provisioner after you have the NFS server set up.
 
-# Useful commands
+# Useful Commands
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
 * `kubectl get po -A` lists all pods in the cluster.
 * `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
