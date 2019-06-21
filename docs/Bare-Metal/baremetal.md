@@ -145,7 +145,7 @@ becuase it says they are looking for more people to post their deployments on th
 
 # Networking
 
-Here is our basic setup for the nodes (not pods yet): ![our networking setup basically](./images/network.svg)
+Here is our basic setup for the nodes (not pods yet): ![our networking setup basically](../images/network.svg)
 (taken from LibreTexts/Documentation/network_drawing as a saved svg)
 
 ## k8s network (internal network)
@@ -502,6 +502,7 @@ network for all of the above public IPs. This is done by modifying
                   nameservers:
                           addresses: [128.120.136.129,128.120.136.133,128.120.136.134]
 
+Apply the netplan configuration by running `sudo netplan apply`.
 
 Then for the forwarding, we use nginx and forward from public to private. The following
 is part of `/etc/nginx/nginx.conf` forwarding:
@@ -537,6 +538,8 @@ is part of `/etc/nginx/nginx.conf` forwarding:
 	}
 
 ```
+
+Apply the nginx configuration by running `systemctl restart nginx.service`.
 
 Finally, `on metallb-config.yml` the pool of IPs are the internal "public" ips
 beginning with `10.0.1.`.
