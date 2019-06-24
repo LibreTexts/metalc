@@ -1,11 +1,12 @@
 # Metal Cluster
 
 This is our repo for everything involving our bare-metal Kubernetes cluster. At this moment, 
-it also contains documentation for setting up Kubernetes on Google Cloud. The folder [docs](./docs) 
-contains all documentation related to these two subjects. The root of this repository contains
-files relating to the set-up of the bare-metal cluster.
+it also contains documentation for setting up Kubernetes, JupyterHub, and BinderHub on Google Cloud. 
+The folder [docs](./docs) contains all documentation related to these topics. 
+The root of this repository contains files relating to the set-up of the bare-metal cluster, 
 
 ## Table of Contents
+This discusses the table of contents of [documentation](./docs) folder based on the following topics.
 
 ### Virtual Machine
 1. [JupyterHubVM.md](./docs/JupyterHubVM.md) gives instructions on setting up JupyterHub on a
@@ -41,8 +42,6 @@ balancer and the process of setting it up on Google Cloud.
 ### BinderHub on GCloud
 1. [01-BinderHub.md](./docs/Binder-on-GCloud/01-BinderHub.md) gives instructions on setting up BinderHub
 on a Kubernetes cluster on Google Cloud.
-
-[config-template.yaml](./docs/JupyterHub-on-GCloud/config-template.yaml)
 
 ### Test Kubernetes Environment
 
