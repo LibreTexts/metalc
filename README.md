@@ -9,9 +9,13 @@ The root of this repository contains files relating to the set-up of the bare-me
 This discusses the table of contents of [documentation](./docs) folder based on the following topics.
 
 ### Virtual Machine
-1. [JupyterHubVM.md](./docs/JupyterHubVM.md) gives instructions on setting up JupyterHub on a
-virtual machine with RAID1. [More information on RAID](./docs/Bare-Metal/concepts/RAID.md) could 
+1. [JupyterHubVM.md](./docs/Virtual-Machine/JupyterHubVM.md) gives instructions on setting up JupyterHub on a
+virtual machine with RAID1 using the LibreTexts fork of the [jupyter-deploy-teaching](https://github.com/LibreTexts/jupyterhub-deploy-teaching/) repository. [More information on RAID](./docs/Bare-Metal/concepts/RAID.md) could 
 be found in the concepts section.
+1. [baremetal_jhub.md](./docs/Virtual-Machine/baremetal_jhub.md) is Kevin's (@kkrausse) instructions for
+setting up JupyterHub on a virtual machine. It contains solutions to the problems we faced
+when installing JupyterHub through the [jupyterhub-deploy-teaching](https://github.com/mechmotum/jupyterhub-deploy-teaching)
+repository. We keep this as a reference for those who might encounter the same problems in the future.
 
 ### Bare-Metal
 1. [Bare Metal Cluster Setup](./docs/Bare-Metal/baremetal.md) has what you should read first about
