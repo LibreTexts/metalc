@@ -11,6 +11,8 @@ cluster.
 1. [Publishing Services](#Publishing-Services)
 1. [Netbooting](#Netbooting)
 1. [Adding Nodes](#Adding-Nodes)
+1. [Installing JupyterHub and BinderHub](#Installing-JupyterHub-and-BinderHub)
+1. [Accessing the Cluster](#Accessing-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
 
@@ -577,24 +579,31 @@ Run
 ```
 helm install --name nfs-client-release stable/nfs-client-provisioner -f nfs-client-vals.yml
 ```
-
-Then follow [these instructions](https://zero-to-jupyterhub.readthedocs.io/en/latest/setup-helm.html)
-for setting up JupyterHub.
-
 Later, we will have a physical NFS server.
 
+# Installing JupyterHub and BinderHub
+
+Follow [these instructions](https://zero-to-jupyterhub.readthedocs.io/en/latest/setup-helm.html)
+for setting up JupyterHub.
+
+Follow [these instructions](https://binderhub.readthedocs.io/en/latest/setup-registry.html) for
+setting up BinderHub. The DockerHub container registry is under @lux12337's account for now.
+
 # Accessing the Cluster
-Ssh into rooster on putty.
-On putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels** 
+To access the cluster, you can run the command `ssh <rooster's IP address> -D 4545`.
+
+Alternatively, if you have putty, you can SSH into rooster.
+In putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels** 
 to add a new port forwarding rule.
 For **Source port**, type `4545`.
 Select `Dynamic`. Click **Add**.
 
-In Mozilla Firefox, go to **Tools**, then **Options**.
+After SSHing into the cluster, go to Mozilla Firefox, go to **Tools**, then **Options**.
 Under **Network Settings**, click **Settings**.
 Select **Manual proxy configuration**. In SOCKS Host, enter `localhost`. In Port, enter `4545`. Select **SOCKSv4**.
 
-Now, open http://10.0.1.54.
+Go to http://10.0.1.54 or http://10.0.1.55 to access JupyterHub or BinderHub respectively.
+To access other services, run `kubectl get service -A` and go to one of the `External IP`'s.
 
 # Literature List
 
