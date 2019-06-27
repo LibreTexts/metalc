@@ -541,8 +541,10 @@ is part of `/etc/nginx/nginx.conf` forwarding:
 
 Apply the nginx configuration by running `systemctl restart nginx.service`.
 
-Finally, `on metallb-config.yml` the pool of IPs are the internal "public" ips
+Finally, on `metallb-config.yml` the pool of IPs are the internal "public" ips
 beginning with `10.0.1.`.
+
+Add the IP addresses to `metallb-config.yml` and run `kubectl apply -f metallb-config.yml`.
 
 
 ## NFS
