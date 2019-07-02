@@ -605,6 +605,11 @@ Select **Manual proxy configuration**. In SOCKS Host, enter `localhost`. In Port
 Go to http://10.0.1.54 or http://10.0.1.55 to access JupyterHub or BinderHub respectively.
 To access other services, run `kubectl get service -A` and go to one of the `External IP`'s.
 
+Note that BinderHub has an "underlying JupyterHub" it uses to create non-persistent notebooks.
+This JupyterHub does not seem to be accessible on its own. Hence when you type
+`kubectl get services -A`, the `proxy-public` load balancer under the `binderhub` namespace
+corresponds to the underlying JupyterHub and the `binder` load balancer corresponds to Binder.
+
 # Literature List
 
 Place for us to add some useful reading we find
