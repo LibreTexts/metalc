@@ -62,14 +62,12 @@ not need a login page (mybinder.org does not have a login page).
 
 ## JupyterHub Customization
 
-In this step, we can customize JupyterHub user resource by editing config.yaml. 
+In this step, we can customize [JupyterHub user resource](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-resources.html) and other customization by editing config.yaml. 
 This [page](https://binderhub.readthedocs.io/en/latest/customizing.html) provides a general 
 jupyterHub customization description, but the format it provides is incorrect. See the config-template.yaml
 file provided. More explanations can be found on [page1](https://binderhub.readthedocs.io/en/latest/debug.html) 
 and [page2](https://discourse.jupyter.org/t/nesting-levels-in-config-yml-file/1037)
 
-#### Notes:
-- I did not find a way to set the [JupyterHub user environment](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-environment.html) in BinderHub config.yaml. 
 
 ## Q&A
 Get more help about Binderhub on [discourse](https://discourse.jupyter.org) and [GitHub issue](https://github.com/jupyterhub/binderhub) and [mybinder github](https://github.com/jupyterhub/mybinder.org-deploy)
