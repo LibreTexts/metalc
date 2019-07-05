@@ -50,3 +50,26 @@ the ​[website](https://binderhub.readthedocs.io/en/latest/setup-binderhub.html
 <li>At the '1.2.2 Initialization' section, the command at step 2 has to be run in order for <br>
 steps further in the installation to work.
 </ul>
+
+## Setting up Authentication
+
+In this setp, we setup BinderHub Authentication following the steps on this [website](https://binderhub.readthedocs.io/en/latest/authentication.html). This step is only useful if 
+we want to redirect our users to a login page when they arrive at our BinderHub URL. Usually we will
+not need a login page (mybinder.org does not have a login page).
+
+#### Notes:
+Binder Oauth requires a binderhub domain and a jupyterhub domain. 
+
+## JupyterHub Customization
+
+In this step, we can customize JupyterHub user resource by editing config.yaml. 
+This [page](https://binderhub.readthedocs.io/en/latest/customizing.html) provides a general 
+jupyterHub customization description, but the format it provides is incorrect. See the config-template.yaml
+file provided. More explanations can be found on [page1](https://binderhub.readthedocs.io/en/latest/debug.html) 
+and [page2](https://discourse.jupyter.org/t/nesting-levels-in-config-yml-file/1037)
+
+#### Notes:
+I did not find a way to set the [JupyterHub user environment](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-environment.html) in BinderHub config.yaml. 
+
+## Q&A
+Get more help about Binderhub on [discourse](https://discourse.jupyter.org) and [GitHub issue](https://github.com/jupyterhub/binderhub) and [mybinder github](https://github.com/jupyterhub/mybinder.org-deploy)
