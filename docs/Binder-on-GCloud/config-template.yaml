@@ -1,0 +1,50 @@
+config:
+  BinderHub:
+
+    # connect image registry and set image prefix
+    use_registry: true
+    image_prefix: <docker-org>/<prefix>-
+
+    # jupyterhub IP address
+    hub_url: http://<jupyterhub-ip>
+
+    # enable authentication
+    auth_enabled: true
+
+jupyterhub:
+
+  hub:
+    services:
+      binder:
+        oauth_redirect_uri: "http://<binder-ip>/oauth_callback"
+        oauth_client_id: "binder-oauth-client-test"
+    extraConfig:
+      hub_extra: |
+        c.JupyterHub.redirect_to_server = False
+
+      binder: |
+        from kubespawner import KubeSpawner
+
+        class BinderSpawner(KubeSpawner):
+          def start(self):
+              if 'image' in self.user_options:
+                # binder service sets the image spec via user options
+                self.image = self.user_options['image']
+              return super().start()
+        c.JupyterHub.spawner_class = BinderSpawner
+
+  singleuser:
+    # to make notebook servers aware of hub
+    cmd: jupyterhub-singleuser
+
+
+  auth:
+    # the same way jupyterhub authorize itself
+    # see this link: https://zero-to-jupyterhub.readthedocs.io/en/latest/authentication.html?highlight=auth#google-oauth
+    type: google
+    google:
+      clientId: "yourlongclientidstring.apps.googleusercontent.com"
+      clientSecret: "adifferentlongstring"
+      callbackUrl: "http://<your_jupyterhub_host>/hub/oauth_callback"
+      hostedDomain: "youruniversity.edu"
+      loginService: "Your University"
