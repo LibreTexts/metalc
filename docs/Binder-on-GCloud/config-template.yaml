@@ -12,7 +12,14 @@ config:
     auth_enabled: true
 
 jupyterhub:
-
+  # customer JupyterHub user resources
+  # https://zero-to-jupyterhub.readthedocs.io/en/latest/user-resources.html
+  cull:
+    enabled: true
+    timeout: 3600
+    
+  # everything below is to set authentication for BinderHub
+  # more details on https://binderhub.readthedocs.io/en/latest/authentication.html
   hub:
     services:
       binder:
