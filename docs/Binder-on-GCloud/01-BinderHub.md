@@ -58,7 +58,7 @@ we want to redirect our users to a login page when they arrive at our BinderHub 
 not need a login page (mybinder.org does not have a login page).
 
 #### Notes:
-Binder Oauth requires a binderhub domain and a jupyterhub domain. 
+- Binder Oauth requires a binderhub domain and a jupyterhub domain. 
 
 ## JupyterHub Customization
 
@@ -69,7 +69,7 @@ file provided. More explanations can be found on [page1](https://binderhub.readt
 and [page2](https://discourse.jupyter.org/t/nesting-levels-in-config-yml-file/1037)
 
 #### Notes:
-I did not find a way to set the [JupyterHub user environment](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-environment.html) in BinderHub config.yaml. 
+- I did not find a way to set the [JupyterHub user environment](https://zero-to-jupyterhub.readthedocs.io/en/latest/user-environment.html) in BinderHub config.yaml. 
 
 ## Q&A
 Get more help about Binderhub on [discourse](https://discourse.jupyter.org) and [GitHub issue](https://github.com/jupyterhub/binderhub) and [mybinder github](https://github.com/jupyterhub/mybinder.org-deploy)
