@@ -17,14 +17,17 @@ cluster.
 1. [Useful Commands](#Useful-Commands)
 
 # Introduction
+This guide is organized in a way so one could build a Kubernetes cluster running JupyterHub
+from the beginning. We suggest reading more about Kubernetes first; there are some
+sources from the [Literature List](#Literature-List) section you could follow.
 
 ## Management Node
 
-In the rest of the docs we may refer to the management node by its hostname,
+In the rest of the docs, we may refer to the management node by its hostname,
 rooster.
 
 This node is not part of the kubernetes cluster, but acts as a gateway to the
-internet, runs a dhcp server, and hosts the network boot stuff.
+Internet, runs a dhcp server, and hosts the network boot stuff.
 
 ## Standard Nodes
 
@@ -40,9 +43,9 @@ at `10.0.0.100` and `chick1` at `10.0.0.101`, etc.
 
 ## Testing
 
-try running a [test deployment](
+To test out your cluster, try running a [test deployment](
 https://github.com/kubernetes/examples/blob/master/staging/simple-nginx.md)
-and see if you can access the server from every node. Or if you can accesss the
+and see if you can access the server from every node. Or if you can access the
 public ip assigned by metalc from outside the network if you publish as type
 loadbalancer.
 
@@ -156,9 +159,9 @@ This is how all the computers will communicate with each other using kubernetes 
 access the internet indirectly though the manager. The manager will be a load balancer, dhcp server,
 router with NAT, and our way assign IP addresses to services.
 
-blue ethernet cables. Plugged into the smart switch.
+Uses blue ethernet cables. Plugged into the smart switch.
 
-manager is at 128.120.136.26
+Manager is at 128.120.136.26
 
 enp1s0 on all the machines (the one on the left but not the far left) except
 the manager has it on enp3s0 which is the one as shown in the diagram above.
@@ -166,6 +169,16 @@ the manager has it on enp3s0 which is the one as shown in the diagram above.
 log into the switch with `screen /dev/ttyS0` on the management node
   - use username: manager
         password: friend
+
+## Management Network
+
+We will have one management node and one dumb switch for this network. The management node
+will connect to it on its enp2s0(the ethernet port on the right) and its management
+interface (the one all the way to the left next to the usb ports).
+It will run a DHCP server on this network.
+The rest of the nodes will connect to this dumb switch only on their management interface.
+
+Uses green ethernet cables.
         
 
 ## Pod Network
@@ -188,16 +201,6 @@ In this we changed:
     CALICO_IPV4_IPIP: "Never"
     CALICO_IPV4POOL_CIDER: "10.244.0.0/16"
 
-
-## Management Network
-
-We will have one management node and one dumb switch for this network. The management node
-will connect to it on its enp2s0(the ethernet port on the right) and its management
-interface (the one all the way to the left next to the usb ports).
-It will run a DHCP server on this network.
-The rest of the nodes will connect to this dumb switch only on their management interface.
-
-Use green ethernet cables.
 
 # Netbooting
 
@@ -622,7 +625,9 @@ Load Balancing, and networking is probably the most important aspect for our
 intents and purposes. Also, check out the [/dev-env](https://github.com/LibreTexts/metalc/tree/master/dev-env)
 to give yourself a kubernetes cluster to mess with while learning.
 
-good intro blog on basics like containers and kubernetes: [what is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/)
+A good intro blog on basics like containers and kubernetes: [what is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/)
+
+An introduction and overview of Kubernetes and its keywords: [An Introduction to Kubernetes](https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes)
 
 Building a Kubernetes cluster using Ansible Playbooks: [How to Build a Kubernetes Cluster Using Kubeadm on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-cluster-using-kubeadm-on-ubuntu-18-04)
 
