@@ -631,6 +631,8 @@ An introduction and overview of Kubernetes and its keywords: [An Introduction to
 
 Building a Kubernetes cluster using Ansible Playbooks: [How to Build a Kubernetes Cluster Using Kubeadm on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-cluster-using-kubeadm-on-ubuntu-18-04)
 
+A lab website where you can play with Kubernetes! [Play With Kubernetes](https://labs.play-with-k8s.com/)
+
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
