@@ -70,7 +70,7 @@ singleuser:
       kubespawner_override:
         image: <your custom built image address>
 
-# Optimation for the cluster
+# Optimization for the cluster
 scheduling:
   userScheduler:
     enabled: true
