@@ -18,7 +18,7 @@ auth:
     clientId: "<Client ID>"
     clientSecret: "<Client secret>"
     callbackUrl: "https://<your domain name>/hub/oauth_callback"
-    hostedDomain: "<restric to specific domain, eg. 'ucdavis.com'>"
+    hostedDomain: "<restric to specific domain, eg. 'ucdavis.edu'>"
     loginService: "<name that will appear on sign in button for OAuth>"
 
 # The resources requested is very important to consider in
