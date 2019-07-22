@@ -601,6 +601,97 @@ If we don't make use of the stream block funtion on Nginx, https traffic coming 
 on the cluster would never reach the cluster as Nginx would see encrypted traffic and try to perform a
 three-way handshake, which would obviously fail as the certificates are setup on the services themselves.
 
+## HTTPS on Binder
+The documentation for BinderHub seems to suggest that it doesn't have a built in https functionality like
+JupyterHub does. So we had to install manually the various components for https, credit to [@kaseyhackspace](https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html#steps):
+
+1. Install [cert-manager](https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html#steps).
+```
+# Install the CustomResourceDefinition resources separately
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml
+
+# Create the namespace for cert-manager
+kubectl create namespace cert-manager
+
+# Label the cert-manager namespace to disable resource validation
+kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+
+# Add the Jetstack Helm repository
+helm repo add jetstack https://charts.jetstack.io
+
+# Update your local Helm chart repository cache
+helm repo update
+
+# Install the cert-manager Helm chart
+helm install \
+  --name cert-manager \
+  --namespace cert-manager \
+  --version v0.8.1 \
+  jetstack/cert-manager
+```
+2. Create binderhub-issuer.yaml
+```
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: letsencrypt-production
+  namespace: <binderhub-namespace>
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: <email-address>
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource used to store the account's private key.
+      name: letsencrypt-production
+    http01: {}
+```
+3. Apply issuer with kubectl
+```
+kubectl apply -f binderhub-issuer.yaml
+```
+4. Install nginx-ingress controller
+```
+helm install stable/nginx-ingress --name quickstart
+```
+5. Point your domain to the loadbalancer external IP of the nginx-ingress controller, 10.0.1.61
+on k8s in our case
+```
+kubectl get svc -n <NAMESPACE OF INGRESS CONTROLLER>
+```
+6. Append ingress object on top level indentation in your config.yaml
+```
+config:
+  BinderHub:
+    use_registry: true
+    image_prefix: <dockerhub prefix>
+    hub_url: <jupyterhub-url>
+
+ingress:
+  enabled: true
+  hosts:
+    - <domain-name>
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/issuer: letsencrypt-production
+  https:
+    enabled: true
+    type: nginx
+  tls:
+    - secretName: <domain-name>-tls
+      hosts:
+        - <domain-name>
+```
+7. Perform helm upgrade to enable ingress
+```
+helm upgrade binderhub jupyterhub/binderhub --version=0.2.0-3b53fce  -f secret.yaml -f config.yaml
+```
+8. Wait for 10~ minutes, it takes some time for it to acquire a certificate.
+
 # Accessing the Cluster
 To access the cluster, you can run the command `ssh <rooster's IP address> -D 4545`.
 
