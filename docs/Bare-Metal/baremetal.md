@@ -106,10 +106,10 @@ https://kubernetes.github.io/ingress-nginx/deploy/baremetal/)
 ## HA masters
 
 Down the road, we need to configure high availability masters so we aren't as vulnerable to a master
-failing. The setup is outlined in the [kubeadm docs](https://kubernetes.io/docs/setup/independent/high-availability/). 
-We can use either [HA proxy](http://www.haproxy.org/#desc), which Richard is familiar with, 
-or maybe some sort of nginx proxy. Either way, we have to do this manually since this proxying 
-must exist before kubectl is operational. 
+failing. The setup is outlined in the [kubeadm docs](https://kubernetes.io/docs/setup/independent/high-availability/).
+We can use either [HA proxy](http://www.haproxy.org/#desc), which Richard is familiar with,
+or maybe some sort of nginx proxy. Either way, we have to do this manually since this proxying
+must exist before kubectl is operational.
 
 ## Cluster Helm chart
 
@@ -179,7 +179,7 @@ It will run a DHCP server on this network.
 The rest of the nodes will connect to this dumb switch only on their management interface.
 
 Uses green ethernet cables.
-        
+
 
 ## Pod Network
 
@@ -243,14 +243,14 @@ dhcp server also at `10.0.0.1`.
 
 1. to `/etc/netplan/01-netcfg.yaml`, or whatever the netplan file is I added
   the following under ethernets:
-    
+
               enp3s0:
                   addresses: [192.168.0.1/24]
                   gateway4: 128.120.136.1
                   dhcp4: no
                   nameservers:
                           addresses: [192.168.0.1]
-    
+
   so we get that management interface up
 
 1. `netplan apply`
@@ -357,7 +357,7 @@ group {
   turn off the network boot on the manager (rooster). So on rooster, run
   `systemctl stop tftpd-hpa` before rebooting your newly installed machine.
   After it boots, you can turn tftp back on.
-  
+
 #### Alternative route: preseeding
 With preseeding, you can install Ubuntu Server 18.04 using a preconfiguration file,
 without going through each installation step manually.
@@ -367,13 +367,13 @@ Under `label cli` lists the tasks and boot parameters needed to automate most of
 configuration.
 
 The file `srv/tftp/preseed.cfg` lists the preconfiguration options. We removed the
-partitioning section of the preconfiguration file because we wanted to keep the 
+partitioning section of the preconfiguration file because we wanted to keep the
 RAID arrays already in place of each chick.
 
 In order to use preseeding, type in the command `cli` after the `boot:` prompt when pxelinux
 shows up from booting from the network.
 
-In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";` 
+In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";`
 to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
@@ -409,12 +409,12 @@ node functioning in the kubernetes cluster after the os is already installed.
   It might be a bug. If you are
   just adding one host and not provisioning the whole cluster, add the `--limit "chick{i}`
   flag.
- 
+
 ## Adding Individual Nodes
-  
-If you are adding a completely new node, add the `--limit "chick{i}` flag, 
-then run the playbook `workers.yml` with both the master and new chick node. 
-  
+
+If you are adding a completely new node, add the `--limit "chick{i}` flag,
+then run the playbook `workers.yml` with both the master and new chick node.
+
 The first task will give you a fatal error for the task, `join cluster`; this
 is expected. (We can probably write another playbook for adding nodes, but would involve
 a lot of copying and pasting.)
@@ -426,7 +426,7 @@ If you are adding a wiped node whose name is still in the cluster, i.e. the name
 the node still appears when running `kubectl get nodes`, then delete the node first
 by running `kubectl delete node <node-name>` and completely wipe the node again.
 Then follow the steps as if you were adding a completely new node.
-  
+
 If you are adding a node that has been detached (e.g. you restarted the system
 on the node), then run `sudo systemctl restart kubelet.service`. If you still have
 trouble, this may help: [Troubleshooting](https://github.com/libretexts/metalc/docs/BareMetalTroubleshooting/AddingNotReadyNode.md)
@@ -515,7 +515,7 @@ is part of `/etc/nginx/nginx.conf` forwarding:
 ```
 
 # this is where we forward to the "public" ips internally
-# only did the first 3. 
+# only did the first 3.
 	server {
 		listen 128.120.136.32;
 
@@ -559,7 +559,7 @@ the nodes.
 (Credit to [Kevin's kube-dev-env](https://github.com/kkrausse/kube-dev-env))
 
 In rooster, run `sudo apt install nfs-kernel-server` to install the NFS server on the
-host system. We will use `/export` on rooster as the shared directory which the chicks 
+host system. We will use `/export` on rooster as the shared directory which the chicks
 can access.
 
 Add the following line to `/etc/exports`:
@@ -568,13 +568,13 @@ Add the following line to `/etc/exports`:
 ```
 and run `exportfs -a`.
 
-To make sure the NFS mount is successful, run this command on rooster to allow anything 
+To make sure the NFS mount is successful, run this command on rooster to allow anything
 from the network of chicks to talk to rooster: `ufw allow from 10.0.0.0/8 to 10.0.0.1`.
 Without this command, the firewall won't allow you to mount NFS.
 
 We want each chick to mount `10.0.0.1:/export` (on rooster) to `/nfs` (locally on the chick
 node). The Ansible Playbook already auto-mounts rooster to each chick by editing the
-`/etc/fstab` file, so you don't have to do this manually. If you do want to do it manually, 
+`/etc/fstab` file, so you don't have to do this manually. If you do want to do it manually,
 run the command `sudo mount 10.0.0.1:/export /nfs` on each chick node.
 
 The `nfs-client-vals.yml` describes the values used for running the NFS client provisioner.
@@ -592,11 +592,20 @@ for setting up JupyterHub.
 Follow [these instructions](https://binderhub.readthedocs.io/en/latest/setup-registry.html) for
 setting up BinderHub. The DockerHub container registry is under @lux12337's account for now.
 
+## Enabling TCP traffic on rooster
+Because of how our cluster is setup with all internet traffic going through rooster before reaching
+the cluster, NginX on rooster is setup as a reverse proxy to direct the inbound traffic to the right
+service running on our cluster(eg. JupyterHub, BinderHub...). We use the [stream](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/) block for TCP traffic. The stream block allows NginX to
+redirect encrypted traffic to the right service on the cluster where it will be decrypted accordingly.
+If we don't make use of the stream block funtion on NginX, https traffic coming in meant for services
+on the cluster would never reach the cluster as Nginx would see encrypted traffic and try to perform a
+three-way handshake, which would obviously fail as the certificates are setup on the services themselves.
+
 # Accessing the Cluster
 To access the cluster, you can run the command `ssh <rooster's IP address> -D 4545`.
 
 Alternatively, if you have putty, you can SSH into rooster.
-In putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels** 
+In putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels**
 to add a new port forwarding rule.
 For **Source port**, type `4545`.
 Select `Dynamic`. Click **Add**.
