@@ -601,6 +601,65 @@ If we don't make use of the stream block funtion on Nginx, https traffic coming 
 on the cluster would never reach the cluster as Nginx would see encrypted traffic and try to perform a
 three-way handshake, which would obviously fail as the certificates are setup on the services themselves.
 
+This differs from our previous nginx setup. Before, we had server and upstream blocks in an 
+`https` block:
+```
+https {
+...
+	server {
+		listen 128.120.136.32;
+
+		location / {
+			proxy_pass http://10.0.1.32;
+
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header Host $host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-NginX-Proxy true;
+		}
+	}
+...
+}
+```
+However, this would not work since the certificates are set up on the services on the cluster,
+so the traffic cannot be decrypted.
+
+Instead, we use a `stream` block, as follows. Note that all IP addresses in the server blocks
+have domain names assigned to them, so any traffic going to those domains are redirected accordingly.
+```
+stream {
+        upstream jupyterhub {
+                server 10.0.1.54:443;
+        }
+
+        upstream binder {
+                server 10.0.1.61:443;
+        }
+
+        upstream binderhub {
+                server 10.0.1.55:443;
+        }
+
+	server {
+                listen 128.120.136.54:443;
+                ssl_preread on;
+                proxy_pass jupyterhub;
+        }
+
+        server {
+                listen 128.120.136.56:443;
+                ssl_preread on;
+                proxy_pass binder;
+        }
+
+        server {
+                listen 128.120.136.55:443;
+                ssl_preread on;
+                proxy_pass binderhub;
+        }
+}
+```
+
 ## HTTPS on Binder
 The documentation for BinderHub seems to suggest that it doesn't have a built in https functionality like
 JupyterHub does. So we had to install manually the various components for https, credit to [@kaseyhackspace](https://github.com/jupyterhub/binderhub/issues/284/#issuecomment-506919567):
