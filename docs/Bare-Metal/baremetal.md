@@ -594,10 +594,10 @@ setting up BinderHub. The DockerHub container registry is under @lux12337's acco
 
 ## Enabling TCP traffic on rooster
 Because of how our cluster is setup with all internet traffic going through rooster before reaching
-the cluster, NginX on rooster is setup as a reverse proxy to direct the inbound traffic to the right
-service running on our cluster(eg. JupyterHub, BinderHub...). We use the [stream](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/) block for TCP traffic. The stream block allows NginX to
+the cluster, Nginx on rooster is setup as a reverse proxy to direct the inbound traffic to the right
+service running on our cluster(eg. JupyterHub, BinderHub...). We use the [stream](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/) block for TCP traffic. The stream block allows Nginx to
 redirect encrypted traffic to the right service on the cluster where it will be decrypted accordingly.
-If we don't make use of the stream block funtion on NginX, https traffic coming in meant for services
+If we don't make use of the stream block funtion on Nginx, https traffic coming in meant for services
 on the cluster would never reach the cluster as Nginx would see encrypted traffic and try to perform a
 three-way handshake, which would obviously fail as the certificates are setup on the services themselves.
 
