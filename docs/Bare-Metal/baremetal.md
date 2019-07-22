@@ -603,7 +603,7 @@ three-way handshake, which would obviously fail as the certificates are setup on
 
 ## HTTPS on Binder
 The documentation for BinderHub seems to suggest that it doesn't have a built in https functionality like
-JupyterHub does. So we had to install manually the various components for https, credit to [@kaseyhackspace](https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html#steps):
+JupyterHub does. So we had to install manually the various components for https, credit to [@kaseyhackspace](https://github.com/jupyterhub/binderhub/issues/284/#issuecomment-506919567):
 
 1. Install [cert-manager](https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html#steps).
 ```
