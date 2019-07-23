@@ -813,5 +813,13 @@ for setting up an automatic provisioner after you have the NFS server set up.
 
 # Useful Commands
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
-* `kubectl get po -A` lists all pods in the cluster.
+Likewise, `kubectl get service -A` lists all services.
+* `kubectl get po -A` or `kubectl get pod -A` lists all pods in the cluster.
+* `kubectl get pv -A` lists all persistent volumes 
+* `kubectl get pvc -A` lists all persistent volume claims made (the requests by for physical storage in rooster)
+* `kubectl get logs <pod name> -n <namespace> -c <container>` gives the logs on a
+container (if applicable) in a pod
+* `kubectl delete pod <pod name> -n <namespace>` will delete the pod specified. Note that
+the pod may regenerate depending on its settings
 * `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
+
