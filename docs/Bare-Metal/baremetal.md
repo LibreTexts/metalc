@@ -13,6 +13,7 @@ cluster.
 1. [Adding Nodes](#Adding-Nodes)
 1. [Installing JupyterHub and BinderHub](#Installing-JupyterHub-and-BinderHub)
 1. [Accessing the Cluster](#Accessing-the-Cluster)
+1. [Monitoring the Cluster](#Monitoring-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
 
@@ -773,6 +774,29 @@ Note that BinderHub has an "underlying JupyterHub" it uses to create non-persist
 This JupyterHub does not seem to be accessible on its own. Hence when you type
 `kubectl get services -A`, the `proxy-public` load balancer under the `binderhub` namespace
 corresponds to the underlying JupyterHub and the `binder` load balancer corresponds to Binder.
+
+# Monitoring the Cluster
+## Installing Prometheus and Grafana
+Follow [these instructions](https://itnext.io/kubernetes-monitoring-with-prometheus-in-15-minutes-8e54d1de2e13)
+to install Prometheus and Grafana.
+
+To make Grafana publicly accessible, find the service which is running Grafana.
+```
+$ kubectl get svc -A
+...
+NAMESPACE      NAME                                            TYPE           ...
+monitoring     prometheus-operator-grafana                     ClusterIP   ...
+...
+```
+Change the service type to LoadBalancer by running
+```
+    kubectl patch svc "prometheus-operator-grafana" \
+      --namespace "monitoring" \
+      -p '{"spec": {"type": "LoadBalancer"}}'
+```
+An IP should be assigned to `EXTERNAL-IP` and the type should be changed to 
+`LoadBalancer` when you run `kubectl get svc -A`. In `/etc/nginx/tcpconf.d/`
+add a server block redirecting your public IP to the `EXTERNAL-IP`.
 
 # Literature List
 
