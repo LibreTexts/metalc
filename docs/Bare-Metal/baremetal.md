@@ -818,6 +818,8 @@ Building a Kubernetes cluster using Ansible Playbooks: [How to Build a Kubernete
 
 A lab website where you can play with Kubernetes! [Play With Kubernetes](https://labs.play-with-k8s.com/)
 
+[Another Source for Setting Up Grafana and Prometheus](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-prometheus-grafana-and-alertmanager-monitoring-stack-on-digitalocean-kubernetes)
+
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
