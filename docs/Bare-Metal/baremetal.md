@@ -660,6 +660,8 @@ stream {
 }
 ```
 
+For more info on NGINX reverse proxies, look [here](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/).
+
 ## HTTPS on Binder
 The documentation for BinderHub seems to suggest that it doesn't have a built in https functionality like
 JupyterHub does. So we had to install manually the various components for https, credit to [@kaseyhackspace](https://github.com/jupyterhub/binderhub/issues/284/#issuecomment-506919567):
@@ -798,6 +800,8 @@ Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](htt
 Some info on NFS server setup: [Install NFS Server and Client on Ubuntu 18.04](https://vitux.com/install-nfs-server-and-client-on-ubuntu/)
 
 More on NFS: [How to Set Up an NFS Mount](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-18-04)
+
+Nginx Reverse Proxy: [TCP and UDP Load Balancing on Nginx](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/)
 
 ### Installation
 A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [Ubuntu 18.04 Unattended Setup](https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/)
