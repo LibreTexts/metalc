@@ -119,17 +119,6 @@ environment. For instance,
   - install the dynamic nfs volume provisioner on the cluster
   - install MetalLB on cluster
 
-## Configure Monitoring
-
-we should collect data on:
-    - load times
-    - which images are being used
-    - cpu, memory, and data usage. Per user also.
-    - also, all the kubernetes stuff, like pods per node and stuff.
-
-maybe use prometheus? check this [blog post](
-https://akomljen.com/get-kubernetes-cluster-metrics-with-prometheus-in-5-minutes/)
-
 ## Testing
 
 We need an automated testing framework where we can put in test to simulate a bunch of users.
@@ -602,7 +591,7 @@ If we don't make use of the stream block funtion on Nginx, https traffic coming 
 on the cluster would never reach the cluster as Nginx would see encrypted traffic and try to perform a
 three-way handshake, which would obviously fail as the certificates are setup on the services themselves.
 
-This differs from our previous nginx setup. Before, we had server and upstream blocks in an 
+This differs from our previous nginx setup. Before, we had server and upstream blocks in an
 `https` block:
 ```
 https {
@@ -691,13 +680,13 @@ helm install \
   --version v0.8.1 \
   jetstack/cert-manager
 ```
-2. Create binderhub-issuer.yaml
+2. Create cluster-issuer.yaml(**NOTE:** Using 'ClusterIssuer' as kind will allow cert-manager to issue
+certificates for services in any namespace)
 ```
 apiVersion: certmanager.k8s.io/v1alpha1
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-production
-  namespace: <binderhub-namespace>
 spec:
   acme:
     # You must replace this email address with your own.
@@ -777,26 +766,86 @@ corresponds to the underlying JupyterHub and the `binder` load balancer correspo
 
 # Monitoring the Cluster
 ## Installing Prometheus and Grafana
-Follow [these instructions](https://itnext.io/kubernetes-monitoring-with-prometheus-in-15-minutes-8e54d1de2e13)
-to install Prometheus and Grafana.
+We decided to deploy [prometheus-operator](https://github.com/helm/charts/tree/master/stable/prometheus-operator)
+as it takes care of setting up both the Prometheus deployment and the Grafana deployment for us.
+Before installing the chart with helm, we changed the settings of the [values.yaml](https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml) file to enable ingress for Grafana specifically.
 
-To make Grafana publicly accessible, find the service which is running Grafana.
+We created a folder called monitoring to store all of our yaml configuration files.
+
+You can change any of the default values in the values.yaml file and put it in a separate yaml file that
+can be applied during the installation. Our yaml file looks like this:
 ```
-$ kubectl get svc -A
-...
-NAMESPACE      NAME                                            TYPE           ...
-monitoring     prometheus-operator-grafana                     ClusterIP   ...
-...
+grafana:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      ingress.kubernetes.io/ssl-redirect: "true"
+      certmanager.k8s.io/issuer: letsencrypt-production
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - grafana.libretexts.org
+    path: /
+    tls:
+      - secretName: grafana.libretexts.org-tls
+        hosts:
+          - grafana.libretexts.org
 ```
-Change the service type to LoadBalancer by running
+We enable ingress so that our nginx controller pod can connect to the right endpoint for Grafana.
+We can check that the ingress is pointing at the endpoint for Grafana by running 'kubectl get ingress -n <NAMESPACE>',
+and then using 'kubectl describe ingress <NAME OF INGRESS> -n <NAMESPACE>' to get something like:
 ```
-    kubectl patch svc "prometheus-operator-grafana" \
-      --namespace "monitoring" \
-      -p '{"spec": {"type": "LoadBalancer"}}'
+Name:             prometheus-operator-grafana
+Namespace:        monitoring
+Address:
+Default backend:  default-http-backend:80 (<none>)
+TLS:
+  grafana.libretexts.org-tls terminates grafana.libretexts.org
+Rules:
+  Host                    Path  Backends
+  ----                    ----  --------
+  grafana.libretexts.org
+                          /   prometheus-operator-grafana:80 (10.244.85.133:3000)
+Annotations:
+  ingress.kubernetes.io/ssl-redirect:  true
+  kubernetes.io/ingress.class:         nginx
+  kubernetes.io/tls-acme:              true
+  certmanager.k8s.io/issuer:           letsencrypt-production
+Events:                                <none>
 ```
-An IP should be assigned to `EXTERNAL-IP` and the type should be changed to 
-`LoadBalancer` when you run `kubectl get svc -A`. In `/etc/nginx/tcpconf.d/`
-add a server block redirecting your public IP to the `EXTERNAL-IP`.
+Under the 'Host', 'Path', 'Backends', we can see that our domain name points to our Grafana endpoint. Checking
+with the command 'kubectl get ep -n <NAMESPACE>', we can confirm that the endpoint is correct:
+```
+NAME                                           ENDPOINTS                                                     AGE
+prometheus-operator-grafana                    10.244.85.133:3000                                            3d13h
+```
+Once we confirm that the ingress is setup properly, we can move on to the last step. We used cert-manager to secure
+access to Grafana over the web. We created a seperate yaml file called 'certificate.yaml' that communicates with
+our cert-manager that we had setup already to assign a certificate for HTTPS communnication.
+```
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: grafana.libretexts.org-tls
+spec:
+  secretName: grafana.libretexts.org-tls
+  dnsNames:
+  - grafana.libretexts.org
+  acme:
+    config:
+    - http01:
+        ingressClass: nginx
+      domains:
+      - grafana.libretexts.org
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+```
+Run with 'kubectl create -f <FILE>' (this assumes that the cert-manager is of kind ClusterIssuer), and cert-manager
+will take care of the rest.
+
+In our setup, since we are using nginx as a proxy to our cluster, we changed our nginx.conf and lb file accordingly
+to point traffic for 'grafana.libretexts.org' to our nginx controller on the cluster.
 
 # User Stats
 ## Current Specifications
@@ -820,7 +869,7 @@ Supports ~100 concurrent users at most. Rounded down since CPU is also needed fo
 
 `2 TB of storage / 500 MB per user`
 
-If only using rooster's storage, we can support ~4000 accounts. 
+If only using rooster's storage, we can support ~4000 accounts.
 
 # Literature List
 
@@ -865,11 +914,10 @@ for setting up an automatic provisioner after you have the NFS server set up.
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
 Likewise, `kubectl get service -A` lists all services.
 * `kubectl get po -A` or `kubectl get pod -A` lists all pods in the cluster.
-* `kubectl get pv -A` lists all persistent volumes 
+* `kubectl get pv -A` lists all persistent volumes
 * `kubectl get pvc -A` lists all persistent volume claims made (the requests by for physical storage in rooster)
 * `kubectl get logs <pod name> -n <namespace> -c <container>` gives the logs on a
 container (if applicable) in a pod
 * `kubectl delete pod <pod name> -n <namespace>` will delete the pod specified. Note that
 the pod may regenerate depending on its settings
 * `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
-
