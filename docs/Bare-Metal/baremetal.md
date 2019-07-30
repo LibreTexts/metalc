@@ -792,8 +792,8 @@ grafana:
           - grafana.libretexts.org
 ```
 We enable ingress so that our nginx controller pod can connect to the right endpoint for Grafana.
-We can check that the ingress is pointing at the endpoint for Grafana by running "kubectl get ingress -n <NAMESPACE>",
-and then using 'kubectl describe ingress <NAME OF INGRESS> -n <NAMESPACE>' to get something like:
+We can check that the ingress is pointing at the endpoint for Grafana by running `kubectl get ingress -n <NAMESPACE>`,
+and then using `kubectl describe ingress <NAME OF INGRESS> -n <NAMESPACE>` to get something like:
 ```
 Name:             prometheus-operator-grafana
 Namespace:        monitoring
@@ -814,7 +814,7 @@ Annotations:
 Events:                                <none>
 ```
 Under the 'Host', 'Path', 'Backends', we can see that our domain name points to our Grafana endpoint. Checking
-with the command 'kubectl get ep -n <NAMESPACE>', we can confirm that the endpoint is correct:
+with the command `kubectl get ep -n <NAMESPACE>`, we can confirm that the endpoint is correct:
 ```
 NAME                                           ENDPOINTS                                                     AGE
 prometheus-operator-grafana                    10.244.85.133:3000                                            3d13h
@@ -841,7 +841,7 @@ spec:
     name: letsencrypt-production
     kind: ClusterIssuer
 ```
-Run with 'kubectl create -f <FILE>' (this assumes that the cert-manager is of kind ClusterIssuer), and cert-manager
+Run with `kubectl create -f <FILE>` (this assumes that the cert-manager is of kind ClusterIssuer), and cert-manager
 will take care of the rest.
 
 In our setup, since we are using nginx as a proxy to our cluster, we changed our nginx.conf and lb file accordingly
