@@ -792,7 +792,7 @@ grafana:
           - grafana.libretexts.org
 ```
 We enable ingress so that our nginx controller pod can connect to the right endpoint for Grafana.
-We can check that the ingress is pointing at the endpoint for Grafana by running 'kubectl get ingress -n <NAMESPACE>',
+We can check that the ingress is pointing at the endpoint for Grafana by running "kubectl get ingress -n <NAMESPACE>",
 and then using 'kubectl describe ingress <NAME OF INGRESS> -n <NAMESPACE>' to get something like:
 ```
 Name:             prometheus-operator-grafana
