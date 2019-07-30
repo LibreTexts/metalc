@@ -798,6 +798,30 @@ An IP should be assigned to `EXTERNAL-IP` and the type should be changed to
 `LoadBalancer` when you run `kubectl get svc -A`. In `/etc/nginx/tcpconf.d/`
 add a server block redirecting your public IP to the `EXTERNAL-IP`.
 
+# User Stats
+## Current Specifications
+For each user:
+
+### CPU
+* limit: 4
+* guarantee: 0.5
+
+### Memory
+* limit: 8G
+* guarantee: 1G
+
+### Storage
+* 500 MB per user
+
+## Support
+`6 cores per server / 0.5 core per user x 10 servers is approximately 100 users`
+
+Supports ~100 concurrent users at most. Rounded down since CPU is also needed for monitoring, etc.
+
+`2 TB of storage / 500 MB per user`
+
+If only using rooster's storage, we can support ~4000 accounts. 
+
 # Literature List
 
 Place for us to add some useful reading we find
