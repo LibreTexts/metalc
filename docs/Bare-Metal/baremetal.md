@@ -920,4 +920,13 @@ Likewise, `kubectl get service -A` lists all services.
 container (if applicable) in a pod
 * `kubectl delete pod <pod name> -n <namespace>` will delete the pod specified. Note that
 the pod may regenerate depending on its settings
+* `kubectl describe <type> <name>` describes your object
+* `kubectl exec <pod name> -n <namespace> -ti bash` enters the pod's command line
+* Example of patching a pod (in this case, making one a LoadBalancer):
+```
+kubectl patch svc "prometheus-operator-grafana" \
+      --namespace "monitoring" \
+      -p '{"spec": {"type": "LoadBalancer"}}'
+```
 * `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
+* `tail /var/log/apt/history.log` gives the logs for unattended upgrades
