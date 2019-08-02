@@ -847,6 +847,165 @@ will take care of the rest.
 In our setup, since we are using nginx as a proxy to our cluster, we changed our nginx.conf and lb file accordingly
 to point traffic for 'grafana.libretexts.org' to our nginx controller on the cluster.
 
+# Securing the Cluster
+We followed [*How to Secure a Linux Server*](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server)
+to secure and harden rooster. The following describes our choices for implementation.
+
+## SSH Public and Private Keys
+We disabled using a password to log into rooster by uncommenting
+`PasswordAuthentication no` in `/etc/ssh/sshd_config`. You can only
+log in using an ssh key.
+
+Generate a key using `ssh-keygen` on your local computer. Copy
+`~/.ssh/id_rsa.pub` on your local computer to `~/.ssh/authorized_keys`
+on rooster.
+
+Alternatively if you use PuTTY, you can use PuTTYgen to generate 
+a public/private key pair, and copy the public key into `~/.ssh/authorized_keys`
+on rooster. Then, double click the private key file to enter your
+password and PuTTY will log into rooster using your key.
+
+## AllowGroups
+We chose not to use AllowGroups since we don't have many accounts
+for now. More info in [this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## Securing `/etc/ssh/sshd_config`
+We uncommented `PermitRootLogin prohibit-password` to allow automated
+backups to Richard's server.
+We also uncommented several lines in the file for security:
+* Maximum authorization attempts: 6
+* Turned off PAM authentication
+* Turned off challenege authentication
+
+## Removed Short Diffie-Hellman Keys
+Short Diffie-Hellman keys are less secure.
+>   Make a backup of SSH's moduli file /etc/ssh/moduli:
+
+    ```
+    sudo cp --preserve /etc/ssh/moduli /etc/ssh/moduli.$(date +"%Y%m%d%H%M%S")
+    ```
+    
+>   Remove short moduli:
+
+    ```
+    sudo awk '$5 >= 3071' /etc/ssh/moduli | sudo tee /etc/ssh/moduli.tmp
+    sudo mv /etc/ssh/moduli.tmp /etc/ssh/moduli
+    ```
+## 2FA
+We did not enable 2FA for SSH. More info in 
+[this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## NTP Client
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#ntp-client).
+
+## Securing `/proc`
+We did not secure `/proc` since there aren't many accounts. More info in 
+[this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## Automatic Security Updates
+We did set them up, but plan on doing them manually. Reasons include:
+* Being able to let users know that we are performing the updates
+in case something bad happens
+* Being there in case if something bad does happen
+* Controlling the time to update
+
+We followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#automatic-security-updates-and-alerts). Our unattended upgrades configurations are stored in 
+`/etc/apt/apt.conf.d/51myunattended-upgrades`.
+
+## Random Entropy Pool
+Some systems generate predictable SSH keys, so this could help mitigate that.
+```
+sudo apt-get install rng-tools
+```
+We just installed the package for now.
+
+
+## UFW
+List your UFW rules by running `sudo ufw status numbered`.
+Deleted the following rules, by calling `sudo ufw delete <line #>`,
+  * Deleted traffic on 80 and 443 into enp2s0 and enp3s0 interfaces
+     * `allow in on enp3s0 to any port 80`
+     * `allow in on enp3s0 to any port 443`
+     * `allow in on enp2s0 to any port 80`
+     * `allow in on enp2s0 to any port 443`
+  * Delete traffic `allow 111`
+Some of these rules were added while trying to get JupyterHub to work.
+
+## psad: iptables Intrusion Detection
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#iptables-intrusion-detection-and-prevention-with-psad)
+almost exactly. Here is [psad's documentation](http://www.cipherdyne.org/psad/docs/config.html).
+psad scans iptables for suspicious activity and automatically sends alerts to 
+our email. DL stands for "danger level" of suspicious activity.
+
+The following are the changes in the instructions we followed:
+
+ 3. Review and update configuration options in `/etc/psad/psad.conf`. Pay special attention to these:
+
+   |Setting|Set To
+   |--|--|
+   |[`EMAIL_ADDRESSES`](http://www.cipherdyne.org/psad/docs/config.html#EMAIL_ADDRESSES)|your email address(s)|
+   |`HOSTNAME`|your server's hostname|
+   |[`ENABLE_AUTO_IDS`](http://www.cipherdyne.org/psad/docs/config.html#ENABLE_AUTO_IDS)|`ENABLE_AUTO_IDS N;`|
+   |`ENABLE_AUTO_IDS_EMAILS`|`ENABLE_AUTO_IDS_EMAILS N;`|
+   |`EXPECT_TCP_OPTIONS`|`EXPECT_TCP_OPTIONS Y;`|
+   
+   We chose not to enable auto IDS, which automatically blocks suspicious IP's. For now, 
+   we do not want to accidentally block a legitimate IP, like one from the cluster.
+   
+## Fail2Ban: SSH Intrustion Detection
+Roughly followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#application-intrusion-detection-and-prevention-with-fail2ban).
+1. Install fail2ban
+
+```
+sudo apt install fail2ban
+```
+
+1. We created `/etc/fail2ban/jail.local` and added the following:
+
+```
+[DEFAULT]
+# the IP address range we want to ignore
+ignoreip = 127.0.0.1/8 10.0.0.1/8 192.168.0.1/24
+
+# who to send e-mail to
+destemail = [our e-mail]
+
+# who is the email from
+sender = [our e-mail]
+
+# since we're using exim4 to send emails
+mta = mail
+
+# get email alerts
+action = %(action_mwl)s
+```
+
+1. According to the instructions, we created an `sshd` jail by
+creating `/etc/fail2ban/jail.d/ssh.local` and adding:
+
+```
+[sshd]
+enabled = true
+banaction = ufw
+port = ssh
+filter = sshd
+logpath = %(sshd_log)s
+maxretry = 5
+```
+  However, after executing the following, I get a `noduplicates` error.
+
+```
+sudo fail2ban-client start
+sudo fail2ban-client reload
+sudo fail2ban-client add sshd
+```
+  
+  Although running `sudo fail2ban-client status` shows that the `sshd` jail is
+  active, probably from the sshd jail in the default file
+  `/etc/fail2ban/action.d/defaults-debian.conf`.
+  
+  
+  
 # User Stats
 ## Current Specifications
 For each user:
