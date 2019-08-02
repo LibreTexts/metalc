@@ -1052,6 +1052,8 @@ A lab website where you can play with Kubernetes! [Play With Kubernetes](https:/
 
 [Another Source for Setting Up Grafana and Prometheus](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-prometheus-grafana-and-alertmanager-monitoring-stack-on-digitalocean-kubernetes)
 
+For when we have multiple masters: [High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
+
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
