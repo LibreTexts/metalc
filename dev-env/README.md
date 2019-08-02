@@ -131,6 +131,56 @@ helm delete nfs-client-release --purge
 You should now be able to run the jupyterhub [Helm chart](
 https://zero-to-jupyterhub.readthedocs.io/en/latest/setup-jupyterhub.html) on this cluster
 
+#### Exposing JupyterHub
+One way to publicly expose JupyterHub: forward requests using an upstream block.
+First, find the IP address of the node that JupyterHub is running on.
+```
+$ kubectl get pods -n jhub
+NAME                                                       READY   STATUS    RESTARTS   AGE
+hub-5c458869b6-q9mjz                                       1/1     Running   0          3h29m
+nfs-client-release-nfs-client-provisioner-9c489f48-5b7k9   1/1     Running   5          55d
+proxy-ddc67f979-4rlqs                                      1/1     Running   0          3d5h
+
+$ kubectl describe pod hub-5c458869b6-q9mjz -n jhub
+...
+Node:               node2/192.168.99.22
+...
+```
+We know that JupyterHub is running on node2, which has the IP of 192.168.99.22.
+
+```
+$ kubectl get svc -n jhub
+NAME           TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+hub            ClusterIP      10.104.64.184   <none>        8081/TCP                     55d
+proxy-api      ClusterIP      10.104.232.54   <none>        8001/TCP                     55d
+proxy-public   LoadBalancer   10.97.147.113   <pending>     80:32335/TCP,443:32667/TCP   55d
+```
+We also know that the LoadBalancer is exposed on port 32335 of node2.
+
+In `/etc/nginx/nginx.conf`, we can add this to the `http` and `server` blocks:
+```
+...
+http {
+    upstream root_host {
+        server 192.168.99.22:32335;
+    }
+...
+
+server {
+    listen 443;
+    server_name <your domain>
+    
+    location / {
+      proxy_pass http://root_host;
+      ...
+    }
+  }
+...
+}   
+```
+This is assuming that you have run Let's Encrypt/Certbot on your server.
+Use `sudo nginx -t` to make sure the syntax is correct and `systemctl restart nginx.service`
+to restart nginx. JupyterHub should now be live on your domain!
 
 ### Tearing it down
 To delete the virtual machines and cluster, run
