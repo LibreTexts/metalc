@@ -952,6 +952,12 @@ The following are the changes in the instructions we followed:
    We chose not to enable auto IDS, which automatically blocks suspicious IP's. For now, 
    we do not want to accidentally block a legitimate IP, like one from the cluster.
    
+#### Whitelisting an IP Address
+To whitelist, edit `/etc/psad/auto_dl`:
+```
+<IP address> <danger level> <optional protocol or ports>;
+```
+   
 ## Fail2Ban: SSH Intrustion Detection
 Roughly followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#application-intrusion-detection-and-prevention-with-fail2ban).
 1. Install fail2ban
