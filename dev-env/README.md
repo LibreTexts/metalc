@@ -182,6 +182,11 @@ This is assuming that you have run Let's Encrypt/Certbot on your server.
 Use `sudo nginx -t` to make sure the syntax is correct and `systemctl restart nginx.service`
 to restart nginx. JupyterHub should now be live on your domain!
 
+#### Quick note
+If you delete JupyterHub and reinstall it, run 
+`helm install --name nfs-client-release stable/nfs-client-provisioner -f nfs-client-vals.yml` 
+again so the persistent volume claim for the hub is bound.
+
 ### Tearing it down
 To delete the virtual machines and cluster, run
 ```
