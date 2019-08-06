@@ -186,8 +186,8 @@ to restart nginx. JupyterHub should now be live on your domain!
 To delete the virtual machines and cluster, run
 ```
 vagrant destroy -f node2
-vagrant destory -f node1
-vagrant destory -f node0
+vagrant destroy -f node1
+vagrant destroy -f node0
 ```
 
 ### Vocabulary
