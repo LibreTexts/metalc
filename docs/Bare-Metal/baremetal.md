@@ -871,8 +871,8 @@ grafana:
       user: "youremail@gmail.com" #email
       password: <gmail password>
 ```
-These configurations were enough for us to setup gmail for SMTP. For different SMTP setups, more settings can be found [here](https://grafana.com/docs/installation/configuration/#smtp). After installing prometheus-operator with these settings, one can follow [these](https://grafana.com/docs/alerting/notifications/) instructions to setup the alert channels on Grafana.
-**NOTE:**
+These configurations were enough for us to setup gmail for SMTP. For different SMTP setups, more settings can be found [here](https://grafana.com/docs/installation/configuration/#smtp). After installing prometheus-operator with these settings, one can follow [these](https://grafana.com/docs/alerting/notifications/) instructions to setup the alert channels on Grafana.<br/>
+**NOTE:** If you are running a firewall, make sure to open the ports used by SMTP, we use 587 here.
 
 After the alert channels are setup, one can move on to creating the alerts. We organized our alerts in a separate 'Alerts' folder from the rest of the dashboards used for monitoring.
 ![folders](../images/grafana-folders.png)
@@ -890,11 +890,11 @@ After we setup the panel by coping the templated panels, we can click on the bel
 ![alerts](../images/grafana-alerts.png)
 
 For our cluster, we have setup these alerts so far:
-| Data      | Threshold |
-| ----------- | ----------- |
-| jupyter.libretexts.org  | If it goes down or high ping  |
-| Cluster   | CPU/cores/RAM utilization exceeds 80% |
-| Nodes | CPU/RAM utilization exceeds 80% or a node goes offline |
+ Data      | Threshold
+ ----------- | -----------
+ jupyter.libretexts.org  | If it goes down or high ping  
+ Cluster   | CPU/cores/RAM utilization exceeds 80%
+ Nodes | CPU/RAM utilization exceeds 80% or a node goes offline
 
 
 # Securing the Cluster
