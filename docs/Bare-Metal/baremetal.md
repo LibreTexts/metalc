@@ -14,6 +14,7 @@ cluster.
 1. [Installing JupyterHub and BinderHub](#Installing-JupyterHub-and-BinderHub)
 1. [Accessing the Cluster](#Accessing-the-Cluster)
 1. [Monitoring the Cluster](#Monitoring-the-Cluster)
+1. [Alerting for the Cluster](#Alerting-for-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
 
@@ -846,6 +847,18 @@ will take care of the rest.
 
 In our setup, since we are using nginx as a proxy to our cluster, we changed our nginx.conf and lb file accordingly
 to point traffic for 'grafana.libretexts.org' to our nginx controller on the cluster.
+
+# Alerting for the Cluster
+For basic alerts on the cluster, we have decided to use Grafana built in alerting becuase it is easy to setup and use.
+
+## Grafana Alert Channels
+Grafana supports a variety of [channels](https://grafana.com/docs/alerting/notifications/) to send notifications with,
+we setup a Slack channel and an email channel.
+
+## Setting up Alerts
+The latest version of Grafana has a built-in templating feature where it allows the user to use a 'template' variable
+instead of a hardcoded one, allowing for a better user experience. However, Grafana doesn't support the use of templates when alerting. A workaround is to create specific dashboards with hardcoded values for alerting, and use separate dashboards with templates for actual monitoring.
+![testing](../images/grafana-folders.png)
 
 # User Stats
 ## Current Specifications
