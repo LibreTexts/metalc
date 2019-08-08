@@ -14,8 +14,8 @@ cluster.
 1. [Installing JupyterHub and BinderHub](#Installing-JupyterHub-and-BinderHub)
 1. [Accessing the Cluster](#Accessing-the-Cluster)
 1. [Monitoring the Cluster](#Monitoring-the-Cluster)
-1. [Securing the Cluster](#Securing-the-Cluster)
 1. [Alerting for the Cluster](#Alerting-for-the-Cluster)
+1. [Securing the Cluster](#Securing-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
 
@@ -770,7 +770,7 @@ corresponds to the underlying JupyterHub and the `binder` load balancer correspo
 ## Installing Prometheus and Grafana
 We decided to deploy [prometheus-operator](https://github.com/helm/charts/tree/master/stable/prometheus-operator)
 as it takes care of setting up both the Prometheus deployment and the Grafana deployment for us.
-Before installing the chart with helm, we changed the settings of the [values.yaml](https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml) file to enable ingress for Grafana specifically.
+Before installing the chart with helm, we changed the settings of the [values.yaml](https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml) file to enable ingress for Grafana specifically.<br/>
 **NOTE:** Prometheus-operator seems to have an issue where upgrading the helm deployment deletes all the user data in Grafana, for now make sure to add all the settings you want in the beginning to avoid upgrading in the future. I suggest you take a look at our next section on alerting before installing Grafana.
 
 We created a folder called monitoring to store all of our yaml configuration files.
@@ -872,6 +872,7 @@ grafana:
       password: <gmail password>
 ```
 These configurations were enough for us to setup gmail for SMTP. For different SMTP setups, more settings can be found [here](https://grafana.com/docs/installation/configuration/#smtp). After installing prometheus-operator with these settings, one can follow [these](https://grafana.com/docs/alerting/notifications/) instructions to setup the alert channels on Grafana.
+**NOTE:**
 
 After the alert channels are setup, one can move on to creating the alerts. We organized our alerts in a separate 'Alerts' folder from the rest of the dashboards used for monitoring.
 ![folders](../images/grafana-folders.png)
