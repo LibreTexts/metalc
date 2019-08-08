@@ -16,6 +16,7 @@ cluster.
 1. [Monitoring the Cluster](#Monitoring-the-Cluster)
 1. [Alerting for the Cluster](#Alerting-for-the-Cluster)
 1. [Securing the Cluster](#Securing-the-Cluster)
+1. [Customizing the Cluster](#Customizing-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
 
@@ -1059,8 +1060,38 @@ sudo fail2ban-client add sshd
   Although running `sudo fail2ban-client status` shows that the `sshd` jail is
   active, probably from the sshd jail in the default file
   `/etc/fail2ban/action.d/defaults-debian.conf`.
+  
+# Customizing the Cluster
+## Whitelisting
+There are two ways to whitelist users: through the configuration file
+or on JupyterHub as an admin user. More information can be found in the
+[documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/authentication.html#adding-a-whitelist).
 
+### Through `config.yaml`
+SSH into rooster. Open the JupyterHub configuration file in `~/jupyterhub/config.yaml`.
+There will be a block that looks like this:
+```
+auth:
+  type: google
+  admin:
+    access: true
+    users:
+      - admin@gmail.com
+  whitelist:
+    users:
+      - user@gmail.com
+      - user@gmail.com
+```
+Add user emails in the `whitelist` section under `users`.
+Note that anyone who is added under `admin` will have admin privileges and will
+automatically be whitelisted.
 
+### As an Admin User
+When you log into JupyterHub, go to the **Control Panel** (Hub -> Control Panel)
+if you haven't already. Click the **Admin** tab on the navigation bar.
+
+You can add email addresses by clicking **Add Users**. Be careful of the other
+buttons!
 
 # User Stats
 ## Current Specifications
