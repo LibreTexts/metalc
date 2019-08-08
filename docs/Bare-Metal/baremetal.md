@@ -860,6 +860,171 @@ The latest version of Grafana has a built-in templating feature where it allows 
 instead of a hardcoded one, allowing for a better user experience. However, Grafana doesn't support the use of templates when alerting. A workaround is to create specific dashboards with hardcoded values for alerting, and use separate dashboards with templates for actual monitoring.
 ![testing](../images/grafana-folders.png)
 
+# Securing the Cluster
+We followed [*How to Secure a Linux Server*](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server)
+to secure and harden rooster. The following describes our choices for implementation.
+
+## SSH Public and Private Keys
+We disabled using a password to log into rooster by uncommenting
+`PasswordAuthentication no` in `/etc/ssh/sshd_config`. You can only
+log in using an ssh key.
+
+Generate a key using `ssh-keygen` on your local computer. Copy
+`~/.ssh/id_rsa.pub` on your local computer to `~/.ssh/authorized_keys`
+on rooster.
+
+Alternatively if you use PuTTY, you can use PuTTYgen to generate 
+a public/private key pair, and copy the public key into `~/.ssh/authorized_keys`
+on rooster. Then, double click the private key file to enter your
+password and PuTTY will log into rooster using your key.
+
+## AllowGroups
+We chose not to use AllowGroups since we don't have many accounts
+for now. More info in [this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## Securing `/etc/ssh/sshd_config`
+We uncommented `PermitRootLogin prohibit-password` to allow automated
+backups to Richard's server.
+We also uncommented several lines in the file for security:
+* Maximum authorization attempts: 6
+* Turned off PAM authentication
+* Turned off challenege authentication
+
+## Removed Short Diffie-Hellman Keys
+Short Diffie-Hellman keys are less secure.
+>   Make a backup of SSH's moduli file /etc/ssh/moduli:
+
+    ```
+    sudo cp --preserve /etc/ssh/moduli /etc/ssh/moduli.$(date +"%Y%m%d%H%M%S")
+    ```
+    
+>   Remove short moduli:
+
+    ```
+    sudo awk '$5 >= 3071' /etc/ssh/moduli | sudo tee /etc/ssh/moduli.tmp
+    sudo mv /etc/ssh/moduli.tmp /etc/ssh/moduli
+    ```
+## 2FA
+We did not enable 2FA for SSH. More info in 
+[this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## NTP Client
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#ntp-client).
+
+## Securing `/proc`
+We did not secure `/proc` since there aren't many accounts. More info in 
+[this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## Automatic Security Updates
+We did set them up, but plan on doing them manually. Reasons include:
+* Being able to let users know that we are performing the updates
+in case something bad happens
+* Being there in case if something bad does happen
+* Controlling the time to update
+
+We followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#automatic-security-updates-and-alerts). Our unattended upgrades configurations are stored in 
+`/etc/apt/apt.conf.d/51myunattended-upgrades`.
+
+## Random Entropy Pool
+Some systems generate predictable SSH keys, so this could help mitigate that.
+```
+sudo apt-get install rng-tools
+```
+We just installed the package for now.
+
+
+## UFW
+List your UFW rules by running `sudo ufw status numbered`.
+Deleted the following rules, by calling `sudo ufw delete <line #>`,
+  * Deleted traffic on 80 and 443 into enp2s0 and enp3s0 interfaces
+     * `allow in on enp3s0 to any port 80`
+     * `allow in on enp3s0 to any port 443`
+     * `allow in on enp2s0 to any port 80`
+     * `allow in on enp2s0 to any port 443`
+  * Delete traffic `allow 111`
+Some of these rules were added while trying to get JupyterHub to work.
+
+## psad: iptables Intrusion Detection
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#iptables-intrusion-detection-and-prevention-with-psad)
+almost exactly. Here is [psad's documentation](http://www.cipherdyne.org/psad/docs/config.html).
+psad scans iptables for suspicious activity and automatically sends alerts to 
+our email. DL stands for "danger level" of suspicious activity.
+
+The following are the changes in the instructions we followed:
+
+ 3. Review and update configuration options in `/etc/psad/psad.conf`. Pay special attention to these:
+
+   |Setting|Set To
+   |--|--|
+   |[`EMAIL_ADDRESSES`](http://www.cipherdyne.org/psad/docs/config.html#EMAIL_ADDRESSES)|your email address(s)|
+   |`HOSTNAME`|your server's hostname|
+   |[`ENABLE_AUTO_IDS`](http://www.cipherdyne.org/psad/docs/config.html#ENABLE_AUTO_IDS)|`ENABLE_AUTO_IDS N;`|
+   |`ENABLE_AUTO_IDS_EMAILS`|`ENABLE_AUTO_IDS_EMAILS N;`|
+   |`EXPECT_TCP_OPTIONS`|`EXPECT_TCP_OPTIONS Y;`|
+   
+   We chose not to enable auto IDS, which automatically blocks suspicious IP's. For now, 
+   we do not want to accidentally block a legitimate IP, like one from the cluster.
+   
+#### Whitelisting an IP Address
+To whitelist, edit `/etc/psad/auto_dl`:
+```
+<IP address> <danger level> <optional protocol or ports>;
+```
+   
+## Fail2Ban: SSH Intrustion Detection
+Roughly followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#application-intrusion-detection-and-prevention-with-fail2ban).
+1. Install fail2ban
+
+```
+sudo apt install fail2ban
+```
+
+1. We created `/etc/fail2ban/jail.local` and added the following:
+
+```
+[DEFAULT]
+# the IP address range we want to ignore
+ignoreip = 127.0.0.1/8 10.0.0.1/8 192.168.0.1/24
+
+# who to send e-mail to
+destemail = [our e-mail]
+
+# who is the email from
+sender = [our e-mail]
+
+# since we're using exim4 to send emails
+mta = mail
+
+# get email alerts
+action = %(action_mwl)s
+```
+
+1. According to the instructions, we created an `sshd` jail by
+creating `/etc/fail2ban/jail.d/ssh.local` and adding:
+
+```
+[sshd]
+enabled = true
+banaction = ufw
+port = ssh
+filter = sshd
+logpath = %(sshd_log)s
+maxretry = 5
+```
+  However, after executing the following, I get a `noduplicates` error.
+
+```
+sudo fail2ban-client start
+sudo fail2ban-client reload
+sudo fail2ban-client add sshd
+```
+  
+  Although running `sudo fail2ban-client status` shows that the `sshd` jail is
+  active, probably from the sshd jail in the default file
+  `/etc/fail2ban/action.d/defaults-debian.conf`.
+  
+  
+  
 # User Stats
 ## Current Specifications
 For each user:
@@ -906,6 +1071,8 @@ A lab website where you can play with Kubernetes! [Play With Kubernetes](https:/
 
 [Another Source for Setting Up Grafana and Prometheus](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-prometheus-grafana-and-alertmanager-monitoring-stack-on-digitalocean-kubernetes)
 
+For when we have multiple masters: [High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
+
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
@@ -933,4 +1100,13 @@ Likewise, `kubectl get service -A` lists all services.
 container (if applicable) in a pod
 * `kubectl delete pod <pod name> -n <namespace>` will delete the pod specified. Note that
 the pod may regenerate depending on its settings
+* `kubectl describe <type> <name>` describes your object
+* `kubectl exec <pod name> -n <namespace> -ti bash` enters the pod's command line
+* Example of patching a pod (in this case, making one a LoadBalancer):
+```
+kubectl patch svc "prometheus-operator-grafana" \
+      --namespace "monitoring" \
+      -p '{"spec": {"type": "LoadBalancer"}}'
+```
 * `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
+* `tail /var/log/apt/history.log` gives the logs for unattended upgrades
