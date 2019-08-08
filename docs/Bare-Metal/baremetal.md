@@ -14,6 +14,7 @@ cluster.
 1. [Installing JupyterHub and BinderHub](#Installing-JupyterHub-and-BinderHub)
 1. [Accessing the Cluster](#Accessing-the-Cluster)
 1. [Monitoring the Cluster](#Monitoring-the-Cluster)
+1. [Securing the Cluster](#Securing-the-Cluster)
 1. [Alerting for the Cluster](#Alerting-for-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
@@ -770,6 +771,7 @@ corresponds to the underlying JupyterHub and the `binder` load balancer correspo
 We decided to deploy [prometheus-operator](https://github.com/helm/charts/tree/master/stable/prometheus-operator)
 as it takes care of setting up both the Prometheus deployment and the Grafana deployment for us.
 Before installing the chart with helm, we changed the settings of the [values.yaml](https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml) file to enable ingress for Grafana specifically.
+**NOTE:** Prometheus-operator seems to have an issue where upgrading the helm deployment deletes all the user data in Grafana, for now make sure to add all the settings you want in the beginning to avoid upgrading in the future. I suggest you take a look at our next section on alerting before installing Grafana.
 
 We created a folder called monitoring to store all of our yaml configuration files.
 
@@ -849,7 +851,7 @@ In our setup, since we are using nginx as a proxy to our cluster, we changed our
 to point traffic for 'grafana.libretexts.org' to our nginx controller on the cluster.
 
 # Alerting for the Cluster
-For basic alerts on the cluster, we have decided to use Grafana built in alerting becuase it is easy to setup and use.
+For basic alerts on the cluster, we have decided to use Grafana built in alerting because it is easy to setup and use.
 
 ## Grafana Alert Channels
 Grafana supports a variety of [channels](https://grafana.com/docs/alerting/notifications/) to send notifications with,
@@ -858,7 +860,41 @@ we setup a Slack channel and an email channel.
 ## Setting up Alerts
 The latest version of Grafana has a built-in templating feature where it allows the user to use a 'template' variable
 instead of a hardcoded one, allowing for a better user experience. However, Grafana doesn't support the use of templates when alerting. A workaround is to create specific dashboards with hardcoded values for alerting, and use separate dashboards with templates for actual monitoring.
-![testing](../images/grafana-folders.png)
+
+In order to setup the email channel for notifications, it requires a SMTP server. You can use your own SMTP server if you have one on your server, if not, you can use a third party one. We will be using the SMTP server that comes with a gmail account for simplicity. In order to enable email notifications, we need to add some settings to the configuration file for our prometheus-operator:
+```
+grafana:
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: "smtp.gmail.com:587" #gmail
+      user: "youremail@gmail.com" #email
+      password: <gmail password>
+```
+These configurations were enough for us to setup gmail for SMTP. For different SMTP setups, more settings can be found [here](https://grafana.com/docs/installation/configuration/#smtp). After installing prometheus-operator with these settings, one can follow [these](https://grafana.com/docs/alerting/notifications/) instructions to setup the alert channels on Grafana.
+
+After the alert channels are setup, one can move on to creating the alerts. We organized our alerts in a separate 'Alerts' folder from the rest of the dashboards used for monitoring.
+![folders](../images/grafana-folders.png)
+
+We can use existing dashboards as templates for our alerts. We can click on the name of a panel at the top to get a drop down menu, and selecting 'edit' we can see the settings for a panel.
+![edit](../images/grafana-edit.png)
+
+By looking at existing panels with template values, the values that look like '$cluster', we can get a sense of the queries and use them to create our own:
+![edit](../images/grafana-templates.png)
+
+We replace the template variables with hardcoded values in our alerting dashboards:
+![hardcoded](../images/grafana-hardcoded.png)
+
+After we setup the panel by coping the templated panels, we can click on the bell to setup an alert. Setting up the alerts is pretty self-explanatory as we can see from this picture:
+![alerts](../images/grafana-alerts.png)
+
+For our cluster, we have setup these alerts so far:
+Data | Threshold
+------------ | -------------
+jupyter.libretexts.org | If it goes down or high ping
+Cluster | CPU/cores/RAM utilization exceeds 80%
+Nodes | CPU/RAM utilization exceeds 80% or a node goes offline
+
 
 # Securing the Cluster
 We followed [*How to Secure a Linux Server*](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server)
@@ -873,7 +909,7 @@ Generate a key using `ssh-keygen` on your local computer. Copy
 `~/.ssh/id_rsa.pub` on your local computer to `~/.ssh/authorized_keys`
 on rooster.
 
-Alternatively if you use PuTTY, you can use PuTTYgen to generate 
+Alternatively if you use PuTTY, you can use PuTTYgen to generate
 a public/private key pair, and copy the public key into `~/.ssh/authorized_keys`
 on rooster. Then, double click the private key file to enter your
 password and PuTTY will log into rooster using your key.
@@ -897,7 +933,7 @@ Short Diffie-Hellman keys are less secure.
     ```
     sudo cp --preserve /etc/ssh/moduli /etc/ssh/moduli.$(date +"%Y%m%d%H%M%S")
     ```
-    
+
 >   Remove short moduli:
 
     ```
@@ -905,14 +941,14 @@ Short Diffie-Hellman keys are less secure.
     sudo mv /etc/ssh/moduli.tmp /etc/ssh/moduli
     ```
 ## 2FA
-We did not enable 2FA for SSH. More info in 
+We did not enable 2FA for SSH. More info in
 [this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
 
 ## NTP Client
 Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#ntp-client).
 
 ## Securing `/proc`
-We did not secure `/proc` since there aren't many accounts. More info in 
+We did not secure `/proc` since there aren't many accounts. More info in
 [this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
 
 ## Automatic Security Updates
@@ -922,7 +958,7 @@ in case something bad happens
 * Being there in case if something bad does happen
 * Controlling the time to update
 
-We followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#automatic-security-updates-and-alerts). Our unattended upgrades configurations are stored in 
+We followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#automatic-security-updates-and-alerts). Our unattended upgrades configurations are stored in
 `/etc/apt/apt.conf.d/51myunattended-upgrades`.
 
 ## Random Entropy Pool
@@ -947,7 +983,7 @@ Some of these rules were added while trying to get JupyterHub to work.
 ## psad: iptables Intrusion Detection
 Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#iptables-intrusion-detection-and-prevention-with-psad)
 almost exactly. Here is [psad's documentation](http://www.cipherdyne.org/psad/docs/config.html).
-psad scans iptables for suspicious activity and automatically sends alerts to 
+psad scans iptables for suspicious activity and automatically sends alerts to
 our email. DL stands for "danger level" of suspicious activity.
 
 The following are the changes in the instructions we followed:
@@ -961,16 +997,16 @@ The following are the changes in the instructions we followed:
    |[`ENABLE_AUTO_IDS`](http://www.cipherdyne.org/psad/docs/config.html#ENABLE_AUTO_IDS)|`ENABLE_AUTO_IDS N;`|
    |`ENABLE_AUTO_IDS_EMAILS`|`ENABLE_AUTO_IDS_EMAILS N;`|
    |`EXPECT_TCP_OPTIONS`|`EXPECT_TCP_OPTIONS Y;`|
-   
-   We chose not to enable auto IDS, which automatically blocks suspicious IP's. For now, 
+
+   We chose not to enable auto IDS, which automatically blocks suspicious IP's. For now,
    we do not want to accidentally block a legitimate IP, like one from the cluster.
-   
+
 #### Whitelisting an IP Address
 To whitelist, edit `/etc/psad/auto_dl`:
 ```
 <IP address> <danger level> <optional protocol or ports>;
 ```
-   
+
 ## Fail2Ban: SSH Intrustion Detection
 Roughly followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#application-intrusion-detection-and-prevention-with-fail2ban).
 1. Install fail2ban
@@ -1018,13 +1054,13 @@ sudo fail2ban-client start
 sudo fail2ban-client reload
 sudo fail2ban-client add sshd
 ```
-  
+
   Although running `sudo fail2ban-client status` shows that the `sshd` jail is
   active, probably from the sshd jail in the default file
   `/etc/fail2ban/action.d/defaults-debian.conf`.
-  
-  
-  
+
+
+
 # User Stats
 ## Current Specifications
 For each user:
