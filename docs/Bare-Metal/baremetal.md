@@ -889,11 +889,11 @@ After we setup the panel by coping the templated panels, we can click on the bel
 ![alerts](../images/grafana-alerts.png)
 
 For our cluster, we have setup these alerts so far:
-Data         | Threshold
------------- | -------------
-jupyter.libretexts.org | If it goes down or high ping
-Cluster | CPU/cores/RAM utilization exceeds 80%
-Nodes | CPU/RAM utilization exceeds 80% or a node goes offline
+| Data      | Threshold |
+| ----------- | ----------- |
+| jupyter.libretexts.org  | If it goes down or high ping  |
+| Cluster   | CPU/cores/RAM utilization exceeds 80% |
+| Nodes | CPU/RAM utilization exceeds 80% or a node goes offline |
 
 
 # Securing the Cluster
