@@ -1087,6 +1087,16 @@ Add user emails in the `whitelist` section under `users`.
 Note that anyone who is added under `admin` will have admin privileges and will
 automatically be whitelisted.
 
+After editing `config.yaml`, upgrade JupyterHub by running these commands in the
+`~/jupyterhub` folder (as specified in the [documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/extending-jupyterhub.html):
+```
+RELEASE=jhub
+
+helm upgrade $RELEASE jupyterhub/jupyterhub \
+  --version=0.8.2 \
+  --values config.yaml
+```
+
 ### As an Admin User
 When you log into JupyterHub, go to the **Control Panel** (Hub -> Control Panel)
 if you haven't already. Click the **Admin** tab on the navigation bar.
