@@ -1062,6 +1062,35 @@ sudo fail2ban-client add sshd
   active, probably from the sshd jail in the default file
   `/etc/fail2ban/action.d/defaults-debian.conf`.
   
+## Rkhunter: Rootkit Detection
+Attackers can install rootkits, which allow them to gain access to a system without the owner noticing. Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#rootkit-detection-with-rkhunter-wip) almost exactly.
+
+Exception:
+4. The value `PHALANX2_DIRTEST` was not set to 1. There is not much documentation on this
+so I decided to leave it alone.
+
+Another change was made to match with SSH login as root, as described in `/etc/ssh/sshd_config`.
+
+Note that rkhunter in Ubuntu comes with cron scripts, which you can find in `/etc/cron.daily/rkhunter`.
+
+Rkhunter will email a daily report.
+
+## chrootkit: More Rootkit Detection
+[This article](https://debaday.debian.net/2008/02/06/rkhunter-chkrootkit-wise-crackers-only/) 
+describes the differences between rkhunter and chrootkit. It recommends to use both!
+
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#rootkit-detection-with-chrootkit-wip)
+to install. 
+
+4. When running `sudo dpkg-reconfigure chkrootkit`, I answered `Yes` to the first question
+   and left the second question blank. The default answer to the second question is `-q`, 
+   mode. The third question was answered with `Yes`.
+   
+## Logwatch: System Log Analyzer
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#logwatch---system-log-analyzer-and-reporter) to install.
+
+As of now, it sends emails to root.
+  
 # Customizing the Cluster
 ## Whitelisting
 There are two ways to whitelist users: through the configuration file
