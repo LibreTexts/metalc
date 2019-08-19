@@ -11,7 +11,7 @@ Some resources to learn Jupyter:
 * [jupyter.org/try](https://jupyter.org/try) has interactive demo notebooks in
 many different languages
 * [Demo video of Jupyter](https://www.youtube.com/watch?v=DLWBfR2hxoo&list=PLUrHeD2K9CmnCOjrnHzSIbZbZmDE-lQRt)
-of 
+of how to navigate the Jupyter Notebook.
 * Visit the 
 [JupyterLab documentation](https://jupyterlab.readthedocs.io/en/latest/user/interface.html)
 for more information on navigating the interface.
