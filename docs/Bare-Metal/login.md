@@ -1,7 +1,10 @@
 # Login
+This JupyterHub serves LibreTexts instructors and their students, as well as UC Davis faculty, staff, and students.
 
 ## Request an account
-If you are a LibreTexts or UC Davis student, please email <email> to request an account.
+If you are a LibreTexts or UC Davis student, please request an account by sending your 
+Google OAuth enabled email to <email>. Your email address must have a Google Account 
+that can be used with Google OAuth, like `@gmail.com` or `@ucdavis.edu`.
 
 ## Getting started with Jupyter
 [Jupyter](https://jupyter.org/index.html) is an environment where you can
@@ -22,14 +25,15 @@ for information on creating custom conda environments.
 
 ## Setting up custom environments for a class
 If you are a teacher who wants to set up an environment with custom packages and kernels,
-please create a Dockerfile. There are two ways to do this:
-1. Use [repo2docker](https://repo2docker.readthedocs.io/en/latest/) to convert a repository
-to a Docker image.
-1. Use or build on top of a [Jupyter Docker Stack](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html)
-already available to the community.
+please create one of the following and email it to <email>:
+1. One or more configuration files supported by [repo2docker](https://repo2docker.readthedocs.io) that list your desired packages. Supported configuration files are listed
+  [here](https://repo2docker.readthedocs.io/en/latest/config_files.html).
+1. A [Dockerfile](https://docs.docker.com/engine/reference/builder/). We recommend using or building
+on top of a [Jupyter Docker Stack](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html)
+that is already available to the community.
 
-Please upload your Dockerfile to [DockerHub](https://hub.docker.com/). Email the Docker image and tag name to
-<email> to add it to the spawner page.
+For an example of packages that could be included, please look at the 
+[Jupyter Core Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#core-stacks).
 
 ## I have an issue!
 Please [open an issue](https://github.com/LibreTexts/tech-Issues/issues/new) on GitHub. You will need to 
