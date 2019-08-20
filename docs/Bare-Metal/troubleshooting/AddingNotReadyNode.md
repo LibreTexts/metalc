@@ -25,8 +25,10 @@ First, ssh into the node with the NotReady state by running `ssh chick<NUMBER>`.
 Running `sudo systemctl restart kubelet.service` and checking the status with
 `systemctl status kubelet.service` returns an error code: 255.
 
-Checking the logs with `journalctl --since <time>` revealed that swap needed
-to be disabled for kubelet to run.
+Check if the node is added by running `kubectl get nodes`.
+
+In my case, chick9 was still `NotReady`. Checking the logs with `journalctl --since <time>` 
+revealed that swap needed to be disabled for kubelet to run.
 
 ```
 Jun 17 14:00:00 chick9 kubelet[18280]...failed to run Kubelet: Running with swap on is not supported, please disable swap!
