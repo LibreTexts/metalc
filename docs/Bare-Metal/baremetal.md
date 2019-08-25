@@ -1140,6 +1140,10 @@ buttons!
 Refer to [this Discourse post](https://discourse.jupyter.org/t/customizing-jupyterhub-on-kubernetes/1769/3)
 for information on editing the login page.
 
+### Enabling custom html templates
+You only need to complete this section once. To edit or add html files, go to
+the [next section](#Editing-custom-html-pages).
+
 The Discourse post includes two approaches to editing the login templates.
 We decided to use [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/),
 which must run to completion before a pod launches, i.e. a pod has the `Running` status.
@@ -1208,7 +1212,7 @@ hub:
 After adding this to `config.yaml`, run the command below.
 **Important note:** you must upgrade JupyterHub to a development release
 later than [this pull request](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/pull/1274).
-This is because Init Containers were added after the stable
+`config.yaml` supports Init Containers after the stable
 release of 0.8.2.
 ```
 RELEASE=jhub
@@ -1225,12 +1229,51 @@ folder in which the volume is mounted and `.../custom` (the second `custom`
 folder mentioned) refers to the folder in the repository containing your
 custom templates. (This is also explained in the Discourse post.)
 
-The images are mounted at `/usr/local/share/jupyterhub/static/external`.
-If you specify an image locally in an html file, use the prefix
-`hub/static/external/<path in repo to image`. For example,
-```
-<img src="/hub/static/external/images/libretexts_logo.png">
-```
+### Editing custom html pages
+1. Clone [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates).
+If you want to add images, clone [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
+too.
+   ```
+   git clone https://github.com/LibreTexts/jupyterhub-templates.git
+   git clone https://github.com/LibreTexts/jupyterhub-images.git
+   ```
+1. Edit or add html files in the `custom` folder of `jupyterhub-templates`.
+
+   Useful resources:
+   * [Working with templates and UI](https://jupyterhub.readthedocs.io/en/stable/reference/templates.html)
+   from the JupyterHub documentation.
+   * [How to extend Jinja2 templates](https://jinja.palletsprojects.com/en/2.10.x/templates/#template-inheritance)
+   
+   Additional note:
+   The images are mounted at `/usr/local/share/jupyterhub/static/external`.
+   If you specify an image locally in an html file, use the prefix
+   `hub/static/external/<path in repo to image`. For example,
+   ```
+   <img src="/hub/static/external/images/libretexts_logo.png">
+   ```
+   
+1. After editing your files, commit and push to the master branch of the repositories.
+   ```
+   git add *
+   git commit -m "<your commit message>"
+   git push
+   ```
+
+1. For the changes to appear, recreate the `hub-xxx` pod to rerun the Init Containers. 
+This can be done one of two ways:
+   a. by deleting the pod to force recreation,
+      ```
+      $ kubectl get pods -n jhub | grep "hub"
+      hub-<random string> ....
+      $ kubectl delete pod hub-<random string> -n jhub
+      ```
+   b. or by recreating all pods.
+      ```
+      helm upgrade $RELEASE jupyterhub/jupyterhub \
+        --version=0.9-2d435d6 \
+        --values config.yaml \
+        --recreate-pods
+      ```
 
 # User Stats
 ## Current Specifications
