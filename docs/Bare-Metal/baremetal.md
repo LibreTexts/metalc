@@ -1124,9 +1124,106 @@ After editing `config.yaml`, upgrade JupyterHub by running these commands in the
 RELEASE=jhub
 
 helm upgrade $RELEASE jupyterhub/jupyterhub \
-  --version=0.8.2 \
+  --version=0.9-2d435d6 \
   --values config.yaml
 ```
+
+## Editing the Login Page
+Refer to [this Discourse post](https://discourse.jupyter.org/t/customizing-jupyterhub-on-kubernetes/1769/3)
+for information on editing the login page.
+
+The Discourse post includes two approaches to editing the login templates.
+We decided to use [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/),
+which must run to completion before a pod launches, i.e. a pod has the `Running` status.
+In this setup, the Init Container uses the [alpine/git](https://hub.docker.com/r/alpine/git/)
+Docker image to `git clone` a repository of custom templates and mounts this
+volume to the `hub-xxx` pod. The volume is mounted to `/etc/jupyterhub/custom`
+of the `hub-xxx` pod.
+
+We mounted two volumes that clone two different repositories:
+1. [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates),
+ containing custom html templates
+1. [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images),
+containing images used in the website. This way, the html files reference
+the images locally rather than on different links online, which could later break.
+
+Our relevant portion of `config.yaml` looks like this:
+```
+hub:
+  # Clone custom JupyterHub templates into a volume
+  initContainers:
+    - name: git-clone-templates
+      image: alpine/git
+      args:
+        - clone
+        - --single-branch
+        - --branch=master
+        - --depth=1
+        - --
+        - https://github.com/LibreTexts/jupyterhub-templates.git
+        - /etc/jupyterhub/custom
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - name: custom-templates
+          mountPath: /etc/jupyterhub/custom
+    - name: git-clone-images
+      image: alpine/git
+      args:
+        - clone
+        - --single-branch
+        - --branch=master
+        - --depth=1
+        - --
+        - https://github.com/LibreTexts/jupyterhub-images.git
+        - /usr/local/share/jupyterhub/static/external
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - name: custom-images
+          mountPath: /usr/local/share/jupyterhub/static/external
+  extraVolumes:
+    - name: custom-templates
+      emptyDir: {}
+    - name: custom-images
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: custom-templates
+      mountPath: /etc/jupyterhub/custom
+    - name: custom-images
+      mountPath: /usr/local/share/jupyterhub/static/external
+  extraConfig:
+    templates: |
+      c.JupyterHub.template_paths = ['/etc/jupyterhub/custom/custom']
+```
+
+After adding this to `config.yaml`, run the command below.
+**Important note:** you must upgrade JupyterHub to a development release
+later than [this pull request](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/pull/1274).
+This is because Init Containers were added after the stable
+release of 0.8.2.
+```
+RELEASE=jhub
+
+helm upgrade $RELEASE jupyterhub/jupyterhub \
+  --version=0.9-2d435d6 \
+  --values config.yaml \
+  --recreate-pods
+```
+
+Note that the `c.JupyterHub.template_paths` variable is set to 
+`/etc/jupyterhub/custom/custom`. `/etc/jupyterhub/custom/` refers to the
+folder in which the volume is mounted and `.../custom` (the second `custom`
+folder mentioned) refers to the folder in the repository containing your
+custom templates. (This is also explained in the Discourse post.)
+
+The images are mounted at `/usr/local/share/jupyterhub/static/external`.
+If you specify an image locally in an html file, use the prefix
+`hub/static/external/<path in repo to image`. For example,
+```
+<img src="/hub/static/external/images/libretexts_logo.png">
+```
+
 
 ### As an Admin User
 When you log into JupyterHub, go to the **Control Panel** (Hub -> Control Panel)
