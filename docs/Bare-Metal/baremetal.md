@@ -1128,6 +1128,14 @@ helm upgrade $RELEASE jupyterhub/jupyterhub \
   --values config.yaml
 ```
 
+### As an Admin User
+When you log into JupyterHub, go to the **Control Panel** (Hub -> Control Panel)
+if you haven't already. Click the **Admin** tab on the navigation bar.
+
+You can add email addresses by clicking **Add Users**. Be careful of the other
+buttons!
+
+
 ## Editing the Login Page
 Refer to [this Discourse post](https://discourse.jupyter.org/t/customizing-jupyterhub-on-kubernetes/1769/3)
 for information on editing the login page.
@@ -1223,14 +1231,6 @@ If you specify an image locally in an html file, use the prefix
 ```
 <img src="/hub/static/external/images/libretexts_logo.png">
 ```
-
-
-### As an Admin User
-When you log into JupyterHub, go to the **Control Panel** (Hub -> Control Panel)
-if you haven't already. Click the **Admin** tab on the navigation bar.
-
-You can add email addresses by clicking **Add Users**. Be careful of the other
-buttons!
 
 # User Stats
 ## Current Specifications
