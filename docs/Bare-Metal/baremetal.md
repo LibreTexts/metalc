@@ -16,6 +16,7 @@ cluster.
 1. [Monitoring the Cluster](#Monitoring-the-Cluster)
 1. [Alerting for the Cluster](#Alerting-for-the-Cluster)
 1. [Securing the Cluster](#Securing-the-Cluster)
+1. [Updating Rooster](#Updating-Rooster)
 1. [Customizing the Cluster](#Customizing-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
@@ -1063,7 +1064,7 @@ sudo fail2ban-client add sshd
   Although running `sudo fail2ban-client status` shows that the `sshd` jail is
   active, probably from the sshd jail in the default file
   `/etc/fail2ban/action.d/defaults-debian.conf`.
-  
+
 ## Rkhunter: Rootkit Detection
 Attackers can install rootkits, which allow them to gain access to a system without the owner noticing. Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#rootkit-detection-with-rkhunter-wip) almost exactly.
 
@@ -1078,21 +1079,24 @@ Note that rkhunter in Ubuntu comes with cron scripts, which you can find in `/et
 Rkhunter will email a daily report.
 
 ## chrootkit: More Rootkit Detection
-[This article](https://debaday.debian.net/2008/02/06/rkhunter-chkrootkit-wise-crackers-only/) 
+[This article](https://debaday.debian.net/2008/02/06/rkhunter-chkrootkit-wise-crackers-only/)
 describes the differences between rkhunter and chrootkit. It recommends to use both!
 
 Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#rootkit-detection-with-chrootkit-wip)
-to install. 
+to install.
 
 4. When running `sudo dpkg-reconfigure chkrootkit`, I answered `Yes` to the first question
-   and left the second question blank. The default answer to the second question is `-q`, 
+   and left the second question blank. The default answer to the second question is `-q`,
    mode. The third question was answered with `Yes`.
-   
+
 ## Logwatch: System Log Analyzer
 Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#logwatch---system-log-analyzer-and-reporter) to install.
 
 As of now, it sends emails to root.
-  
+
+#Updating Rooster
+After weighting the pros and cons of using unattended updates against manual updates, we have decided to go with the manual updates. With manual updates, we can schedule a time ahead of time and let the users know to expect downtime. Also, since the updates are manual, we will be there to fix anything that goes wrong if Rooster encounters any problem during the update. 
+
 # Customizing the Cluster
 ## Whitelisting
 There are two ways to whitelist users: through the configuration file
@@ -1223,7 +1227,7 @@ helm upgrade $RELEASE jupyterhub/jupyterhub \
   --recreate-pods
 ```
 
-Note that the `c.JupyterHub.template_paths` variable is set to 
+Note that the `c.JupyterHub.template_paths` variable is set to
 `/etc/jupyterhub/custom/custom`. `/etc/jupyterhub/custom/` refers to the
 folder in which the volume is mounted and `.../custom` (the second `custom`
 folder mentioned) refers to the folder in the repository containing your
@@ -1243,7 +1247,7 @@ too.
    * [Working with templates and UI](https://jupyterhub.readthedocs.io/en/stable/reference/templates.html)
    from the JupyterHub documentation.
    * [How to extend Jinja2 templates](https://jinja.palletsprojects.com/en/2.10.x/templates/#template-inheritance)
-   
+
    Additional note:
    The images are mounted at `/usr/local/share/jupyterhub/static/external`.
    If you specify an image locally in an html file, use the prefix
@@ -1251,7 +1255,7 @@ too.
    ```
    <img src="/hub/static/external/images/libretexts_logo.png">
    ```
-   
+
 1. After editing your files, commit and push to the master branch of the repositories.
    ```
    git add *
@@ -1259,7 +1263,7 @@ too.
    git push
    ```
 
-1. For the changes to appear, recreate the `hub-xxx` pod to rerun the Init Containers. 
+1. For the changes to appear, recreate the `hub-xxx` pod to rerun the Init Containers.
 This can be done one of two ways:
    a. by deleting the pod to force recreation,
       ```
