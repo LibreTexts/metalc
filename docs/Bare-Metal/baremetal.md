@@ -1105,7 +1105,7 @@ are any potential errors that could occur during the update.
 1. If everything looks good from performing the dry run, then run the actual update: `sudo unattended-upgrade -d`
 1. If anything goes wrong, then troubleshoot the problem, otherwise perform some basic tests like trying to connect to a service
 on the cluster to confirm that everything is working.
-1. After we are sure that every service is working on the cluster, we will send out a message to users letting them know our
+1. After we are sure that every service is working on the cluster, we will send out a message to our users to let them know our
 services are back online.
 
 # Customizing the Cluster
