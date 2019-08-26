@@ -1094,8 +1094,19 @@ Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-L
 
 As of now, it sends emails to root.
 
-#Updating Rooster
-After weighting the pros and cons of using unattended updates against manual updates, we have decided to go with the manual updates. With manual updates, we can schedule a time ahead of time and let the users know to expect downtime. Also, since the updates are manual, we will be there to fix anything that goes wrong if Rooster encounters any problem during the update. 
+# Updating Rooster
+After weighting the pros and cons of using unattended updates against manual updates, we have decided to go with the manual updates. With manual updates, we can schedule a time ahead of time and let the users know to expect downtime. Also, since the updates are manual, we will be there to fix anything that goes wrong during the update. On the other hand, if anything went wrong during an unattended update, no one would be there to fix a problem if Rooster went down.
+
+## Steps for Updating Rooster:
+1. Decide on a time to run the update and send out an announcement to users letting them know ahead of time.
+1. Send out a second reminder on the day of the scheduled update.
+1. SSH into rooster and perform a dry run of the updates first:  `sudo unattended-upgrade -d --dry-run` , check if there
+are any potential errors that could occur during the update.
+1. If everything looks good from performing the dry run, then run the actual update: `sudo unattended-upgrade -d`
+1. If anything goes wrong, then troubleshoot the problem, otherwise perform some basic tests like trying to connect to a service
+on the cluster to confirm that everything is working.
+1. After we are sure that every service is working on the cluster, we will send out a message to users letting them know our
+services are back online.
 
 # Customizing the Cluster
 ## Whitelisting
