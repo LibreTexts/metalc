@@ -5,7 +5,7 @@ For the storage needs of our cluster, we have decided to setup a ZFS server. Thi
 * ***Chassis:*** 4U rackmount server case 36 bay
 * ***Motherboard:*** Supermicro X9DRH-7TF/7F/iTF/iF
 * ***Memory:*** Samsung 16 GB DDR3
-* ***HDD:*** Seagate Constellation ES.3 SAS 6Gb/s
+* ***HDD:*** Seagate Constellation ES.3 SAS 6Gb/s(will be referred to as 'HDDs')
 * ***SSD:***
     * Intel SSD DC S3500 Series 120GB(will be referred to as 'Intel SSDs' in the rest of the document)
     * Seagate Enterprise SATA SSD 120GB(will be referred to as 'Seagate SSDs' in the rest of the document)
@@ -18,8 +18,22 @@ For the OS, we use Centos 7. The OS is running on 2 Seagate SSDs with RAID1 for 
 
 Since we expect more writes than reads, we have setup 2 Intel SSDs as the zil cache. Because of the known weakness of SSDs to writes, the Intel SSDs were over-provisioned to 70% of their capacity. This will improve their performance and increase their life expectancy greatly. Potentially in the future, we can also add some l2arc caches to improve read performance, but it seems that we won't need that for now.
 
-On standby, we have two HDDs that act as hot spares to add an additional layer of security, If a HDD goes down in one of the stripes, one of the hot spares will be used to rebuild a stripe automatically without user intervention. In the event of a HDD failure, we plan to replace the failed drive with a new HDD and rebuild that stripe with that, so that we can keep the hot spares in the back of the chassis can just remain there.
-
-In the near future, we plan to also add 2 SSDs as l2arc caches to improve the read performance from the cluster.
+On standby, we have two HDDs that act as hot spares to add an additional layer of security. If a HDD goes down in one of the stripes, one of the hot spares will be used to rebuild a stripe automatically without user intervention. In the event of a HDD failure, we plan to replace the failed drive with a new HDD and rebuild that stripe with that, so that the hot spares in the back of the chassis can just remain there.
 
 # Hardware Preparation
+
+It is critical to update all the hardware when setting up a new server, since it will be very hard to do so once it runs in production. In this section, some of the details regarding the specific hardware that we had will be covered along with some tips.
+
+All of the hardware that we used to setup our ZFS server was made available to us by the UC Davis Bioinformatics Core, and luckily it well exceeds our needs.
+
+## Chassis
+
+The chassis that we have is a standard 4U rackmount server case with 36 bays. 24 bays are in the front, and 12 are in the back. The data and parity HDDs will be in the front bay for easy access, and the 2 zil caches, 2 OS Seagate SSDs and the 2 hot spares will be in the back.
+
+## Motherboard
+
+The Supermicro X9DRH-7TF/7F/iTF/iF motherboard needed to be updated. The BIOS was at version 3.0a when it was first booted, with 3.3 being the newest version. Also the IPMI controller firmware was updated.
+
+For Supermicro X9DRH-7TF/7F/iTF/iF, in order to update and flash the BIOS, two jumpers needed to be placed on the motherboard. This is a safety feature to prevent unauthorized people from trying to tamper with the BIOS.
+
+A DOS was used to update both the BIOS and the IPMI, the BIOS and IPMI can be found at [Supermicro](https://www.supermicro.com/products/motherboard/xeon/c600/x9drh-7tf.cfm)'s website.
