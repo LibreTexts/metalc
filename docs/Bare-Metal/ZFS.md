@@ -1,3 +1,10 @@
+# Table of Contents
+1. [Introduction](#Introduction)
+1. [Hardware](#Hardware)
+1. [Design](#Design)
+1. [Hardware Preparation](#Hardware-Preparation)
+
+
 # Introduction
 For the storage needs of our cluster, we have decided to setup a ZFS server. This decision was made partly because of the expertise and help that folks at the UC Davis Bioinformatics core could bring to the table, and because of the hardware already available to us. In addition, ZFS is one of the best filesystem for long-term, large-scale data storage, probably exceeding our needs for our current setup and for near future iterations of our cluster.
 
