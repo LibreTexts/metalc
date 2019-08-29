@@ -7,6 +7,21 @@
         #shell: echo "dev_env is false"
         when: dev_env|bool == false 
 
+      - name: mount nfs
+        lineinfile:
+          path: ~/hello.txt
+          line: '10.0.0.1:/export        /nfs    nfs     defaults 0 0'
+
+      
+      - name: create /nfs directory
+        file:
+          path: hello
+          state: directory #      - name: comment out swap
+        #        replace:
+        #          path: ~/hello.txt
+        #          regexp: 'is'
+        #          replace: '#is'
+
         # this is the task to run netplan on all the hosts
 #      - name: netplan apply to get the default gateway reset
 #        shell: netplan apply

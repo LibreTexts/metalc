@@ -76,12 +76,26 @@
      tags:
        - nfs
 
+   - name: create /zfs directory
+     file:
+       path: /zfs
+       state: directory
+     tags:
+       - zfs
+
    - name: mount nfs
      lineinfile:
        path: /etc/fstab
-       line: '10.0.0.1:/export        /nfs    nfs     defaults 0 0'
+#       line: '10.0.0.1:/export        /nfs    nfs     defaults 0 0'
+       line: '10.0.0.200:/nest        /zfs    nfs     defaults 0 0'
      tags:
        - nfs
+       - zfs
+
+   - name: manually mount /zfs
+     command: sudo mount 10.0.0.200:/nest /zfs
+     tags:
+       - manual
  
 # this is required because the nodeip was incorrect by default and the apiserver
 # was unable to locate worker pods.
