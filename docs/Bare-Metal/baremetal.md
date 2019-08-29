@@ -371,6 +371,15 @@ In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";`
 to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
+**Note:** In `/etc/hosts`, add the hostnames and IPs for each chick so you can
+ssh into each one using their hostname. 
+For example:
+```
+10.0.0.100      chick0
+10.0.0.101      chick1
+```
+Then run `sudo systemctl restart sshd`.
+
 # Adding Nodes
 
 First, check out [Netbooting](#Netbooting) to get the OS installed.
