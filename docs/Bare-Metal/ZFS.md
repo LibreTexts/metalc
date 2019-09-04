@@ -53,3 +53,10 @@ We used the linux cli tool to update the firmware, and it was very straightforwa
 
 ## SSD
 ### Intel SSD DC S3500 Series 120GB
+Intel provides a couple of very good tools for firmware updates and just general benchmarking. The tool that we used was the [Intel Solid State Drive Toolbox](https://downloadcenter.intel.com/download/28808/Intel-Solid-State-Drive-Toolbox), which is only available for Windows, but it allows you to update the firmware of your Intel SSD in the click of one button, and it can check the health state of your SSD.
+
+To increase the performance and life expectancy of an SSD, it is suggested to overprovision them. Overprovisioning is the act of "reducing" the maximum amount of storage available to the user, so there is always some free storage on the SSD. By always having free storage available, the endurance of the SSD is improved as the total number of writes and erases can be distributed across a larger population of NAND flash blocks.
+
+Intel has a [white paper](https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/over-provisioning-nand-based-ssds-better-endurance-whitepaper.pdf) on overprovisioning. We followed the using 'Using Intel SSD Data Center Tool for Over-Provisioning' section. We set the capacity to ```MaximumLBA=70%```, we overprovisioned a little more than the suggested amount of 80% because we planned to use these as the zil caches for the ZFS, so we knew that there would be a lot of writing and erasing going to happen on the drive.
+
+### Seagate Enterprise SATA SSD 120GB
