@@ -60,3 +60,47 @@ To increase the performance and life expectancy of an SSD, it is suggested to ov
 Intel has a [white paper](https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/over-provisioning-nand-based-ssds-better-endurance-whitepaper.pdf) on overprovisioning. We followed the using 'Using Intel SSD Data Center Tool for Over-Provisioning' section. We set the capacity to ```MaximumLBA=70%```, we overprovisioned a little more than the suggested amount of 80% because we planned to use these as the zil caches for the ZFS, so we knew that there would be a lot of writing and erasing going to happen on the drive.
 
 ### Seagate Enterprise SATA SSD 120GB
+The Seagate SSDs can be updated using similar tools used for updating the Seagate HDDs. To find the right tools and instructions to update the drive, the [Seagate website](https://www.seagate.com/support/internal-hard-drives/enterprise-hard-drives/constellation-es/) provides a way to check for firmware updates, at the bottom left corner of the page one can use the serial number of the drive to do a quick look up.
+
+The process was similar to updating the HDDs, and we used the linux cli tool again.
+
+We also overprovision the Seagate SSDs by leaving some free space when we install CentOS.
+
+# Installing CentOS 7
+For our CentOS installation, we burned the [minimal ISO](https://www.centos.org/download/) of CentOS onto a USB and used it as a bootable device.
+
+After booting into the drive, you should be greeted by seeing the CentOS installation screen. Here one can customize options such as keyboard language, OS language network, and various other options. Clicking on the 'Installation Destination' option, here we pick the drives to where the OS will be installed. For our setup, we will use a simple RAID1 setup with our 2 overprovisioned Seagate SSDs for redundancy and performance. After choosing the destination of the installation, we check the option 'I will configure partitioning' and click 'Done'.
+
+At this point, we will be presented with the manual partitioning screen. We delete any partition currently present on the drives that we have chosen and proceed to create our own. We choose the 'LVM' partitioning scheme and start by creating the /boot partition. We assign a size of 4GB to it, and set the filesystem type to ext4 and the 'RAID level' to RAID1. Next, we create the /swap partition, and also assign a size of 4GB to it, and leave the filesystem type to 'swap' and set the 'RAID level' to RAID1. We also make partitions for /var and /tmp, each one with 10GB of storage and ext4 and RAID1. Finally, we create the root partition (/) with a size of 60GB and ext4 and RAID1.
+
+***Note:*** It is important to create seperate partitions for /tmp and /var, as these folders tend to take up a lot of space, so that we don't run the risk of crashing the OS in the event they fill up too much.
+
+After we are done with the manual partitioning of the installation, CentOS will start installing. When CentOS is installing, it is a good time to setup the root password and create an account if one desires.
+
+***Note:*** By default, CentOS disables the network interface cards, and they have to be enabled before any kind of networking works. To enabled the cards, we run this command first ```cd /etc/sysconfig/network-scripts/```, here we will find some files with the name of the nic(network interface cards) available. Something like this:
+```
+ifcfg-enp3s0f0      ifcfg-enp6s0f1  ifdown-eth   ifdown-isdn    ifdown-sit       ifup          ifup-ib    ifup-plip   ifup-routes    ifup-tunnel        network-functions-ipv6
+ifcfg-enp3s0f0.bak  ifcfg-lo        ifdown-ib    ifdown-post    ifdown-Team      ifup-aliases  ifup-ippp  ifup-plusb  ifup-sit       ifup-wireless
+ifcfg-enp3s0f1      ifdown          ifdown-ippp  ifdown-ppp     ifdown-TeamPort  ifup-bnep     ifup-ipv6  ifup-post   ifup-Team      init.ipv6-global
+ifcfg-enp6s0f0      ifdown-bnep     ifdown-ipv6  ifdown-routes  ifdown-tunnel    ifup-eth      ifup-isdn  ifup-ppp    ifup-TeamPort  network-functions
+```
+We go into each one of the 'ifcfg-enp*' files and edit them:
+```diff
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=enp3s0f0
+UUID=<your UUID>
+DEVICE=enp3s0f0
+-ONBOOT=no
++ONBOOT=yes
+ZONE=public
+```
