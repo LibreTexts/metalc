@@ -84,7 +84,7 @@ ifcfg-enp3s0f0.bak  ifcfg-lo        ifdown-ib    ifdown-post    ifdown-Team     
 ifcfg-enp3s0f1      ifdown          ifdown-ippp  ifdown-ppp     ifdown-TeamPort  ifup-bnep     ifup-ipv6  ifup-post   ifup-Team      init.ipv6-global
 ifcfg-enp6s0f0      ifdown-bnep     ifdown-ipv6  ifdown-routes  ifdown-tunnel    ifup-eth      ifup-isdn  ifup-ppp    ifup-TeamPort  network-functions
 ```
-We go into each one of the 'ifcfg-enp*' files and edit them:
+We go into each one of the 'ifcfg-enp*' files and edit them by changing the 'ONBOOT' option from 'no' to 'yes':
 ```diff
 TYPE=Ethernet
 PROXY_METHOD=none
@@ -104,3 +104,9 @@ DEVICE=enp3s0f0
 +ONBOOT=yes
 ZONE=public
 ```
+We reboot the system, and now the networking should work.
+
+This is also a good time to install package updates, so we run ```sudo yum check-update``` followed by ```sudo yum update```.
+
+# Installing ZFS
+***Note:*** As of 9/4/19, version 0.8.1-1 is less buggy than version 0.7.*, so that's the version we used.
