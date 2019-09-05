@@ -3,6 +3,8 @@
 1. [Hardware](#Hardware)
 1. [Design](#Design)
 1. [Hardware Preparation](#Hardware-Preparation)
+1. [Installing CentOS 7](#Installing-CentOS-7)
+1. [Setting up ZFS](#Setting-up-ZFS)
 
 
 # Introduction
