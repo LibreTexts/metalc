@@ -108,5 +108,13 @@ We reboot the system, and now the networking should work.
 
 This is also a good time to install package updates, so we run ```sudo yum check-update``` followed by ```sudo yum update```.
 
-# Installing ZFS
-***Note:*** As of 9/4/19, version 0.8.1-1 is less buggy than version 0.7.*, so that's the version we used.
+# Setting up ZFS
+## Installing ZFS
+***Note:*** As of 9/4/19, version 0.8.1-1, which is development version at this moment, is less buggy than version 0.7.*, so that's the version we used.
+
+The ZFS repository provides some good documentation on how to install ZFS for a variety of OSes, the one that we will be looking at will be the [RHEL and CentOS](https://github.com/zfsonlinux/zfs/wiki/RHEL-and-CentOS) one.
+
+Following the guide, we install the latest EL package(EL7.6 at the moment):
+```
+sudo yum install http://download.zfsonlinux.org/epel/zfs-release.el7_6.noarch.rpm
+```
