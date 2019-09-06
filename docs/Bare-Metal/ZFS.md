@@ -79,7 +79,7 @@ At this point, we will be presented with the manual partitioning screen. We dele
 
 After we are done with the manual partitioning of the installation, CentOS will start installing. When CentOS is installing, it is a good time to setup the root password and create an account if one desires.
 
-***Note:*** By default, CentOS disables the network interface cards, and they have to be enabled before any kind of networking works. To enabled the cards, we run this command first ```cd /etc/sysconfig/network-scripts/```, here we will find some files with the name of the nic(network interface cards) available. Something like this:
+***Important:*** By default, CentOS disables the network interface cards, and they have to be enabled before any kind of networking works. To enabled the cards, we run this command first ```cd /etc/sysconfig/network-scripts/```, here we will find some files with the name of the nic(network interface cards) available. Something like this:
 ```
 ifcfg-enp3s0f0      ifcfg-enp6s0f1  ifdown-eth   ifdown-isdn    ifdown-sit       ifup          ifup-ib    ifup-plip   ifup-routes    ifup-tunnel        network-functions-ipv6
 ifcfg-enp3s0f0.bak  ifcfg-lo        ifdown-ib    ifdown-post    ifdown-Team      ifup-aliases  ifup-ippp  ifup-plusb  ifup-sit       ifup-wireless
@@ -120,3 +120,14 @@ Following the guide, we install the latest EL package(EL7.6 at the moment):
 ```
 sudo yum install http://download.zfsonlinux.org/epel/zfs-release.el7_6.noarch.rpm
 ```
+We then run these commands to complete the installation of ZFS:
+```
+sudo yum install epel-release
+sudo yum --enablerepo=zfs-testing install kernel-devel zfs
+```
+***Note:*** If after running ```zfs --version``` you don't get anything, try running ```modprobe zfs```.
+
+## Creating a zpool
+
+
+## Integrating ZFS with Kubernetes
