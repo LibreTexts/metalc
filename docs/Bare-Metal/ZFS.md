@@ -191,4 +191,17 @@ ZIL Cache:
 ```
 ***Importatnt:*** For production zpool deployments, it is necessary to use drive ids when creating a pool instead of the sd* identifiers.
 
+Once we have found all the ids for the drives, we create the zpool by running the command:
+```
+zpool create -o ashift=12 -f <name of the pool> raidz2 <stripe1 ids> raidz2 <stripe2 ids> raidz2 <stripe3 ids> raidz2 <stripe4 ids>
+```
+***ashift:*** This argument sets the minimum size of a IO on a vdev, 12 is for 4k drives. Matching the IO size with the drives you have will increase the performance of your ZFS.  
+***raidz2:*** raidz2 creates a vdev that uses 2 disks for parity allowing up to 2 disks to fail in a vdev and the vdev would still work.
+
+Then we can add the zil cache drives:
+```
+zpool add <name of the pool> log mirror <ssd ids>
+```
+***Note:*** Use ssds for zil cache.
+
 ## Integrating ZFS with Kubernetes
