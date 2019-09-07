@@ -132,6 +132,63 @@ For our setup, we use the front 24 bays(6 rows x 4 columns) for our stripes/vdev
 
 It is highly suggested to insert one stripe at a time and record the ids of the drives. This will be extremely helpful for future maintenance and locating failed drives.
 
-We used ledctl to locate the drives, it can be easily installed with ```sudo yum install ledctl```. After inserting the first stripe
+We used ledctl to find the ids of the drives, it can be easily installed with ```sudo yum install ledctl```. After inserting the first stripe, we navigate to /dev/ and run ```sudo ledctl <sd* address>``` and check if there is a led blinking in our stripe. Once we locate a drive on the stripe, we go to ```cd /dev/disk/by-id``` and run ```ls -l``` and it will show us what sd* has what id.
+```
+lrwxrwxrwx. 1 root root  9 Aug 28 18:19 scsi-35000c50057f4bedb -> ../../sdy
+lrwxrwxrwx. 1 root root 10 Aug 28 18:19 scsi-35000c50057f4bedb-part1 -> ../../sdy1
+lrwxrwxrwx. 1 root root 10 Aug 28 18:19 scsi-35000c50057f4bedb-part9 -> ../../sdy9
+lrwxrwxrwx. 1 root root  9 Aug 28 18:19 scsi-35000c50057f5d163 -> ../../sdn
+lrwxrwxrwx. 1 root root 10 Aug 28 18:19 scsi-35000c50057f5d163-part1 -> ../../sdn1
+lrwxrwxrwx. 1 root root 10 Aug 28 18:19 scsi-35000c50057f5d163-part9 -> ../../sdn9
+lrwxrwxrwx. 1 root root  9 Aug 28 18:19 scsi-35000c50057f625e3 -> ../../sdu
+lrwxrwxrwx. 1 root root 10 Aug 28 18:19 scsi-35000c50057f625e3-part1 -> ../../sdu1
+lrwxrwxrwx. 1 root root 10 Aug 28 18:19 scsi-35000c50057f625e3-part9 -> ../../sdu9
+lrwxrwxrwx. 1 root root  9 Aug 28 18:19 scsi-35000c50058161edb -> ../../sdi
+
+```
+We record down the ids in a text file and find the ids for the rest of the drives in the same way. We should end up with a final text file like this:
+```
+Stripe 1:
+  scsi-35000c500585b835b
+  scsi-35000c500585b7687
+  scsi-35000c500585b5c3b
+  scsi-35000c500585bba67
+  scsi-35000c500585babd3
+  scsi-35000c500585b977b
+
+Stripe 2:
+  scsi-35000c500585b7ef3
+  scsi-35000c500585b7713
+  scsi-35000c500585b640f
+  scsi-35000c500585b8f5f
+  scsi-35000c50057f625e3
+  scsi-35000c50058161edb
+
+Stripe 3:
+  scsi-35000c500585bb363
+  scsi-35000c500585b7723
+  scsi-35000c50057f5d163
+  scsi-35000c50057f4bedb
+  scsi-35000c5005816249f
+  scsi-35000c500585baf5b
+
+Stripe 4:
+  scsi-35000c500585ba3a7
+  scsi-35000c500585be40f
+  scsi-35000c500585bbbbb
+  scsi-35000c500585bcd97
+  scsi-35000c500585bc6a7
+  scsi-35000c500585b5c0b
+
+Hot Spares:
+  scsi-35000c500585b70cb
+  scsi-35000c500585bb737
+
+ZIL Cache:
+  ata-INTEL_SSDSC2BB120G4_BTWL3441025V120LGN
+  ata-INTEL_SSDSC2BB120G4_BTWL344200K7120LGN
+
+```
+***Importatnt:*** For production zpool deployments, it is necessary to use drive ids when creating a pool instead of the sd* identifiers.
 
 ## Integrating ZFS with Kubernetes
