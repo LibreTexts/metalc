@@ -128,6 +128,10 @@ sudo yum --enablerepo=zfs-testing install kernel-devel zfs
 ***Note:*** If after running ```zfs --version``` you don't get anything, try running ```modprobe zfs```.
 
 ## Creating a zpool
+For our setup, we use the front 24 bays(6 rows x 4 columns) for our stripes/vdevs, and in the remaining 12 bays in the back of the rack we have our 2 zil caches, 2 OS drives and 2 hot spares.
 
+It is highly suggested to insert one stripe at a time and record the ids of the drives. This will be extremely helpful for future maintenance and locating failed drives.
+
+We used ledctl to locate the drives, it can be easily installed with ```sudo yum install ledctl```. After inserting the first stripe
 
 ## Integrating ZFS with Kubernetes
