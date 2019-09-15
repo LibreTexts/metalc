@@ -3,6 +3,7 @@
 1. [Hardware](#Hardware)
 1. [Design](#Design)
 1. [Hardware Preparation](#Hardware-Preparation)
+1. [Networking](#Networking)
 1. [Installing CentOS 7](#Installing-CentOS-7)
 1. [Setting up ZFS](#Setting-up-ZFS)
 
@@ -67,6 +68,9 @@ The Seagate SSDs can be updated using similar tools used for updating the Seagat
 The process was similar to updating the HDDs, and we used the linux cli tool again.
 
 We also overprovision the Seagate SSDs by leaving some free space when we install CentOS.
+
+# Networking
+It is best to have the ZFS on a faster connection compared to the nodes that it will interact with. In our case, our ZFS server has a 10Gbps network card, and the rest of the nodes run on a 1Gbps.
 
 # Installing CentOS 7
 For our CentOS installation, we burned the [minimal ISO](https://www.centos.org/download/) of CentOS onto a USB and used it as a bootable device.
@@ -189,7 +193,7 @@ ZIL Cache:
   ata-INTEL_SSDSC2BB120G4_BTWL344200K7120LGN
 
 ```
-***Importatnt:*** For production zpool deployments, it is necessary to use drive ids when creating a pool instead of the sd* identifiers.
+***Important:*** For production zpool deployments, it is necessary to use drive ids when creating a pool instead of the sd* identifiers.
 
 Once we have found all the ids for the drives, we create the zpool by running the command:
 ```
@@ -202,6 +206,11 @@ Then we can add the zil cache drives:
 ```
 zpool add <name of the pool> log mirror <ssd ids>
 ```
-***Note:*** Use ssds for zil cache.
+***Note:*** Use SSDs for zil cache.
+
+Optional step is to add compression to the zpool to increse the capacity, this works best when the data being stored is not compressed already. There are different types of compression available, the most common one is lze:
+```
+zpool set compression=lz4 <pool>
+```
 
 ## Integrating ZFS with Kubernetes
