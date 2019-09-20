@@ -72,6 +72,8 @@ We also overprovision the Seagate SSDs by leaving some free space when we instal
 # Networking
 It is best to have the ZFS on a faster connection compared to the nodes that it will interact with. In our case, our ZFS server has a 10Gbps network card, and the rest of the nodes run on a 1Gbps.
 
+The ZFS server is connected to our smart switch using a short distance SFP+ transceiver with a 10 meters copper wire cable. The worker nodes then are connected to the smart switch using a standard ethernet cable.
+
 # Installing CentOS 7
 For our CentOS installation, we burned the [minimal ISO](https://www.centos.org/download/) of CentOS onto a USB and used it as a bootable device.
 
