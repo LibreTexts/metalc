@@ -1160,7 +1160,7 @@ You can add email addresses by clicking **Add Users**. Be careful of the other
 buttons!
 
 
-## Editing the Login Page
+## Creating Custom Pages
 Refer to [this Discourse post](https://discourse.jupyter.org/t/customizing-jupyterhub-on-kubernetes/1769/3)
 for information on editing the login page.
 
@@ -1298,6 +1298,36 @@ This can be done one of two ways:
         --values config.yaml \
         --recreate-pods
       ```
+#### Example: custom error pages
+Using the Jinja2 templating system, we:
+* extended the existing error.html by calling `{% extends "templates/error.html" %}`
+  (`templates` is a default folder inside the hub pod where JupyterHub looks for templates),
+* modified specific sections of the original file by using blocks, starting with
+`{% block h1_error %}` and ending with `{% endblock h1_error %}`,
+* and included the contents of the original content of the block by calling 
+`{{ super() }}`.
+
+Note that Python syntax can also be used, as shown in the if-else statement.
+```
+{% extends "templates/error.html" %}
+
+{% block h1_error %}
+{% if status_code == 400 %}
+{{ super() }}
+<p>
+  Please login again from <a href="https://jupyter.libretexts.org">the home page</a>.
+</p>
+{% elif status_code == 500 %}
+{{ super() }}
+<p>
+  Oh no! Something is wrong on our end. If this problem persists, please email us</a>.
+</p>
+{% else %}
+{{ super() }}
+{% endif %}
+
+{% endblock h1_error %}
+```
 
 # User Stats
 ## Current Specifications
