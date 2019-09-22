@@ -218,6 +218,11 @@ zpool add <name of the pool> log mirror <ssd ids>
 ```
 ***Note:*** Use SSDs for zil cache.
 
+To add some hot spares to the pool:
+```
+zpool add <name of the pool> spare <spare drive id>
+```
+
 Optional step is to add compression to the zpool to increse the capacity, this works best when the data being stored is not compressed already. There are different types of compression available, the most common one is lze:
 ```
 zpool set compression=lz4 <pool>
