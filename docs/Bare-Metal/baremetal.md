@@ -372,7 +372,7 @@ to each host. This is for dhcp to replace the hostname of the computer. Alternat
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
 
 **Note:** In `/etc/hosts`, add the hostnames and IPs for each chick so you can
-ssh into each one using their hostname. 
+ssh into each one using their hostname.
 For example:
 ```
 10.0.0.100      chick0
@@ -556,6 +556,9 @@ Add the IP addresses to `metallb-config.yml` and run `kubectl apply -f metallb-c
 
 
 ## NFS
+***Update:*** Documentation on how to setup a physical NFS server using ZFS can be found [here](./docs/Bare-Metal/ZFS.md).
+If you don't have the necessary hardware or if you don't need to have a dedicated physical NFS
+server yet, just keep on reading.
 NFS is needed to handle persistent volume claims. It allows persistence of files made by
 the nodes.
 
@@ -1304,7 +1307,7 @@ Using the Jinja2 templating system, we:
   (`templates` is a default folder inside the hub pod where JupyterHub looks for templates),
 * modified specific sections of the original file by using blocks, starting with
 `{% block h1_error %}` and ending with `{% endblock h1_error %}`,
-* and included the contents of the original content of the block by calling 
+* and included the contents of the original content of the block by calling
 `{{ super() }}`.
 
 Note that Python syntax can also be used, as shown in the if-else statement.

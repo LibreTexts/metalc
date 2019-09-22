@@ -6,6 +6,7 @@
 1. [Networking](#Networking)
 1. [Installing CentOS 7](#Installing-CentOS-7)
 1. [Setting up ZFS](#Setting-up-ZFS)
+1. [Done](#Done)
 
 
 # Introduction
@@ -70,11 +71,16 @@ The process was similar to updating the HDDs, and we used the linux cli tool aga
 We also overprovision the Seagate SSDs by leaving some free space when we install CentOS.
 
 # Networking
+***Note:*** If you are using an intel network interface card you might run into compatibilities problem with the driver. Follow [these](https://ahelpme.com/linux/kernel/missing-network-interface-10g-intel-x520-with-error-failed-to-load-because-of-unsupported-sfp/) instructions to solve the problem.
+
 It is best to have the ZFS on a faster connection compared to the nodes that it will interact with. In our case, our ZFS server has a 10Gbps network card, and the rest of the nodes run on a 1Gbps.
 
 The ZFS server is connected to our smart switch using a short distance SFP+ transceiver with a 10 meters SR(multimode) copper wire cable. The worker nodes then are connected to the smart switch using a standard ethernet cable.
 
 ***Note:*** The transceiver and cable type have to match in order to work. For example, if the transceivers being used are multimode then the cable has to be multimode. Same goes for single mode. More info can be found [here](https://community.fs.com/blog/how-many-types-of-sfp-transceivers-do-you-know.html).
+
+We have a DHCP server running on rooster, and this is how our ZFS server gets assigned an ip on the k8s network.
+
 
 # Installing CentOS 7
 For our CentOS installation, we burned the [minimal ISO](https://www.centos.org/download/) of CentOS onto a USB and used it as a bootable device.
@@ -218,3 +224,66 @@ zpool set compression=lz4 <pool>
 ```
 
 ## Integrating ZFS with Kubernetes
+### On the ZFS server
+This part will assume that the ZFS is running CentOS 7.
+
+SSH onto the ZFS server and setup a nfs server:
+```
+yum install -y nfs-utils
+```
+Once installed, enable the services:
+```
+systemctl start nfs-server rpcbind
+systemctl enable nfs-server rpcbind
+```
+Set the permissions to allow NFS clients to read and write to the created directory:
+```
+chmod 777 /<name of your share>/
+```
+We have to modify /etc/exports to make an entry for the ZFS that we want to share:
+```
+/<name of your share> <ip address of the ZFS server with subnet mask>(rw,fsid=0,async,no_subtree_check,no_auth_nlm,insecure,no_root_squash)
+```
+Export the shared directory ussing the following command:
+```
+exportfs -r
+```
+Next we configure the firewall to allow other nodes to access the share on the ZFS server:
+```
+firewall-cmd --permanent --add-service mountd
+firewall-cmd --permanent --add-service rpc-bind
+firewall-cmd --permanent --add-service nfs
+firewall-cmd --reload
+```
+
+### On the nodes using the ZFS
+The last step is to login into the nodes and mount the ZFS share on there. It can be done through Ansible or manually. We create a local folder for the share and run:
+```
+mount <ip of the ZFS server>:/<name of the share on the ZFS server> /<local share folder name>
+```
+
+### Setting up nfs-client-provisioner
+Create a config.yaml file with:
+```
+# values as specified in this:
+# https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner
+#
+# # set the nfs server to the host you are running on
+nfs:
+  server: <ip of the ZFS server>
+# note that path can be '/' because we use the "fsid=0" param in `/etc/exports`
+  path: /
+
+# create a storage class with this provisioner and make it the default class
+# reclaim policy Retain means people can sign back in and still have their
+# stuff there
+storageClass:
+  defaultClass: true
+  reclaimPolicy: Retain
+```
+Install the chart with our configurations:
+```
+helm install --name nfs-client-release stable/nfs-client-provisioner -f config.yml
+```
+# Done
+Enjoy your ZFS !
