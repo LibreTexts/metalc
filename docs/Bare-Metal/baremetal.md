@@ -556,7 +556,7 @@ Add the IP addresses to `metallb-config.yml` and run `kubectl apply -f metallb-c
 
 
 ## NFS
-***Update:*** Documentation on how to setup a physical NFS server using ZFS can be found [here](./docs/Bare-Metal/ZFS.md).
+***Update:*** Documentation on how to setup a physical NFS server using ZFS can be found [here](./ZFS.md).
 If you don't have the necessary hardware or if you don't need to have a dedicated physical NFS
 server yet, just keep on reading.  
 
