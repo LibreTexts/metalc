@@ -333,6 +333,12 @@ group {
 
 1. `sudo ufw allow tftp` so it can use the images
 
+**Note:** If getting errors (like the nodes can't reach the internet, or
+you're not having the 'right' Ubuntu mirror), change the IP forwarding 
+policy in `/etc/default/ufw` to:
+```
+DEFAULT_FORWARD_POLICY="ACCEPT"
+```
 
 ### steps on chicks (i.e. things you need to do to boot a node on the network)
 
