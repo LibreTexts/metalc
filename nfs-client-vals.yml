@@ -3,7 +3,7 @@
 #
 # # set the nfs server to the host you are running on
 nfs:
-  server: 128.120.136.26
+  server: 10.0.0.200
 # note that path can be '/' because we use the "fsid=0" param in `/etc/exports`
   path: /
 

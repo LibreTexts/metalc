@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+  - name: Ansible creates hello.txt
+    file:
+      path: "~/hello.txt"
+      state: touch
+

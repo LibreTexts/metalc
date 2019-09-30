@@ -69,12 +69,10 @@
      tags:
        - nfs
 
-   - name: create /nfs directory
-     file:
-       path: /nfs
-       state: directory
+   - name: disable swap
+     shell: swapoff -a
      tags:
-       - nfs
+       - swap
 
    - name: create /zfs directory
      file:

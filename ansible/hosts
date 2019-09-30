@@ -13,7 +13,15 @@ chick6 ansible_host=10.0.0.106 ansible_port=22 ansible_user='spicy'
 chick7 ansible_host=10.0.0.107 ansible_port=22 ansible_user='spicy' 
 chick8 ansible_host=10.0.0.108 ansible_port=22 ansible_user='spicy' 
 chick9 ansible_host=10.0.0.109 ansible_port=22 ansible_user='spicy' 
-chick10 ansible_host=10.0.0.110 ansible_port=22 ansible_user='spicy' 
+chick10 ansible_host=10.0.0.110 ansible_port=22 ansible_user='spicy'
+chick11 ansible_host=10.0.0.111 ansible_port=22 ansible_user='spicy'
+chick12 ansible_host=10.0.0.112 ansible_port=22 ansible_user='spicy'
+chick13 ansible_host=10.0.0.113 ansible_port=22 ansible_user='spicy'
+chick14 ansible_host=10.0.0.114 ansible_port=22 ansible_user='spicy'
+chick15 ansible_host=10.0.0.115 ansible_port=22 ansible_user='spicy'
+chick16 ansible_host=10.0.0.116 ansible_port=22 ansible_user='spicy'
+chick17 ansible_host=10.0.0.117 ansible_port=22 ansible_user='spicy'
+chick18 ansible_host=10.0.0.118 ansible_port=22 ansible_user='spicy' 
 
 # only 1 master master. This stuff executes stuff that is only done
 # once for the entire cluster
@@ -24,7 +32,7 @@ chick0
 [masters]
 
 [workers]
-chick[1:10]
+chick[11:11]
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
