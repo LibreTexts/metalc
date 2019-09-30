@@ -29,9 +29,12 @@ repository. We keep this as a reference for those who might encounter the same p
 This section documents troubleshooting problems and solutions. Readers should consult this section 
 when dealing with an issue.
 
-1. [AddingNotReadyNode.md](./docs/Bare-Metal/troubleshooting/AddingNotReadyNode.md) troubleshoots adding a node
+1. [Adding Not Ready Node](./docs/Bare-Metal/troubleshooting/AddingNotReadyNode.md) troubleshoots adding a node
 in a NotReady state, with error code 255. The process works best for adding a node that is considered
 to be part of the cluster.
+1. [Deleted Kube DNS Service](./docs/Bare-Metal/troubleshooting/DeletedKubeDNSService.md) troubleshoots
+accidentally deleting and readding a service from the cluster. In this case, the `kube-dns` service is deleted;
+this could be useful for other services that may be deleted.
 
 ### JupyterHub on GCloud
 This section teaches how to set-up and configure JupyterHub on Google Cloud.

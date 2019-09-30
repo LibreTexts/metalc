@@ -13,6 +13,11 @@ cluster.
 1. [Adding Nodes](#Adding-Nodes)
 1. [Installing JupyterHub and BinderHub](#Installing-JupyterHub-and-BinderHub)
 1. [Accessing the Cluster](#Accessing-the-Cluster)
+1. [Monitoring the Cluster](#Monitoring-the-Cluster)
+1. [Alerting for the Cluster](#Alerting-for-the-Cluster)
+1. [Securing the Cluster](#Securing-the-Cluster)
+1. [Updating Rooster](#Updating-Rooster)
+1. [Customizing the Cluster](#Customizing-the-Cluster)
 1. [Literature List](#Literature-List) for learning resources.
 1. [Useful Commands](#Useful-Commands)
 
@@ -106,10 +111,10 @@ https://kubernetes.github.io/ingress-nginx/deploy/baremetal/)
 ## HA masters
 
 Down the road, we need to configure high availability masters so we aren't as vulnerable to a master
-failing. The setup is outlined in the [kubeadm docs](https://kubernetes.io/docs/setup/independent/high-availability/). 
-We can use either [HA proxy](http://www.haproxy.org/#desc), which Richard is familiar with, 
-or maybe some sort of nginx proxy. Either way, we have to do this manually since this proxying 
-must exist before kubectl is operational. 
+failing. The setup is outlined in the [kubeadm docs](https://kubernetes.io/docs/setup/independent/high-availability/).
+We can use either [HA proxy](http://www.haproxy.org/#desc), which Richard is familiar with,
+or maybe some sort of nginx proxy. Either way, we have to do this manually since this proxying
+must exist before kubectl is operational.
 
 ## Cluster Helm chart
 
@@ -117,17 +122,6 @@ This will basically all the extra stuff we need to add to the cluster to make it
 environment. For instance,
   - install the dynamic nfs volume provisioner on the cluster
   - install MetalLB on cluster
-
-## Configure Monitoring
-
-we should collect data on:
-    - load times
-    - which images are being used
-    - cpu, memory, and data usage. Per user also.
-    - also, all the kubernetes stuff, like pods per node and stuff.
-
-maybe use prometheus? check this [blog post](
-https://akomljen.com/get-kubernetes-cluster-metrics-with-prometheus-in-5-minutes/)
 
 ## Testing
 
@@ -179,7 +173,7 @@ It will run a DHCP server on this network.
 The rest of the nodes will connect to this dumb switch only on their management interface.
 
 Uses green ethernet cables.
-        
+
 
 ## Pod Network
 
@@ -243,14 +237,14 @@ dhcp server also at `10.0.0.1`.
 
 1. to `/etc/netplan/01-netcfg.yaml`, or whatever the netplan file is I added
   the following under ethernets:
-    
+
               enp3s0:
                   addresses: [192.168.0.1/24]
                   gateway4: 128.120.136.1
                   dhcp4: no
                   nameservers:
                           addresses: [192.168.0.1]
-    
+
   so we get that management interface up
 
 1. `netplan apply`
@@ -339,6 +333,12 @@ group {
 
 1. `sudo ufw allow tftp` so it can use the images
 
+**Note:** If getting errors (like the nodes can't reach the internet, or
+you're not having the 'right' Ubuntu mirror), change the IP forwarding 
+policy in `/etc/default/ufw` to:
+```
+DEFAULT_FORWARD_POLICY="ACCEPT"
+```
 
 ### steps on chicks (i.e. things you need to do to boot a node on the network)
 
@@ -357,7 +357,7 @@ group {
   turn off the network boot on the manager (rooster). So on rooster, run
   `systemctl stop tftpd-hpa` before rebooting your newly installed machine.
   After it boots, you can turn tftp back on.
-  
+
 #### Alternative route: preseeding
 With preseeding, you can install Ubuntu Server 18.04 using a preconfiguration file,
 without going through each installation step manually.
@@ -367,15 +367,24 @@ Under `label cli` lists the tasks and boot parameters needed to automate most of
 configuration.
 
 The file `srv/tftp/preseed.cfg` lists the preconfiguration options. We removed the
-partitioning section of the preconfiguration file because we wanted to keep the 
+partitioning section of the preconfiguration file because we wanted to keep the
 RAID arrays already in place of each chick.
 
 In order to use preseeding, type in the command `cli` after the `boot:` prompt when pxelinux
 shows up from booting from the network.
 
-In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";` 
+In `/etc/dhcp/dhcpd.conf`, to each host, add `option host-name "<HOSTNAME>";`
 to each host. This is for dhcp to replace the hostname of the computer. Alternatively,
 you could type in `cli hostname=<HOSTNAME>` when booting each chick.
+
+**Note:** In `/etc/hosts`, add the hostnames and IPs for each chick so you can
+ssh into each one using their hostname.
+For example:
+```
+10.0.0.100      chick0
+10.0.0.101      chick1
+```
+Then run `sudo systemctl restart sshd`.
 
 # Adding Nodes
 
@@ -409,12 +418,12 @@ node functioning in the kubernetes cluster after the os is already installed.
   It might be a bug. If you are
   just adding one host and not provisioning the whole cluster, add the `--limit "chick{i}`
   flag.
- 
+
 ## Adding Individual Nodes
-  
-If you are adding a completely new node, add the `--limit "chick{i}` flag, 
-then run the playbook `workers.yml` with both the master and new chick node. 
-  
+
+If you are adding a completely new node, add the `--limit "chick{i}` flag,
+then run the playbook `workers.yml` with both the master and new chick node.
+
 The first task will give you a fatal error for the task, `join cluster`; this
 is expected. (We can probably write another playbook for adding nodes, but would involve
 a lot of copying and pasting.)
@@ -426,7 +435,7 @@ If you are adding a wiped node whose name is still in the cluster, i.e. the name
 the node still appears when running `kubectl get nodes`, then delete the node first
 by running `kubectl delete node <node-name>` and completely wipe the node again.
 Then follow the steps as if you were adding a completely new node.
-  
+
 If you are adding a node that has been detached (e.g. you restarted the system
 on the node), then run `sudo systemctl restart kubelet.service`. If you still have
 trouble, this may help: [Troubleshooting](https://github.com/libretexts/metalc/docs/BareMetalTroubleshooting/AddingNotReadyNode.md)
@@ -515,7 +524,7 @@ is part of `/etc/nginx/nginx.conf` forwarding:
 ```
 
 # this is where we forward to the "public" ips internally
-# only did the first 3. 
+# only did the first 3.
 	server {
 		listen 128.120.136.32;
 
@@ -553,13 +562,17 @@ Add the IP addresses to `metallb-config.yml` and run `kubectl apply -f metallb-c
 
 
 ## NFS
+***Update:*** Documentation on how to setup a physical NFS server using ZFS can be found [here](./ZFS.md).
+If you don't have the necessary hardware or if you don't need to have a dedicated physical NFS
+server yet, just keep on reading.  
+
 NFS is needed to handle persistent volume claims. It allows persistence of files made by
 the nodes.
 
 (Credit to [Kevin's kube-dev-env](https://github.com/kkrausse/kube-dev-env))
 
 In rooster, run `sudo apt install nfs-kernel-server` to install the NFS server on the
-host system. We will use `/export` on rooster as the shared directory which the chicks 
+host system. We will use `/export` on rooster as the shared directory which the chicks
 can access.
 
 Add the following line to `/etc/exports`:
@@ -568,13 +581,13 @@ Add the following line to `/etc/exports`:
 ```
 and run `exportfs -a`.
 
-To make sure the NFS mount is successful, run this command on rooster to allow anything 
+To make sure the NFS mount is successful, run this command on rooster to allow anything
 from the network of chicks to talk to rooster: `ufw allow from 10.0.0.0/8 to 10.0.0.1`.
 Without this command, the firewall won't allow you to mount NFS.
 
 We want each chick to mount `10.0.0.1:/export` (on rooster) to `/nfs` (locally on the chick
 node). The Ansible Playbook already auto-mounts rooster to each chick by editing the
-`/etc/fstab` file, so you don't have to do this manually. If you do want to do it manually, 
+`/etc/fstab` file, so you don't have to do this manually. If you do want to do it manually,
 run the command `sudo mount 10.0.0.1:/export /nfs` on each chick node.
 
 The `nfs-client-vals.yml` describes the values used for running the NFS client provisioner.
@@ -592,11 +605,174 @@ for setting up JupyterHub.
 Follow [these instructions](https://binderhub.readthedocs.io/en/latest/setup-registry.html) for
 setting up BinderHub. The DockerHub container registry is under @lux12337's account for now.
 
+## Enabling TCP traffic on rooster
+Because of how our cluster is setup with all internet traffic going through rooster before reaching
+the cluster, Nginx on rooster is setup as a reverse proxy to direct the inbound traffic to the right
+service running on our cluster(eg. JupyterHub, BinderHub...). We use the [stream](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/) block for TCP traffic. The stream block allows Nginx to
+redirect encrypted traffic to the right service on the cluster where it will be decrypted accordingly.
+If we don't make use of the stream block funtion on Nginx, https traffic coming in meant for services
+on the cluster would never reach the cluster as Nginx would see encrypted traffic and try to perform a
+three-way handshake, which would obviously fail as the certificates are setup on the services themselves.
+
+This differs from our previous nginx setup. Before, we had server and upstream blocks in an
+`https` block:
+```
+https {
+...
+	server {
+		listen 128.120.136.32;
+
+		location / {
+			proxy_pass http://10.0.1.32;
+
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header Host $host;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header X-NginX-Proxy true;
+		}
+	}
+...
+}
+```
+However, this would not work since the certificates are set up on the services on the cluster,
+so the traffic cannot be decrypted.
+
+Instead, we use a `stream` block, as follows. Note that all IP addresses in the server blocks
+have domain names assigned to them, so any traffic going to those domains are redirected accordingly.
+```
+stream {
+        upstream jupyterhub {
+                server 10.0.1.54:443;
+        }
+
+        upstream binder {
+                server 10.0.1.61:443;
+        }
+
+        upstream binderhub {
+                server 10.0.1.55:443;
+        }
+
+	server {
+                listen 128.120.136.54:443;
+                ssl_preread on;
+                proxy_pass jupyterhub;
+        }
+
+        server {
+                listen 128.120.136.56:443;
+                ssl_preread on;
+                proxy_pass binder;
+        }
+
+        server {
+                listen 128.120.136.55:443;
+                ssl_preread on;
+                proxy_pass binderhub;
+        }
+}
+```
+
+For more info on NGINX reverse proxies, look [here](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/).
+
+Still encountering errors? Maybe port 80 isn't open. More details [here](/docs/Bare-Metal/troubleshooting/HTTPSonJupyterHub.md).
+
+## HTTPS on Binder
+The documentation for BinderHub seems to suggest that it doesn't have a built in https functionality like
+JupyterHub does. So we had to install manually the various components for https, credit to [@kaseyhackspace](https://github.com/jupyterhub/binderhub/issues/284/#issuecomment-506919567):
+
+1. Install [cert-manager](https://docs.cert-manager.io/en/latest/getting-started/install/kubernetes.html#steps).
+```
+# Install the CustomResourceDefinition resources separately
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml
+
+# Create the namespace for cert-manager
+kubectl create namespace cert-manager
+
+# Label the cert-manager namespace to disable resource validation
+kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+
+# Add the Jetstack Helm repository
+helm repo add jetstack https://charts.jetstack.io
+
+# Update your local Helm chart repository cache
+helm repo update
+
+# Install the cert-manager Helm chart
+helm install \
+  --name cert-manager \
+  --namespace cert-manager \
+  --version v0.8.1 \
+  jetstack/cert-manager
+```
+2. Create cluster-issuer.yaml(**NOTE:** Using 'ClusterIssuer' as kind will allow cert-manager to issue
+certificates for services in any namespace)
+```
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: <email-address>
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource used to store the account's private key.
+      name: letsencrypt-production
+    http01: {}
+```
+3. Apply issuer with kubectl
+```
+kubectl apply -f binderhub-issuer.yaml
+```
+4. Install nginx-ingress controller
+```
+helm install stable/nginx-ingress --name quickstart
+```
+5. Point your domain to the loadbalancer external IP of the nginx-ingress controller, 10.0.1.61
+on k8s in our case
+```
+kubectl get svc -n <NAMESPACE OF INGRESS CONTROLLER>
+```
+6. Append ingress object on top level indentation in your config.yaml
+```
+config:
+  BinderHub:
+    use_registry: true
+    image_prefix: <dockerhub prefix>
+    hub_url: <jupyterhub-url>
+
+ingress:
+  enabled: true
+  hosts:
+    - <domain-name>
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/issuer: letsencrypt-production
+  https:
+    enabled: true
+    type: nginx
+  tls:
+    - secretName: <domain-name>-tls
+      hosts:
+        - <domain-name>
+```
+7. Perform helm upgrade to enable ingress
+```
+helm upgrade binderhub jupyterhub/binderhub --version=0.2.0-3b53fce  -f secret.yaml -f config.yaml
+```
+8. Wait for 10~ minutes, it takes some time for it to acquire a certificate.
+
 # Accessing the Cluster
 To access the cluster, you can run the command `ssh <rooster's IP address> -D 4545`.
 
 Alternatively, if you have putty, you can SSH into rooster.
-In putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels** 
+In putty, click the upper left, go to **Change Settings**. In the left menu, go to **SSH**, then **Tunnels**
 to add a new port forwarding rule.
 For **Source port**, type `4545`.
 Select `Dynamic`. Click **Add**.
@@ -612,6 +788,580 @@ Note that BinderHub has an "underlying JupyterHub" it uses to create non-persist
 This JupyterHub does not seem to be accessible on its own. Hence when you type
 `kubectl get services -A`, the `proxy-public` load balancer under the `binderhub` namespace
 corresponds to the underlying JupyterHub and the `binder` load balancer corresponds to Binder.
+
+# Monitoring the Cluster
+## Installing Prometheus and Grafana
+We decided to deploy [prometheus-operator](https://github.com/helm/charts/tree/master/stable/prometheus-operator)
+as it takes care of setting up both the Prometheus deployment and the Grafana deployment for us.
+Before installing the chart with helm, we changed the settings of the [values.yaml](https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml) file to enable ingress for Grafana specifically.<br/>
+**NOTE:** Prometheus-operator seems to have an issue where upgrading the helm deployment deletes all the user data in Grafana, for now make sure to add all the settings you want in the beginning to avoid upgrading in the future. I suggest you take a look at our next section on alerting before installing Grafana.
+
+We created a folder called monitoring to store all of our yaml configuration files.
+
+You can change any of the default values in the values.yaml file and put it in a separate yaml file that
+can be applied during the installation. Our yaml file looks like this:
+```
+grafana:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      ingress.kubernetes.io/ssl-redirect: "true"
+      certmanager.k8s.io/issuer: letsencrypt-production
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - grafana.libretexts.org
+    path: /
+    tls:
+      - secretName: grafana.libretexts.org-tls
+        hosts:
+          - grafana.libretexts.org
+```
+We enable ingress so that our nginx controller pod can connect to the right endpoint for Grafana.
+We can check that the ingress is pointing at the endpoint for Grafana by running `kubectl get ingress -n <NAMESPACE>`,
+and then using `kubectl describe ingress <NAME OF INGRESS> -n <NAMESPACE>` to get something like:
+```
+Name:             prometheus-operator-grafana
+Namespace:        monitoring
+Address:
+Default backend:  default-http-backend:80 (<none>)
+TLS:
+  grafana.libretexts.org-tls terminates grafana.libretexts.org
+Rules:
+  Host                    Path  Backends
+  ----                    ----  --------
+  grafana.libretexts.org
+                          /   prometheus-operator-grafana:80 (10.244.85.133:3000)
+Annotations:
+  ingress.kubernetes.io/ssl-redirect:  true
+  kubernetes.io/ingress.class:         nginx
+  kubernetes.io/tls-acme:              true
+  certmanager.k8s.io/issuer:           letsencrypt-production
+Events:                                <none>
+```
+Under the 'Host', 'Path', 'Backends', we can see that our domain name points to our Grafana endpoint. Checking
+with the command `kubectl get ep -n <NAMESPACE>`, we can confirm that the endpoint is correct:
+```
+NAME                                           ENDPOINTS                                                     AGE
+prometheus-operator-grafana                    10.244.85.133:3000                                            3d13h
+```
+Once we confirm that the ingress is setup properly, we can move on to the last step. We used cert-manager to secure
+access to Grafana over the web. We created a seperate yaml file called 'certificate.yaml' that communicates with
+our cert-manager that we had setup already to assign a certificate for HTTPS communnication.
+```
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: grafana.libretexts.org-tls
+spec:
+  secretName: grafana.libretexts.org-tls
+  dnsNames:
+  - grafana.libretexts.org
+  acme:
+    config:
+    - http01:
+        ingressClass: nginx
+      domains:
+      - grafana.libretexts.org
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+```
+Run with `kubectl create -f <FILE>` (this assumes that the cert-manager is of kind ClusterIssuer), and cert-manager
+will take care of the rest.
+
+In our setup, since we are using nginx as a proxy to our cluster, we changed our nginx.conf and lb file accordingly
+to point traffic for 'grafana.libretexts.org' to our nginx controller on the cluster.
+
+# Alerting for the Cluster
+For basic alerts on the cluster, we have decided to use Grafana built in alerting because it is easy to setup and use.
+
+## Grafana Alert Channels
+Grafana supports a variety of [channels](https://grafana.com/docs/alerting/notifications/) to send notifications with,
+we setup a Slack channel and an email channel.
+
+## Setting up Alerts
+The latest version of Grafana has a built-in templating feature where it allows the user to use a 'template' variable
+instead of a hardcoded one, allowing for a better user experience. However, Grafana doesn't support the use of templates when alerting. A workaround is to create specific dashboards with hardcoded values for alerting, and use separate dashboards with templates for actual monitoring.
+
+In order to setup the email channel for notifications, it requires a SMTP server. You can use your own SMTP server if you have one on your server, if not, you can use a third party one. We will be using the SMTP server that comes with a gmail account for simplicity. In order to enable email notifications, we need to add some settings to the configuration file for our prometheus-operator:
+```
+grafana:
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: "smtp.gmail.com:587" #gmail
+      user: "youremail@gmail.com" #email
+      password: <gmail password>
+```
+These configurations were enough for us to setup gmail for SMTP. For different SMTP setups, more settings can be found [here](https://grafana.com/docs/installation/configuration/#smtp). After installing prometheus-operator with these settings, one can follow [these](https://grafana.com/docs/alerting/notifications/) instructions to setup the alert channels on Grafana.<br/>
+**NOTE:** If you are running a firewall, make sure to open the ports used by SMTP, we use 587 here.
+
+After the alert channels are setup, one can move on to creating the alerts. We organized our alerts in a separate 'Alerts' folder from the rest of the dashboards used for monitoring.
+![folders](../images/grafana-folders.png)
+
+We can use existing dashboards as templates for our alerts. We can click on the name of a panel at the top to get a drop down menu, and selecting 'edit' we can see the settings for a panel.
+![edit](../images/grafana-edit.png)
+
+By looking at existing panels with template values, the values that look like '$cluster', we can get a sense of the queries and use them to create our own:
+![edit](../images/grafana-templates.png)
+
+We replace the template variables with hardcoded values in our alerting dashboards:
+![hardcoded](../images/grafana-hardcoded.png)
+
+After we setup the panel by coping the templated panels, we can click on the bell to setup an alert. Setting up the alerts is pretty self-explanatory as we can see from this picture:
+![alerts](../images/grafana-alerts.png)
+
+For our cluster, we have setup these alerts so far:
+
+Data      | Threshold
+ ----------- | -----------
+ jupyter.libretexts.org  | If it goes down or high ping  
+ Cluster   | CPU/cores/RAM utilization exceeds 80%
+ Nodes | CPU/RAM utilization exceeds 80% or a node goes offline
+
+
+# Securing the Cluster
+We followed [*How to Secure a Linux Server*](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server)
+to secure and harden rooster. The following describes our choices for implementation.
+
+## SSH Public and Private Keys
+We disabled using a password to log into rooster by uncommenting
+`PasswordAuthentication no` in `/etc/ssh/sshd_config`. You can only
+log in using an ssh key.
+
+Generate a key using `ssh-keygen` on your local computer. Copy
+`~/.ssh/id_rsa.pub` on your local computer to `~/.ssh/authorized_keys`
+on rooster.
+
+Alternatively if you use PuTTY, you can use PuTTYgen to generate
+a public/private key pair, and copy the public key into `~/.ssh/authorized_keys`
+on rooster. Then, double click the private key file to enter your
+password and PuTTY will log into rooster using your key.
+
+## AllowGroups
+We chose not to use AllowGroups since we don't have many accounts
+for now. More info in [this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## Securing `/etc/ssh/sshd_config`
+We uncommented `PermitRootLogin prohibit-password` to allow automated
+backups to Richard's server.
+We also uncommented several lines in the file for security:
+* Maximum authorization attempts: 6
+* Turned off PAM authentication
+* Turned off challenege authentication
+
+## Removed Short Diffie-Hellman Keys
+Short Diffie-Hellman keys are less secure.
+>   Make a backup of SSH's moduli file /etc/ssh/moduli:
+
+    ```
+    sudo cp --preserve /etc/ssh/moduli /etc/ssh/moduli.$(date +"%Y%m%d%H%M%S")
+    ```
+
+>   Remove short moduli:
+
+    ```
+    sudo awk '$5 >= 3071' /etc/ssh/moduli | sudo tee /etc/ssh/moduli.tmp
+    sudo mv /etc/ssh/moduli.tmp /etc/ssh/moduli
+    ```
+## 2FA
+We did not enable 2FA for SSH. More info in
+[this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## NTP Client
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#ntp-client).
+
+## Securing `/proc`
+We did not secure `/proc` since there aren't many accounts. More info in
+[this issue](https://github.com/LibreTexts/metalc/issues/12#issuecomment-516621181).
+
+## Automatic Security Updates
+We did set them up, but plan on doing them manually. Reasons include:
+* Being able to let users know that we are performing the updates
+in case something bad happens
+* Being there in case if something bad does happen
+* Controlling the time to update
+
+We followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#automatic-security-updates-and-alerts). Our unattended upgrades configurations are stored in
+`/etc/apt/apt.conf.d/51myunattended-upgrades`.
+
+## Random Entropy Pool
+Some systems generate predictable SSH keys, so this could help mitigate that.
+```
+sudo apt-get install rng-tools
+```
+We just installed the package for now.
+
+
+## UFW
+List your UFW rules by running `sudo ufw status numbered`.
+Deleted the following rules, by calling `sudo ufw delete <line #>`,
+  * Deleted traffic on 80 and 443 into enp2s0 and enp3s0 interfaces
+     * `allow in on enp3s0 to any port 80`
+     * `allow in on enp3s0 to any port 443`
+     * `allow in on enp2s0 to any port 80`
+     * `allow in on enp2s0 to any port 443`
+  * Delete traffic `allow 111`
+Some of these rules were added while trying to get JupyterHub to work.
+
+## psad: iptables Intrusion Detection
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#iptables-intrusion-detection-and-prevention-with-psad)
+almost exactly. Here is [psad's documentation](http://www.cipherdyne.org/psad/docs/config.html).
+psad scans iptables for suspicious activity and automatically sends alerts to
+our email. DL stands for "danger level" of suspicious activity.
+
+The following are the changes in the instructions we followed:
+
+ 3. Review and update configuration options in `/etc/psad/psad.conf`. Pay special attention to these:
+
+   |Setting|Set To
+   |--|--|
+   |[`EMAIL_ADDRESSES`](http://www.cipherdyne.org/psad/docs/config.html#EMAIL_ADDRESSES)|your email address(s)|
+   |`HOSTNAME`|your server's hostname|
+   |[`ENABLE_AUTO_IDS`](http://www.cipherdyne.org/psad/docs/config.html#ENABLE_AUTO_IDS)|`ENABLE_AUTO_IDS N;`|
+   |`ENABLE_AUTO_IDS_EMAILS`|`ENABLE_AUTO_IDS_EMAILS N;`|
+   |`EXPECT_TCP_OPTIONS`|`EXPECT_TCP_OPTIONS Y;`|
+
+   We chose not to enable auto IDS, which automatically blocks suspicious IP's. For now,
+   we do not want to accidentally block a legitimate IP, like one from the cluster.
+
+#### Whitelisting an IP Address
+To whitelist, edit `/etc/psad/auto_dl`:
+```
+<IP address> <danger level> <optional protocol or ports>;
+```
+
+## Fail2Ban: SSH Intrustion Detection
+Roughly followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#application-intrusion-detection-and-prevention-with-fail2ban).
+1. Install fail2ban
+
+```
+sudo apt install fail2ban
+```
+
+1. We created `/etc/fail2ban/jail.local` and added the following:
+
+```
+[DEFAULT]
+# the IP address range we want to ignore
+ignoreip = 127.0.0.1/8 10.0.0.1/8 192.168.0.1/24
+
+# who to send e-mail to
+destemail = [our e-mail]
+
+# who is the email from
+sender = [our e-mail]
+
+# since we're using exim4 to send emails
+mta = mail
+
+# get email alerts
+action = %(action_mwl)s
+```
+
+1. According to the instructions, we created an `sshd` jail by
+creating `/etc/fail2ban/jail.d/ssh.local` and adding:
+
+```
+[sshd]
+enabled = true
+banaction = ufw
+port = ssh
+filter = sshd
+logpath = %(sshd_log)s
+maxretry = 5
+```
+  However, after executing the following, I get a `noduplicates` error.
+
+```
+sudo fail2ban-client start
+sudo fail2ban-client reload
+sudo fail2ban-client add sshd
+```
+
+  Although running `sudo fail2ban-client status` shows that the `sshd` jail is
+  active, probably from the sshd jail in the default file
+  `/etc/fail2ban/action.d/defaults-debian.conf`.
+
+## Rkhunter: Rootkit Detection
+Attackers can install rootkits, which allow them to gain access to a system without the owner noticing. Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#rootkit-detection-with-rkhunter-wip) almost exactly.
+
+Exception:
+4. The value `PHALANX2_DIRTEST` was not set to 1. There is not much documentation on this
+so I decided to leave it alone.
+
+Another change was made to match with SSH login as root, as described in `/etc/ssh/sshd_config`.
+
+Note that rkhunter in Ubuntu comes with cron scripts, which you can find in `/etc/cron.daily/rkhunter`.
+
+Rkhunter will email a daily report.
+
+## chrootkit: More Rootkit Detection
+[This article](https://debaday.debian.net/2008/02/06/rkhunter-chkrootkit-wise-crackers-only/)
+describes the differences between rkhunter and chrootkit. It recommends to use both!
+
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#rootkit-detection-with-chrootkit-wip)
+to install.
+
+4. When running `sudo dpkg-reconfigure chkrootkit`, I answered `Yes` to the first question
+   and left the second question blank. The default answer to the second question is `-q`,
+   mode. The third question was answered with `Yes`.
+
+## Logwatch: System Log Analyzer
+Followed [these instructions](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#logwatch---system-log-analyzer-and-reporter) to install.
+
+As of now, it sends emails to root.
+
+# Updating Rooster
+After weighting the pros and cons of using unattended updates against manual updates, we have decided to go with the manual updates. With manual updates, we can schedule a time ahead of time and let the users know to expect downtime. Also, since the updates are manual, we will be there to fix anything that goes wrong during the update. On the other hand, if anything went wrong during an unattended update, no one would be there to fix a problem if Rooster went down.
+
+## Steps for Updating Rooster:
+1. Decide on a time to run the update and send out an announcement to users letting them know ahead of time.
+1. Send out a second reminder on the day of the scheduled update.
+1. SSH into rooster and perform a dry run of the updates first:  `sudo unattended-upgrade -d --dry-run` , check if there
+are any potential errors that could occur during the update.
+1. If everything looks good from performing the dry run, then run the actual update: `sudo unattended-upgrade -d`
+1. If anything goes wrong, then troubleshoot the problem, otherwise perform some basic tests like trying to connect to a service
+on the cluster to confirm that everything is working.
+1. After we are sure that every service is working on the cluster, we will send out a message to our users to let them know our
+services are back online.
+
+# Customizing the Cluster
+## Whitelisting
+There are two ways to whitelist users: through the configuration file
+or on JupyterHub as an admin user. More information can be found in the
+[documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/authentication.html#adding-a-whitelist).
+
+### Through `config.yaml`
+SSH into rooster. Open the JupyterHub configuration file in `~/jupyterhub/config.yaml`.
+There will be a block that looks like this:
+```
+auth:
+  type: google
+  admin:
+    access: true
+    users:
+      - admin@gmail.com
+  whitelist:
+    users:
+      - user@gmail.com
+      - user@gmail.com
+```
+Add user emails in the `whitelist` section under `users`.
+Note that anyone who is added under `admin` will have admin privileges and will
+automatically be whitelisted.
+
+After editing `config.yaml`, upgrade JupyterHub by running these commands in the
+`~/jupyterhub` folder (as specified in the [documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/extending-jupyterhub.html):
+```
+RELEASE=jhub
+
+helm upgrade $RELEASE jupyterhub/jupyterhub \
+  --version=0.9-2d435d6 \
+  --values config.yaml
+```
+
+### As an Admin User
+When you log into JupyterHub, go to the **Control Panel** (Hub -> Control Panel)
+if you haven't already. Click the **Admin** tab on the navigation bar.
+
+You can add email addresses by clicking **Add Users**. Be careful of the other
+buttons!
+
+
+## Creating Custom Pages
+Refer to [this Discourse post](https://discourse.jupyter.org/t/customizing-jupyterhub-on-kubernetes/1769/3)
+for information on editing the login page.
+
+### Enabling custom html templates
+You only need to complete this section once. To edit or add html files, go to
+the [next section](#Editing-custom-html-pages).
+
+The Discourse post includes two approaches to editing the login templates.
+We decided to use [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/),
+which must run to completion before a pod launches, i.e. a pod has the `Running` status.
+In this setup, the Init Container uses the [alpine/git](https://hub.docker.com/r/alpine/git/)
+Docker image to `git clone` a repository of custom templates and mounts this
+volume to the `hub-xxx` pod. The volume is mounted to `/etc/jupyterhub/custom`
+of the `hub-xxx` pod.
+
+We mounted two volumes that clone two different repositories:
+1. [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates),
+ containing custom html templates
+1. [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images),
+containing images used in the website. This way, the html files reference
+the images locally rather than on different links online, which could later break.
+
+Our relevant portion of `config.yaml` looks like this:
+```
+hub:
+  # Clone custom JupyterHub templates into a volume
+  initContainers:
+    - name: git-clone-templates
+      image: alpine/git
+      args:
+        - clone
+        - --single-branch
+        - --branch=master
+        - --depth=1
+        - --
+        - https://github.com/LibreTexts/jupyterhub-templates.git
+        - /etc/jupyterhub/custom
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - name: custom-templates
+          mountPath: /etc/jupyterhub/custom
+    - name: git-clone-images
+      image: alpine/git
+      args:
+        - clone
+        - --single-branch
+        - --branch=master
+        - --depth=1
+        - --
+        - https://github.com/LibreTexts/jupyterhub-images.git
+        - /usr/local/share/jupyterhub/static/external
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - name: custom-images
+          mountPath: /usr/local/share/jupyterhub/static/external
+  extraVolumes:
+    - name: custom-templates
+      emptyDir: {}
+    - name: custom-images
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: custom-templates
+      mountPath: /etc/jupyterhub/custom
+    - name: custom-images
+      mountPath: /usr/local/share/jupyterhub/static/external
+  extraConfig:
+    templates: |
+      c.JupyterHub.template_paths = ['/etc/jupyterhub/custom/custom']
+```
+
+After adding this to `config.yaml`, run the command below.
+**Important note:** you must upgrade JupyterHub to a development release
+later than [this pull request](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/pull/1274).
+`config.yaml` supports Init Containers after the stable
+release of 0.8.2.
+```
+RELEASE=jhub
+
+helm upgrade $RELEASE jupyterhub/jupyterhub \
+  --version=0.9-2d435d6 \
+  --values config.yaml \
+  --recreate-pods
+```
+
+Note that the `c.JupyterHub.template_paths` variable is set to
+`/etc/jupyterhub/custom/custom`. `/etc/jupyterhub/custom/` refers to the
+folder in which the volume is mounted and `.../custom` (the second `custom`
+folder mentioned) refers to the folder in the repository containing your
+custom templates. (This is also explained in the Discourse post.)
+
+### Editing custom html pages
+1. Clone [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates).
+If you want to add images, clone [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
+too.
+   ```
+   git clone https://github.com/LibreTexts/jupyterhub-templates.git
+   git clone https://github.com/LibreTexts/jupyterhub-images.git
+   ```
+1. Edit or add html files in the `custom` folder of `jupyterhub-templates`.
+
+   Useful resources:
+   * [Working with templates and UI](https://jupyterhub.readthedocs.io/en/stable/reference/templates.html)
+   from the JupyterHub documentation.
+   * [How to extend Jinja2 templates](https://jinja.palletsprojects.com/en/2.10.x/templates/#template-inheritance)
+
+   Additional note:
+   The images are mounted at `/usr/local/share/jupyterhub/static/external`.
+   If you specify an image locally in an html file, use the prefix
+   `hub/static/external/<path in repo to image`. For example,
+   ```
+   <img src="/hub/static/external/images/libretexts_logo.png">
+   ```
+
+1. After editing your files, commit and push to the master branch of the repositories.
+   ```
+   git add *
+   git commit -m "<your commit message>"
+   git push
+   ```
+
+1. For the changes to appear, recreate the `hub-xxx` pod to rerun the Init Containers.
+This can be done one of two ways:
+   a. by deleting the pod to force recreation,
+      ```
+      $ kubectl get pods -n jhub | grep "hub"
+      hub-<random string> ....
+      $ kubectl delete pod hub-<random string> -n jhub
+      ```
+   b. or by recreating all pods.
+      ```
+      helm upgrade $RELEASE jupyterhub/jupyterhub \
+        --version=0.9-2d435d6 \
+        --values config.yaml \
+        --recreate-pods
+      ```
+#### Example: custom error pages
+Using the Jinja2 templating system, we:
+* extended the existing error.html by calling `{% extends "templates/error.html" %}`
+  (`templates` is a default folder inside the hub pod where JupyterHub looks for templates),
+* modified specific sections of the original file by using blocks, starting with
+`{% block h1_error %}` and ending with `{% endblock h1_error %}`,
+* and included the contents of the original content of the block by calling
+`{{ super() }}`.
+
+Note that Python syntax can also be used, as shown in the if-else statement.
+```
+{% extends "templates/error.html" %}
+
+{% block h1_error %}
+{% if status_code == 400 %}
+{{ super() }}
+<p>
+  Please login again from <a href="https://jupyter.libretexts.org">the home page</a>.
+</p>
+{% elif status_code == 500 %}
+{{ super() }}
+<p>
+  Oh no! Something is wrong on our end. If this problem persists, please email us</a>.
+</p>
+{% else %}
+{{ super() }}
+{% endif %}
+
+{% endblock h1_error %}
+```
+
+# User Stats
+## Current Specifications
+For each user:
+
+### CPU
+* limit: 4
+* guarantee: 0.5
+
+### Memory
+* limit: 8G
+* guarantee: 1G
+
+### Storage
+* 500 MB per user
+
+## Support
+`6 cores per server / 0.5 core per user x 10 servers is approximately 100 users`
+
+Supports ~100 concurrent users at most. Rounded down since CPU is also needed for monitoring, etc.
+
+`2 TB of storage / 500 MB per user`
+
+If only using rooster's storage, we can support ~4000 accounts.
 
 # Literature List
 
@@ -633,12 +1383,18 @@ Building a Kubernetes cluster using Ansible Playbooks: [How to Build a Kubernete
 
 A lab website where you can play with Kubernetes! [Play With Kubernetes](https://labs.play-with-k8s.com/)
 
+[Another Source for Setting Up Grafana and Prometheus](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-prometheus-grafana-and-alertmanager-monitoring-stack-on-digitalocean-kubernetes)
+
+For when we have multiple masters: [High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
+
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
 Some info on NFS server setup: [Install NFS Server and Client on Ubuntu 18.04](https://vitux.com/install-nfs-server-and-client-on-ubuntu/)
 
 More on NFS: [How to Set Up an NFS Mount](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-18-04)
+
+Nginx Reverse Proxy: [TCP and UDP Load Balancing on Nginx](https://docs.nginx.com/nginx/admin-guide/load-balancer/tcp-udp-load-balancer/)
 
 ### Installation
 A post about pxelinux.cfg file setup for unattended installs of Ubuntu 18.04: [Ubuntu 18.04 Unattended Setup](https://opstuff.blog/2018/10/16/ubuntu-18-04-unattended-setup/)
@@ -650,5 +1406,21 @@ for setting up an automatic provisioner after you have the NFS server set up.
 
 # Useful Commands
 * `kubectl get service` lists the services of the clusters, with cluster IP, external IP, and ports.
-* `kubectl get po -A` lists all pods in the cluster.
+Likewise, `kubectl get service -A` lists all services.
+* `kubectl get po -A` or `kubectl get pod -A` lists all pods in the cluster.
+* `kubectl get pv -A` lists all persistent volumes
+* `kubectl get pvc -A` lists all persistent volume claims made (the requests by for physical storage in rooster)
+* `kubectl get logs <pod name> -n <namespace> -c <container>` gives the logs on a
+container (if applicable) in a pod
+* `kubectl delete pod <pod name> -n <namespace>` will delete the pod specified. Note that
+the pod may regenerate depending on its settings
+* `kubectl describe <type> <name>` describes your object
+* `kubectl exec <pod name> -n <namespace> -ti bash` enters the pod's command line
+* Example of patching a pod (in this case, making one a LoadBalancer):
+```
+kubectl patch svc "prometheus-operator-grafana" \
+      --namespace "monitoring" \
+      -p '{"spec": {"type": "LoadBalancer"}}'
+```
 * `tail /var/log/syslog` gives the latest updates on dhcp, ufw, etc.
+* `tail /var/log/apt/history.log` gives the logs for unattended upgrades
