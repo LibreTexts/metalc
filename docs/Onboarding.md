@@ -42,6 +42,11 @@ a way for all associated employees to communicate with each other.
 [This Google document](https://docs.google.com/document/d/1dXeBmY8jEpVsvfAfu4JYSyvXageEi2URO9XS-0bdsHY/edit#)
 has everyone's contact information; feel free to add yours.
 
+### AIOs
+Everyone working in Jason's lab sends weekly AIO's over email. We typically
+send one email as a team. AIO stands for "Accomplishments, Issues, and Objectives." 
+More info about AIO's can be found [here](https://mechmotum.github.io/guide.html).
+
 ## Working on GitHub
 We document our work on GitHub. This is so that any current or future workers
 can refer back to the work already done. 
