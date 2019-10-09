@@ -1,6 +1,8 @@
 # Onboarding
 
 This file helps onboard new hires into the Jupyter team.
+We currently maintain [jupyter.libretexts.org](https://jupyter.libretexts.org),
+a JupyterHub for LibreTexts and UC Davis students.
 
 ## Getting Started
 ### Connecting to Rooster
@@ -26,6 +28,7 @@ email your private key.**
 We use Slack and Zulip to communicate. Make sure that you get invited to
 both of these channels.
 
+We also have a shared Google Drive (which is pretty inactive).
 
 ### Exchange Phone Numbers and Emails
 If you haven't already, please request to add yourself to the 
@@ -36,6 +39,29 @@ a way for all associated employees to communicate with each other.
 
 [This Google document](https://docs.google.com/document/d/1dXeBmY8jEpVsvfAfu4JYSyvXageEi2URO9XS-0bdsHY/edit#)
 has everyone's contact information; feel free to add yours.
+
+## Working on GitHub
+We document our work on GitHub. This is so that any current or future workers
+can refer back to the work already done. 
+
+There are a couple of repositories we use:
+* [metalc](https://github.com/LibreTexts/metalc/) is the main repository. It contains
+information on how to build the bare metal cluster using VMs, Google Cloud, and 
+most importantly on bare-metal. [Baremetal.md](https://github.com/LibreTexts/metalc/blob/master/docs/Bare-Metal/baremetal.md)
+is the cumulative document that combines all information about building 
+the cluster.
+* [default-env](https://github.com/LibreTexts/default-env) contains Dockerfiles for
+creating the Default Environment in JupyterHub.
+
+Some lesser used repositories:
+* [mechmotum.github.io](https://github.com/LibreTexts/mechmotum.github.io) is our fork 
+of Jason's website. We write blog posts on this fork and later make pull requests to 
+merge on his repository.
+* [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates) 
+contains custom HTML pages for the website. Updating these on GitHub will
+update the website if JupyterHub gets upgraded.
+* [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
+constains images used on the website.
 
 ## Working With the Cluster
 Our bare-metal cluster consists of one master node named chick0 and 20 children named 
