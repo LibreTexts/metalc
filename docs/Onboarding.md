@@ -30,3 +30,14 @@ We use Slack and Zulip to communicate. Make sure that you get invited to
 both of these channels.
 
 
+### Exchange Phone Numbers and Emails
+If you haven't already, please request to add yourself to the 
+mailing list: jupyterteam@ucdavis.edu. All emails sent to this address
+will be sent to you. This email address is a support email for LibreTexts
+and UC Davis users if they encounter any problems with JupyterHub and 
+a way for all associated employees to communicate with each other.
+
+[This Google document](https://docs.google.com/document/d/1dXeBmY8jEpVsvfAfu4JYSyvXageEi2URO9XS-0bdsHY/edit#)
+has everyone's contact information; feel free to add yours.
+
+
