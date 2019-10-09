@@ -24,6 +24,8 @@ Afterwards, email your public key (should be the file `id_rsa.pub`
 or something similar) to someone who has access to rooster. **Do not
 email your private key.**
 
+Ask us in person for the username and password.
+
 ### Joining Our Communication Channels
 We use Slack and Zulip to communicate. Make sure that you get invited to
 both of these channels.
