@@ -2,14 +2,11 @@
 
 This file helps onboard new hires into the Jupyter team.
 
-## Basic Information
-Our bare-metal cluster consists of one master node named chick0 and 11 children named 
-chick1 through chick19 sequentially. It also contains a management node called rooster, which 
-acts as a proxy between the Internet and the cluster. The cluster is under a private network, 
-so the only way to access the cluster is by SSHing into rooster.
-
 ## Getting Started
 ### Connecting to Rooster
+The cluster is under a private network, so the only way to access the cluster is by 
+SSHing into rooster, our management server.
+
 If you have Windows, it would probably be easier to 
 install [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
 PuTTY makes it easier for you to SSH into rooster. Otherwise, you can
@@ -39,5 +36,29 @@ a way for all associated employees to communicate with each other.
 
 [This Google document](https://docs.google.com/document/d/1dXeBmY8jEpVsvfAfu4JYSyvXageEi2URO9XS-0bdsHY/edit#)
 has everyone's contact information; feel free to add yours.
+
+## Working With the Cluster
+Our bare-metal cluster consists of one master node named chick0 and 20 children named 
+chick1 through chick19 sequentially. It also contains a management node called rooster, which 
+acts as a proxy between the Internet and the cluster. 
+
+### Kubernetes
+We recommend reading some of the following:
+* [Introduction to Kubernetes](https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes)
+by Digital Ocean gives a good overview of what Kubernetes is and its basic concepts.
+* [Play with Kubernetes](https://labs.play-with-k8s.com/) lets you test out building Kubernetes
+clusters online!
+* [What even is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/) is a bit
+more of a technical introduction to Kubernetes.
+
+### JupyterHub
+**JupyterHub** is a service that allows multiple users to create notebooks with code.
+
+[Zero to JupyterHub with Kubernetes](https://zero-to-jupyterhub.readthedocs.io/en/latest/)
+is the main documentation for building a JupyterHub cluster from Kubernetes.
+You can try to build your own on Google Cloud, but this will cost money
+(*unless*: if you have not used Google Cloud before, you can get $300 free credits).
+
+If you want to know more about what Jupyter is, visit [try.jupyter.org](try.jupyter.org).
 
 
