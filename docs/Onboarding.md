@@ -1,6 +1,8 @@
 # Onboarding
 
 This file helps onboard new hires into the Jupyter team.
+We currently maintain [jupyter.libretexts.org](https://jupyter.libretexts.org),
+a JupyterHub for LibreTexts and UC Davis students.
 
 ## Getting Started
 ### Connecting to Rooster
@@ -22,10 +24,13 @@ Afterwards, email your public key (should be the file `id_rsa.pub`
 or something similar) to someone who has access to rooster. **Do not
 email your private key.**
 
+Ask us in person for the username and password.
+
 ### Joining Our Communication Channels
 We use Slack and Zulip to communicate. Make sure that you get invited to
 both of these channels.
 
+We also have a shared Google Drive (which is pretty inactive).
 
 ### Exchange Phone Numbers and Emails
 If you haven't already, please request to add yourself to the 
@@ -36,6 +41,34 @@ a way for all associated employees to communicate with each other.
 
 [This Google document](https://docs.google.com/document/d/1dXeBmY8jEpVsvfAfu4JYSyvXageEi2URO9XS-0bdsHY/edit#)
 has everyone's contact information; feel free to add yours.
+
+### AIOs
+Everyone working in Jason's lab sends weekly AIO's over email. We typically
+send one email as a team. AIO stands for "Accomplishments, Issues, and Objectives." 
+More info about AIO's can be found [here](https://mechmotum.github.io/guide.html).
+
+## Working on GitHub
+We document our work on GitHub. This is so that any current or future workers
+can refer back to the work already done. 
+
+There are a couple of repositories we use:
+* [metalc](https://github.com/LibreTexts/metalc/) is the main repository. It contains
+information on how to build the bare metal cluster using VMs, Google Cloud, and 
+most importantly on bare-metal. [Baremetal.md](https://github.com/LibreTexts/metalc/blob/master/docs/Bare-Metal/baremetal.md)
+is the cumulative document that combines all information about building 
+the cluster.
+* [default-env](https://github.com/LibreTexts/default-env) contains Dockerfiles for
+creating the Default Environment in JupyterHub.
+
+Some lesser used repositories:
+* [mechmotum.github.io](https://github.com/LibreTexts/mechmotum.github.io) is our fork 
+of Jason's website. We write blog posts on this fork and later make pull requests to 
+merge on his repository.
+* [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates) 
+contains custom HTML pages for the website. Updating these on GitHub will
+update the website if JupyterHub gets upgraded.
+* [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
+constains images used on the website.
 
 ## Working With the Cluster
 Our bare-metal cluster consists of one master node named chick0 and 20 children named 
@@ -50,9 +83,6 @@ by Digital Ocean gives a good overview of what Kubernetes is and its basic conce
 clusters online!
 * [What even is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/) is a bit
 more of a technical introduction to Kubernetes.
-* [Kubernetes Documentation](https://kubernetes.io/docs/concepts/) is an in-depth look at
-Kubernetes. It's a technical, complete documentation of the software. This could or
-could not serve as a good introduction to Kubernetes, depending on the person.
 
 ### JupyterHub
 **JupyterHub** is a service that allows multiple users to create notebooks with code.
@@ -62,6 +92,6 @@ is the main documentation for building a JupyterHub cluster from Kubernetes.
 You can try to build your own on Google Cloud, but this will cost money
 (*unless*: if you have not used Google Cloud before, you can get $300 free credits).
 
-If you want to know more about what Jupyter is, visit [https://try.jupyter.org](try.jupyter.org).
+If you want to know more about what Jupyter is, visit [try.jupyter.org](try.jupyter.org).
 
 
