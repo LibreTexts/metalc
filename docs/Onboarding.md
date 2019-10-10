@@ -83,6 +83,9 @@ by Digital Ocean gives a good overview of what Kubernetes is and its basic conce
 clusters online!
 * [What even is a kubelet](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/) is a bit
 more of a technical introduction to Kubernetes.
+* [Kubernetes Documentation](https://kubernetes.io/docs/concepts/) is an in-depth look at
+Kubernetes. It's a technical, complete documentation of the software. This could or
+could not serve as a good introduction to Kubernetes, depending on the person.
 
 ### JupyterHub
 **JupyterHub** is a service that allows multiple users to create notebooks with code.
@@ -92,6 +95,6 @@ is the main documentation for building a JupyterHub cluster from Kubernetes.
 You can try to build your own on Google Cloud, but this will cost money
 (*unless*: if you have not used Google Cloud before, you can get $300 free credits).
 
-If you want to know more about what Jupyter is, visit [try.jupyter.org](try.jupyter.org).
+If you want to know more about what Jupyter is, visit [https://try.jupyter.org](try.jupyter.org).
 
 
