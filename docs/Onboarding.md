@@ -47,6 +47,10 @@ Everyone working in Jason's lab sends weekly AIO's over email. We typically
 send one email as a team. AIO stands for "Accomplishments, Issues, and Objectives." 
 More info about AIO's can be found [here](https://mechmotum.github.io/guide.html).
 
+## Logging Your Hours
+Once you get hired, you will log your hours on [trs-ucpath.ucdavis.edu](https://trs-ucpath.ucdavis.edu).
+You should also receive a key card which can get you access to the server room.
+
 ## Working on GitHub
 We document our work on GitHub. This is so that any current or future workers
 can refer back to the work already done. 
@@ -96,5 +100,86 @@ You can try to build your own on Google Cloud, but this will cost money
 (*unless*: if you have not used Google Cloud before, you can get $300 free credits).
 
 If you want to know more about what Jupyter is, visit [https://try.jupyter.org](try.jupyter.org).
+
+### Quick Guide to Navigating Kubernetes
+`kubectl` is the main way for us to get information from Kubernetes via the command line.
+After you SSH into rooster, try out a few of the following `kubectl` commands:
+
+1. `kubectl get nodes`
+  ```
+  NAME      STATUS                     ROLES    AGE    VERSION
+  chick0    Ready                      master   121d   v1.16.1
+  chick1    Ready                      <none>   121d   v1.14.0
+  chick10   Ready                      <none>   114d   v1.14.0
+  chick11   Ready                      <none>   9d     v1.14.0
+  chick12   Ready                      <none>   8d     v1.14.0
+  chick13   Ready                      <none>   8d     v1.14.0
+  chick14   Ready                      <none>   8d     v1.14.0
+  chick15   Ready                      <none>   8d     v1.14.0
+  chick16   Ready                      <none>   8d     v1.14.0
+  chick17   Ready                      <none>   8d     v1.14.0
+  chick18   Ready                      <none>   8d     v1.14.0
+  chick2    Ready                      <none>   121d   v1.14.0
+  chick3    Ready                      <none>   121d   v1.14.0
+  chick4    Ready,SchedulingDisabled   <none>   121d   v1.14.0
+  chick5    Ready,SchedulingDisabled   <none>   121d   v1.14.0
+  chick6    Ready,SchedulingDisabled   <none>   121d   v1.14.0
+  chick7    Ready                      <none>   121d   v1.14.0
+  chick8    Ready                      <none>   121d   v1.14.0
+  chick9    Ready                      <none>   121d   v1.14.0
+  ...
+  ```
+  This shows all of the nodes on the cluster. You can see the status of each.
+  Note that chick0 is labeled as `master`.
+  Also note that some chicks are labeled `SchedulingDisabled`; this means that
+  no pods can get scheduled onto these nodes.
+
+1. `kubectl get pods -A`
+  ```
+  NAMESPACE        NAME                                                        READY   STATUS        RESTARTS   AGE
+  binderhub        autohttps-59dd446c76-59mbn                                  2/2     Running       0          52d
+  binderhub        binder-5696db87dc-2qll2                                     1/1     Running       0          26d
+  binderhub        binderhub-image-cleaner-2qlsm                               1/1     Running       0          8d
+  ...
+  ```
+  This outputs all of the pods currently on the cluster.
+  
+1. `kubectl get pods -n jhub`
+  ```
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  autohttps-7b4fb9dd6b-gb6td           2/2     Running   0          25d
+  continuous-image-puller-7h4jr        1/1     Running   0          32h
+  continuous-image-puller-7mv45        1/1     Running   0          32h
+  ...
+  ```
+  This outputs all the pods in the `jhub` namespace. The `jhub` namespace contains
+  pods related to our JupyterHub instance.
+  
+1. `kubectl describe pod hub-<fill in random string you get from kubectl get pods here> -n jhub`
+  ```
+  Name:               hub-84595b4df9-2tn6h
+  Namespace:          jhub
+  Priority:           0
+  PriorityClassName:  <none>
+  ...
+  ```
+  This gives a description of the pod, including which node the pod is running on, its tolerations,
+  etc. Sometimes, it will show some logs at the bottom. Note that this command will fail if you 
+  don't include `-n jhub` in the command; Kubernetes usually requires for you to specify a
+  namespace if its not in the default one.
+  
+1. `kubectl logs hub-<fill in random string you get from kubectl get pods here> -n jhub`
+  ```
+  ...
+  [I 2019-10-13 19:26:56.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.57ms
+  [I 2019-10-13 19:27:06.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.61ms
+  [I 2019-10-13 19:27:16.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.49ms
+  ...
+  ```
+  This gives the logs of a pod, useful for debugging when something goes wrong with a pod.
+  
+
+Here's a [reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
+of possible commands.
 
 
