@@ -74,6 +74,9 @@ update the website if JupyterHub gets upgraded.
 * [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
 constains images used on the website.
 
+We track our current tasks on [Issues](https://github.com/LibreTexts/metalc/issues).
+Feel free to comment to 
+
 ## Working With the Cluster
 Our bare-metal cluster consists of one master node named chick0 and 20 children named 
 chick1 through chick19 sequentially. It also contains a management node called rooster, which 
@@ -100,6 +103,9 @@ You can try to build your own on Google Cloud, but this will cost money
 (*unless*: if you have not used Google Cloud before, you can get $300 free credits).
 
 If you want to know more about what Jupyter is, visit [https://try.jupyter.org](try.jupyter.org).
+
+### Grafana
+Our alerting and monitoring system is based in grafana.libretexts.org.
 
 ### Quick Guide to Navigating Kubernetes
 `kubectl` is the main way for us to get information from Kubernetes via the command line.
