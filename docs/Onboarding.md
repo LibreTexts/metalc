@@ -141,25 +141,25 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
   no pods can get scheduled onto these nodes.
 
 1. `kubectl get pods -A`
-  ```
-  NAMESPACE        NAME                                                        READY   STATUS        RESTARTS   AGE
-  binderhub        autohttps-59dd446c76-59mbn                                  2/2     Running       0          52d
-  binderhub        binder-5696db87dc-2qll2                                     1/1     Running       0          26d
-  binderhub        binderhub-image-cleaner-2qlsm                               1/1     Running       0          8d
-  ...
-  ```
-  This outputs all of the pods currently on the cluster.
+   ```
+   NAMESPACE        NAME                                                        READY   STATUS        RESTARTS   AGE
+   binderhub        autohttps-59dd446c76-59mbn                                  2/2     Running       0          52d
+   binderhub        binder-5696db87dc-2qll2                                     1/1     Running       0          26d
+   binderhub        binderhub-image-cleaner-2qlsm                               1/1     Running       0          8d
+   ...
+   ```
+   This outputs all of the pods currently on the cluster.
   
 1. `kubectl get pods -n jhub`
-  ```
-  NAME                                 READY   STATUS    RESTARTS   AGE
-  autohttps-7b4fb9dd6b-gb6td           2/2     Running   0          25d
-  continuous-image-puller-7h4jr        1/1     Running   0          32h
-  continuous-image-puller-7mv45        1/1     Running   0          32h
-  ...
-  ```
-  This outputs all the pods in the `jhub` namespace. The `jhub` namespace contains
-  pods related to our JupyterHub instance.
+   ```
+   NAME                                 READY   STATUS    RESTARTS   AGE
+   autohttps-7b4fb9dd6b-gb6td           2/2     Running   0          25d
+   continuous-image-puller-7h4jr        1/1     Running   0          32h
+   continuous-image-puller-7mv45        1/1     Running   0          32h
+   ...
+   ```
+   This outputs all the pods in the `jhub` namespace. The `jhub` namespace contains
+   pods related to our JupyterHub instance.
   
 1. Now try logging into JupyterHub and spawn a server. Run `kubectl get pods -n jhub` again.
    You should see a new pod with the name `jupyter-<your email>`.
@@ -171,27 +171,27 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    ```
   
 1. `kubectl describe pod hub-<fill in random string you get from kubectl get pods here> -n jhub`
-  ```
-  Name:               hub-84595b4df9-2tn6h
-  Namespace:          jhub
-  Priority:           0
-  PriorityClassName:  <none>
-  ...
-  ```
-  This gives a description of the pod, including which node the pod is running on, its tolerations,
-  etc. Sometimes, it will show some logs at the bottom. Note that this command will fail if you 
-  don't include `-n jhub` in the command; Kubernetes usually requires for you to specify a
-  namespace if its not in the default one.
+   ```
+   Name:               hub-84595b4df9-2tn6h
+   Namespace:          jhub
+   Priority:           0
+   PriorityClassName:  <none>
+   ...
+   ```
+   This gives a description of the pod, including which node the pod is running on, its tolerations,
+   etc. Sometimes, it will show some logs at the bottom. Note that this command will fail if you 
+   don't include `-n jhub` in the command; Kubernetes usually requires for you to specify a
+   namespace if its not in the default one.
   
 1. `kubectl logs hub-<fill in random string you get from kubectl get pods here> -n jhub`
-  ```
-  ...
-  [I 2019-10-13 19:26:56.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.57ms
-  [I 2019-10-13 19:27:06.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.61ms
-  [I 2019-10-13 19:27:16.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.49ms
-  ...
-  ```
-  This gives the logs of a pod, useful for debugging when something goes wrong with a pod.
+   ```
+   ...
+   [I 2019-10-13 19:26:56.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.57ms
+   [I 2019-10-13 19:27:06.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.61ms
+   [I 2019-10-13 19:27:16.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.49ms
+   ...
+   ```
+   This gives the logs of a pod, useful for debugging when something goes wrong with a pod.
  
   
 
