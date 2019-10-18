@@ -161,6 +161,15 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
   This outputs all the pods in the `jhub` namespace. The `jhub` namespace contains
   pods related to our JupyterHub instance.
   
+1. Now try logging into JupyterHub and spawn a server. Run `kubectl get pods -n jhub` again.
+   You should see a new pod with the name `jupyter-<your email>`.
+   ```
+   NAME                                            READY   STATUS    RESTARTS   AGE
+   ...
+   jupyter-<username of email>-40ucdavis-2eedu     1/1     Running   0          1m
+   ...
+   ```
+  
 1. `kubectl describe pod hub-<fill in random string you get from kubectl get pods here> -n jhub`
   ```
   Name:               hub-84595b4df9-2tn6h
@@ -183,6 +192,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
   ...
   ```
   This gives the logs of a pod, useful for debugging when something goes wrong with a pod.
+ 
   
 
 Here's a [reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
