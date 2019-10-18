@@ -182,6 +182,15 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    etc. Sometimes, it will show some logs at the bottom. Note that this command will fail if you 
    don't include `-n jhub` in the command; Kubernetes usually requires for you to specify a
    namespace if its not in the default one.
+   
+1. `kubectl exec hub-<fill in random string you get from kubectl get pods here> -n jhub -ti bash`
+   ```
+   jovyan@hub-<random string>:/srv/jupyterhub$
+   ```
+   This lets you enter the pod and use its command line. You can explore the directories here
+   to see what kind of files are used. This pod is almost like running the original 
+   [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/) without knowledge of Kubernetes.
+   Type `exit` to exit the pod.
   
 1. `kubectl logs hub-<fill in random string you get from kubectl get pods here> -n jhub`
    ```
@@ -192,8 +201,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    ...
    ```
    This gives the logs of a pod, useful for debugging when something goes wrong with a pod.
- 
-  
+
 
 Here's a [reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 of possible commands.
