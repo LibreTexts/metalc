@@ -1,13 +1,38 @@
 # Onboarding
 
-This file helps onboard new hires into the Jupyter team.
-We currently maintain [jupyter.libretexts.org](https://jupyter.libretexts.org),
-a JupyterHub for LibreTexts and UC Davis students.
+This file helps onboard new hires into the Jupyter team. We currently maintain
+[jupyter.libretexts.org](https://jupyter.libretexts.org), a JupyterHub for
+LibreTexts and UC Davis users.
+
+# HR
+
+Your immediate supervisors are:
+
+- Jason K. Moore
+- Richard Feltstykket
+
+You can reach out to them about any issues you need to discuss. If you don't
+feel comfortable reaching out to them (like if you need to report something
+about them) you can reach out to their supervisors. Jason's is Cristina Davis
+(MAE Chair) and Richard's is Matt Settles.
+
+If you are hired under the MAE department (paid via LibreTexts grant) then you
+can contact Felicia Smith in MAE to discuss any HR issues. Felicia is Jason's
+account and department manager. You may also have to interact with Chemistry
+because that is where the funds are located that pay you.
+
+If you are hired under the Bioinformatics Core (paid by their funds) then you
+can contact these people about HR:
+
+- Matt Settles (Richard's Supervisor and your hours approver)
+- Ernie Hoftyzer eahoftyzer@ucdavis.edu (Setup your hiring)
 
 ## Getting Started
+
 ### Connecting to Rooster
-The cluster is under a private network, so the only way to access the cluster is by 
-SSHing into rooster, our management server.
+
+The cluster is under a private network, so the only way to access the cluster
+is by SSHing into rooster, our management server.
 
 If you have Windows, it would probably be easier to 
 install [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
@@ -27,12 +52,14 @@ email your private key.**
 Ask us in person for the username and password.
 
 ### Joining Our Communication Channels
+
 We use Slack and Zulip to communicate. Make sure that you get invited to
 both of these channels.
 
 We also have a shared Google Drive (which is pretty inactive).
 
 ### Exchange Phone Numbers and Emails
+
 If you haven't already, please request to add yourself to the 
 mailing list: jupyterteam@ucdavis.edu. All emails sent to this address
 will be sent to you. This email address is a support email for LibreTexts
@@ -43,17 +70,23 @@ a way for all associated employees to communicate with each other.
 has everyone's contact information; feel free to add yours.
 
 ### AIOs
+
 Everyone working in Jason's lab sends weekly AIO's over email. We typically
-send one email as a team. AIO stands for "Accomplishments, Issues, and Objectives." 
-More info about AIO's can be found [here](https://mechmotum.github.io/guide.html).
+send one email as a team. AIO stands for "Accomplishments, Issues, and
+Objectives." More info about AIO's can be found
+[here](https://mechmotum.github.io/guide.html).
 
 ## Logging Your Hours
-Once you get hired, you will log your hours on [trs-ucpath.ucdavis.edu](https://trs-ucpath.ucdavis.edu).
-You should also receive a key card which can get you access to the server room.
+
+Once you get hired, you will log your hours on
+[trs-ucpath.ucdavis.edu](https://trs-ucpath.ucdavis.edu). You should also
+receive a key card which can get you access to the server room. Matt Settles
+can give you key card access.
 
 ## Working on GitHub
+
 We document our work on GitHub. This is so that any current or future workers
-can refer back to the work already done. 
+can refer back to the work already done.
 
 There are a couple of repositories we use:
 * [metalc](https://github.com/LibreTexts/metalc/) is the main repository. It contains
@@ -202,8 +235,5 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    ```
    This gives the logs of a pod, useful for debugging when something goes wrong with a pod.
 
-
 Here's a [reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 of possible commands.
-
-
