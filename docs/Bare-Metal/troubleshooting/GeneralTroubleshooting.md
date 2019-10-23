@@ -27,6 +27,7 @@ then delete it. `kubectl delete <resource>`
 1. [JupyterHub is down](#JupyterHub-is-down)
 1. [A user cannot spawn a server](#A-user-cannot-spawn-a-server)
 1. [A node is acting strangely](#A-node-is-acting-strangely)
+1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
 
 ## JupyterHub is down
 First, scream.
@@ -98,3 +99,52 @@ Check whether the drives are okay:
 If the `Reallocated_Sector_Ct` is 0 then it's good.
 * `smartctl -t short /dev/sda` or `smartctl -l selftest /dev/sda` to run a test on the
 drives.
+
+## JupyterHub fails to upgrade
+Unfortunately, running `helm upgrade` does not give a lot of debugging information
+when an upgrade fails.
+There are a couple possible causes for a failed upgrade, including but not limited to:
+
+1. `config.yaml` isn't written correctly. These are the most common problems:
+   1. Spelling errors. For example, if you mispell a Docker image name or a name,
+   JupyterHub will fail to upgrade.
+   1. Tab/spacing errors. Double check that your spacing is correct. We indent our YAML 
+   files with two spaces.
+   
+   JupyterHub is picky when reading `config.yaml`. For example,
+   1. It doesn't like when you leave in lines of comments between lists of items like emails.
+   
+      This is bad:
+      ```
+         - chihuahua@ucdavis.edu
+         # Under the deep blue sea
+         - octopus@gmail.com
+         - platypus@gmail.com 
+      ```
+   
+      This is OK:
+      ```
+         - chihuahua@ucdavis.edu
+         - octopus@gmail.com # Under the deep blue sea
+         - platypus@gmail.com 
+      ```
+   
+   1. In the `extraConfig` section, you can attach extra Python code to specific keys.
+      `config.yaml` sometimes doesn't like when you add comments in this section
+      
+      Example:
+      ```
+      extraConfig:
+         templates: |
+            c.JupyterHub.template_paths = ['/etc/jupyterhub/custom/custom']
+            # Wow a comment like this might cause problems
+
+1. The cluster is preventing an upgrade (less common).
+   1. [This issue](https://github.com/LibreTexts/metalc/issues/75) details how
+   an unschedulable chick contained `hook-image-puller` and `continuous-image-puller` pods
+   that were always in a `Pending` state. Since JupyterHub requires these pods
+   to finish running to complete an upgrade, pending pods would stall the 
+   upgrade.
+   
+
+
