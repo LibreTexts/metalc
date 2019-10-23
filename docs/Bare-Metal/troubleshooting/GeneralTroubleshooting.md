@@ -75,6 +75,22 @@ SSH into the node and check whether the [drives are okay](#A-node-is-acting-stra
 Another possibility is thatthe Docker containers failed to terminate, which causes
 the pods to not terminate. Try restarting the node or upgrading JupyterHub.
 
+Try running `kubectl delete pod hub-xxx -n jhub` to restart the `hub-xxx` pod. If
+you know there is nothing wrong with the cluster itself, then this should be relatively
+safe and the hub pod will restart on its own.
+
+If that doesn't work, try upgrading JupyterHub by running `upgrade.sh` or copying and 
+pasting the following commands. This is slightly more riskier since you are applying
+`config.yaml` to the hub. This means that any changes to `config.yaml` will be applied.
+   ```
+   RELEASE=jhub
+
+   helm upgrade $RELEASE jupyterhub/jupyterhub \
+     --version=0.9-2d435d6 \
+     --values config.yaml
+   ```
+
+
 ## A node is acting strangely
 Check whether the drives are okay:
 * `lsblk` to see if the partitions still exist.
