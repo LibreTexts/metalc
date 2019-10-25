@@ -1387,6 +1387,20 @@ A lab website where you can play with Kubernetes! [Play With Kubernetes](https:/
 
 For when we have multiple masters: [High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
 
+Information on using Kubernetes and Load Balancing: [One year using Kubernetes in production: Lessons learned](https://techbeacon.com/devops/one-year-using-kubernetes-production-lessons-learned)
+
+[Understanding kubernetes networking: ingress](https://medium.com/google-cloud/understanding-kubernetes-networking-ingress-1bc341c84078)
+
+[Removing worker nodes to update them](https://cloud.ibm.com/docs/containers?topic=containers-update)
+
+[ETCD Cluster](https://medium.com/@uzzal2k5/etcd-etcd-cluster-configuration-for-kubernetes-779455337db6)
+
+### High Availability Clusters
+[Keep your Kubernetes cluster balanced: the secret to High Availability](https://itnext.io/keep-you-kubernetes-cluster-balanced-the-secret-to-high-availability-17edf60d9cb7)
+
+[High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
+
+
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
 
