@@ -28,6 +28,7 @@ then delete it. `kubectl delete <resource>`
 1. [A user cannot spawn a server](#A-user-cannot-spawn-a-server)
 1. [A node is acting strangely](#A-node-is-acting-strangely)
 1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
+1. [`kubectl` doesn't work](#kubectl-doesn't-work)
 
 ## JupyterHub is down
 First, scream.
@@ -146,5 +147,15 @@ There are a couple possible causes for a failed upgrade, including but not limit
    to finish running to complete an upgrade, pending pods would stall the 
    upgrade.
    
+## `kubectl` doesn't work
+```
+$ kubectl get nodes
+The connection to the server <host>:6443 was refused - did you specify the right host or port?
+```
 
-
+After a server is restarted, sometimes swap is turned back on if it is not specified in
+`/etc/fstab`. Swap does not work with Kubernetes, so simply SSH into that server, run 
+`sudo swapoff -a`, and wait a couple of seconds. 
+   
+For more information, see [this Kubernetes Forum issue](https://discuss.kubernetes.io/t/the-connection-to-the-server-host-6443-was-refused-did-you-specify-the-right-host-or-port/552/5) 
+and possibly [this issue](https://github.com/LibreTexts/metalc/issues/87).
