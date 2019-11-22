@@ -13,7 +13,7 @@ then delete it. `kubectl delete <resource>`
    drain <node>`. Sometimes, this command doesn't complete because important
    system pods are running on the node; this is okay.
 1. Upgrade JupyterHub. Navigate to `~/jupyterhub` and run `upgrade.sh`.
-   1. Sometimes, JupyterHub doesn't like the upgrade script, and we don't 
+   1. Sometimes, JupyterHub doesn't like the upgrade script, and we don't
    know why. In this case, just copy and paste the commands to the terminal:
    ```
    RELEASE=jhub
@@ -22,11 +22,13 @@ then delete it. `kubectl delete <resource>`
      --version=0.9-2d435d6 \
      --values config.yaml
    ```
-   
+
 ## Table of Contents
 1. [JupyterHub is down](#JupyterHub-is-down)
 1. [A user cannot spawn a server](#A-user-cannot-spawn-a-server)
 1. [A node is acting strangely](#A-node-is-acting-strangely)
+1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
+1. [Removing a node from the cluster](#Removing-a-node-from-the-cluster)
 1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
 1. [`kubectl` doesn't work](#kubectl-doesn't-work)
 
@@ -53,8 +55,8 @@ waiting for 2 minutes resolved the problem on its own. If this doesn't work, the
 be on a bad node.
 
 If all else fails, upgrade JupyterHub. Be aware that upgrading JupyterHub does
-not necessarily recreate JupyterHub-related pods if you didn't change `config.yaml`. 
-If necessary, upgrade with the flag `--recreate-pods`, which forces the recreation 
+not necessarily recreate JupyterHub-related pods if you didn't change `config.yaml`.
+If necessary, upgrade with the flag `--recreate-pods`, which forces the recreation
 of JupyterHub-related pods.
 
 An alternative method is to delete the `hub-xxx` pod manually by calling `kubectl
@@ -62,7 +64,7 @@ delete pod hub-xxx -n jhub`, which will delete the existing hub pod and automati
 create a new one.
 
 ## A user cannot spawn a server
-References: 
+References:
 * [This issue](https://github.com/LibreTexts/metalc/issues/35) details what happens
 when a node goes down and a user pod was running on it.
 
@@ -72,7 +74,7 @@ If the pod is not in a `Terminating` state, try deleting the pod by running
 `kubectl delete pod <userpod name>`.
 
 If it's in a `Terminating` state but the pod did not delete itself, or if you cannot delete
-the pod for whatever reason, this usually means there is a problem with the node. 
+the pod for whatever reason, this usually means there is a problem with the node.
 SSH into the node and check whether the [drives are okay](#A-node-is-acting-strangely).
 Another possibility is thatthe Docker containers failed to terminate, which causes
 the pods to not terminate. Try restarting the node or upgrading JupyterHub.
@@ -81,7 +83,7 @@ Try running `kubectl delete pod hub-xxx -n jhub` to restart the `hub-xxx` pod. I
 you know there is nothing wrong with the cluster itself, then this should be relatively
 safe and the hub pod will restart on its own.
 
-If that doesn't work, try upgrading JupyterHub by running `upgrade.sh` or copying and 
+If that doesn't work, try upgrading JupyterHub by running `upgrade.sh` or copying and
 pasting the following commands. This is slightly more riskier since you are applying
 `config.yaml` to the hub. This means that any changes to `config.yaml` will be applied.
    ```
@@ -101,6 +103,22 @@ If the `Reallocated_Sector_Ct` is 0 then it's good.
 * `smartctl -t short /dev/sda` or `smartctl -l selftest /dev/sda` to run a test on the
 drives.
 
+## Removing a node from the cluster
+**Important: This should be the last resort**  
+If non of the other troubleshooting methods resolved the issue on a node, and the issue is
+affecting the performance of the cluster then it is best to remove such node from the cluster
+to restore the services.
+1. Unschedule the node so that no new pods can be scheduled on the problematic node with `kubectl drain chick<i>`, where i is the node number.
+1. Check if the node is running some critical pods with the command `kubectl get pods -A -o wide | grep "chick<i>"`,
+where i is a chick number, this will display all the pods that are running on that specific chick.
+A critical pod is a pod that is involved in serving any of our public facing services or our monitoring services or anything
+else that you think is important. Some examples are: autohttps, binder, hub, proxy, nfs-client-release-nfs-client-provisioner,
+quickstart-nginx.
+1. Remove the critical pods on the node so that they get rescheduled somewhere else `kubectl delete pods <name of the pod> -n <namespace>`
+1. Make sure the pods have been rescheduled to another node by running `kubectl get pods -n <namespace> -o wide` and you should see the pod
+starting on another node.
+1. Run `kubectl delete node chick<i>`, where i is the number of the node, to remove the node from the Kubernetes cluster.
+
 ## JupyterHub fails to upgrade
 Unfortunately, running `helm upgrade` does not give a lot of debugging information
 when an upgrade fails.
@@ -109,30 +127,30 @@ There are a couple possible causes for a failed upgrade, including but not limit
 1. `config.yaml` isn't written correctly. These are the most common problems:
    1. Spelling errors. For example, if you mispell a Docker image name or a name,
    JupyterHub will fail to upgrade.
-   1. Tab/spacing errors. Double check that your spacing is correct. We indent our YAML 
+   1. Tab/spacing errors. Double check that your spacing is correct. We indent our YAML
    files with two spaces.
-   
+
    JupyterHub is picky when reading `config.yaml`. For example,
    1. It doesn't like when you leave in lines of comments between lists of items like emails.
-   
+
       This is bad:
       ```
          - chihuahua@ucdavis.edu
          # Under the deep blue sea
          - octopus@gmail.com
-         - platypus@gmail.com 
+         - platypus@gmail.com
       ```
-   
+
       This is OK:
       ```
          - chihuahua@ucdavis.edu
          - octopus@gmail.com # Under the deep blue sea
-         - platypus@gmail.com 
+         - platypus@gmail.com
       ```
-   
+
    1. In the `extraConfig` section, you can attach extra Python code to specific keys.
       `config.yaml` sometimes doesn't like when you add comments in this section
-      
+
       Example:
       ```
       extraConfig:
@@ -144,9 +162,9 @@ There are a couple possible causes for a failed upgrade, including but not limit
    1. [This issue](https://github.com/LibreTexts/metalc/issues/75) details how
    an unschedulable chick contained `hook-image-puller` and `continuous-image-puller` pods
    that were always in a `Pending` state. Since JupyterHub requires these pods
-   to finish running to complete an upgrade, pending pods would stall the 
+   to finish running to complete an upgrade, pending pods would stall the
    upgrade.
-   
+
 ## `kubectl` doesn't work
 ```
 $ kubectl get nodes
@@ -154,8 +172,8 @@ The connection to the server <host>:6443 was refused - did you specify the right
 ```
 
 After a server is restarted, sometimes swap is turned back on if it is not specified in
-`/etc/fstab`. Swap does not work with Kubernetes, so simply SSH into that server, run 
-`sudo swapoff -a`, and wait a couple of seconds. 
-   
-For more information, see [this Kubernetes Forum issue](https://discuss.kubernetes.io/t/the-connection-to-the-server-host-6443-was-refused-did-you-specify-the-right-host-or-port/552/5) 
+`/etc/fstab`. Swap does not work with Kubernetes, so simply SSH into that server, run
+`sudo swapoff -a`, and wait a couple of seconds.
+
+For more information, see [this Kubernetes Forum issue](https://discuss.kubernetes.io/t/the-connection-to-the-server-host-6443-was-refused-did-you-specify-the-right-host-or-port/552/5)
 and possibly [this issue](https://github.com/LibreTexts/metalc/issues/87).
