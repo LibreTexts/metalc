@@ -8,15 +8,6 @@ The root of this repository contains files relating to the set-up of the bare-me
 ## Table of Contents
 This discusses the table of contents of [documentation](./docs) folder based on the following topics.
 
-### Virtual Machine
-1. [JupyterHubVM.md](./docs/Virtual-Machine/JupyterHubVM.md) gives instructions on setting up JupyterHub on a
-virtual machine with RAID1 using the LibreTexts fork of the [jupyter-deploy-teaching](https://github.com/LibreTexts/jupyterhub-deploy-teaching/) repository. [More information on RAID](./docs/Bare-Metal/concepts/RAID.md) could 
-be found in the concepts section.
-1. [baremetal_jhub.md](./docs/Virtual-Machine/baremetal_jhub.md) is Kevin's (@kkrausse) instructions for
-setting up JupyterHub on a virtual machine. It contains solutions to the problems we faced
-when installing JupyterHub through the [jupyterhub-deploy-teaching](https://github.com/mechmotum/jupyterhub-deploy-teaching)
-repository. We keep this as a reference for those who might encounter the same problems in the future.
-
 ### Bare-Metal
 1. [Bare Metal Cluster Setup](./docs/Bare-Metal/baremetal.md) has what you should read first about
   the cluster. The file gives an overview of the cluster set-up, including networking, publishing services,
@@ -35,6 +26,17 @@ to be part of the cluster.
 1. [Deleted Kube DNS Service](./docs/Bare-Metal/troubleshooting/DeletedKubeDNSService.md) troubleshoots
 accidentally deleting and readding a service from the cluster. In this case, the `kube-dns` service is deleted;
 this could be useful for other services that may be deleted.
+
+### Virtual Machine
+1. [JupyterHubVM.md](./docs/Virtual-Machine/JupyterHubVM.md) gives instructions on setting up JupyterHub on a
+virtual machine with RAID1 using the LibreTexts fork of the [jupyter-deploy-teaching](https://github.com/LibreTexts/jupyterhub-deploy-teaching/) repository. [More information on RAID](./docs/Bare-Metal/concepts/RAID.md) could 
+be found in the concepts section.
+1. [baremetal_jhub.md](./docs/Virtual-Machine/baremetal_jhub.md) is Kevin's (@kkrausse) instructions for
+setting up JupyterHub on a virtual machine. It contains solutions to the problems we faced
+when installing JupyterHub through the [jupyterhub-deploy-teaching](https://github.com/mechmotum/jupyterhub-deploy-teaching)
+repository. We keep this as a reference for those who might encounter the same problems in the future.
+
+
 
 ### JupyterHub on GCloud
 This section teaches how to set-up and configure JupyterHub on Google Cloud.

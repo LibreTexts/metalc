@@ -290,5 +290,59 @@ Install the chart with our configurations:
 ```
 helm install --name nfs-client-release stable/nfs-client-provisioner -f config.yml
 ```
+
+### Tuning nfs-server
+The nfs-server comes with a default of 8 threads, which if fairly low, it recommended to increase the threads number to accommodate for heavier loads. We have raise our number of threads to 512.
+
+To change the number of threads, we change the configuration file at /etc/sysconfig/nfs:
+```
+sudo vim /etc/sysconfig/nfs
+```
+We change the `RPCNFSDCOUNT` parameter to the number of threads we want:
+```diff
+# Note: For new values to take effect the nfs-config service
+# has to be restarted with the following command:
+#    systemctl restart nfs-config
+#
+# Optional arguments passed to in-kernel lockd
+#LOCKDARG=
+# TCP port rpc.lockd should listen on.
+#LOCKD_TCPPORT=32803
+# UDP port rpc.lockd should listen on.
+#LOCKD_UDPPORT=32769
+#
+# Optional arguments passed to rpc.nfsd. See rpc.nfsd(8)
+RPCNFSDARGS=""
+# Number of nfs server processes to be started.
+# The default is 8.
+-RPCNFSDCOUNT=
++RPCNFSDCOUNT=512
+#
+# Set V4 grace period in seconds
+#NFSD_V4_GRACE=90
+#
+# Set V4 lease period in seconds
+#NFSD_V4_LEASE=90
+#
+```
+Then we restart the nfs-server with:
+```
+sudo service nfs-server restart
+```
+To check that the thread numbers have changed, we run `cat /proc/net/rpc/nfsd` and look at the row that says `th`. The first
+column in that row is the number of threads running:
+```
+rc 0 80 1724228437
+fh 13 0 0 0 0
+io 1276009525 4004549293
+th 511 0 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+ra 32 0 0 0 0 0 0 0 0 0 0 0
+net 1724182210 0 1724199642 1716321847
+rpc 1724233643 0 0 0 0
+proc3 22 110 957 22 54 41 0 0 17 21 8 0 0 12 0 0 0 0 36 249 118 59 0
+proc4 2 187 1724229556
+proc4ops 72 0 0 0 283322 277380 92 2950 0 7998 2976415 159260 147 1471402 0 1115825 178521 0 0 280797 0 0 41 7332238 0 948 1472379 4742 0 123236 789 0 146 936 0 36300 0 0 0 531747 0 0 1 384 213 186 498725 0 0 0 0 0 0 472 7929603 0 0 0 198 193 0 0 0 0 0 0 0 0 0 0 0 0 0
+```
+
 # Done
 Enjoy your ZFS !

@@ -334,7 +334,7 @@ group {
 1. `sudo ufw allow tftp` so it can use the images
 
 **Note:** If getting errors (like the nodes can't reach the internet, or
-you're not having the 'right' Ubuntu mirror), change the IP forwarding 
+you're not having the 'right' Ubuntu mirror), change the IP forwarding
 policy in `/etc/default/ufw` to:
 ```
 DEFAULT_FORWARD_POLICY="ACCEPT"
@@ -349,7 +349,7 @@ DEFAULT_FORWARD_POLICY="ACCEPT"
 
 1. go through the installation steps. Once it says "installing base system,"
   that part takes like an hour so you can go do something else. After that its
-  mostly done. Alternatively, you could use the preseed file to  
+  mostly done. Alternatively, you could use the preseed file to
   install the OS onto each chick with very little intervention. Check the next section
   on how to go about this.
 
@@ -564,7 +564,7 @@ Add the IP addresses to `metallb-config.yml` and run `kubectl apply -f metallb-c
 ## NFS
 ***Update:*** Documentation on how to setup a physical NFS server using ZFS can be found [here](./ZFS.md).
 If you don't have the necessary hardware or if you don't need to have a dedicated physical NFS
-server yet, just keep on reading.  
+server yet, just keep on reading.
 
 NFS is needed to handle persistent volume claims. It allows persistence of files made by
 the nodes.
@@ -916,7 +916,7 @@ For our cluster, we have setup these alerts so far:
 
 Data      | Threshold
  ----------- | -----------
- jupyter.libretexts.org  | If it goes down or high ping  
+ jupyter.libretexts.org  | If it goes down or high ping
  Cluster   | CPU/cores/RAM utilization exceeds 80%
  Nodes | CPU/RAM utilization exceeds 80% or a node goes offline
 
@@ -1339,6 +1339,11 @@ Note that Python syntax can also be used, as shown in the if-else statement.
 {% endblock h1_error %}
 ```
 
+### Adding Static Pages
+Static resources is served under the `jupyterhub-images` directory. To add a static page, copy `jupyterhub-images/pages/example.page.html` to `jupyterhub-images/pages/{file name}.html`. The example page contains the base HTML and CSS for you to start (things like the navbar).
+
+> Note that these are static pages. If you want to change something that reflects on all pages, you should edit ALL pages. For example if you want to modify the navbar, you need to change all the navbar sections in all the static .html files.
+
 # User Stats
 ## Current Specifications
 For each user:
@@ -1386,6 +1391,20 @@ A lab website where you can play with Kubernetes! [Play With Kubernetes](https:/
 [Another Source for Setting Up Grafana and Prometheus](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-prometheus-grafana-and-alertmanager-monitoring-stack-on-digitalocean-kubernetes)
 
 For when we have multiple masters: [High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
+
+Information on using Kubernetes and Load Balancing: [One year using Kubernetes in production: Lessons learned](https://techbeacon.com/devops/one-year-using-kubernetes-production-lessons-learned)
+
+[Understanding kubernetes networking: ingress](https://medium.com/google-cloud/understanding-kubernetes-networking-ingress-1bc341c84078)
+
+[Removing worker nodes to update them](https://cloud.ibm.com/docs/containers?topic=containers-update)
+
+[ETCD Cluster](https://medium.com/@uzzal2k5/etcd-etcd-cluster-configuration-for-kubernetes-779455337db6)
+
+### High Availability Clusters
+[Keep your Kubernetes cluster balanced: the secret to High Availability](https://itnext.io/keep-you-kubernetes-cluster-balanced-the-secret-to-high-availability-17edf60d9cb7)
+
+[High Availability Clusters Using Kubeadm](https://medium.com/velotio-perspectives/demystifying-high-availability-in-kubernetes-using-kubeadm-3d83ed8c458b)
+
 
 ### Networking
 Introduction to ports and IP addresses: [TCP/IP Ports and Sockets Explained](http://www.steves-internet-guide.com/tcpip-ports-sockets/)
