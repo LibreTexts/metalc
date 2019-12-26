@@ -6,6 +6,7 @@
 1. [Networking](#Networking)
 1. [Installing CentOS 7](#Installing-CentOS-7)
 1. [Setting up ZFS](#Setting-up-ZFS)
+1. [Updating ZFS/Centos](#Updating-ZFS/Centos)
 1. [Done](#Done)
 
 
@@ -343,6 +344,9 @@ proc3 22 110 957 22 54 41 0 0 17 21 8 0 0 12 0 0 0 0 36 249 118 59 0
 proc4 2 187 1724229556
 proc4ops 72 0 0 0 283322 277380 92 2950 0 7998 2976415 159260 147 1471402 0 1115825 178521 0 0 280797 0 0 41 7332238 0 948 1472379 4742 0 123236 789 0 146 936 0 36300 0 0 0 531747 0 0 1 384 213 186 498725 0 0 0 0 0 0 472 7929603 0 0 0 198 193 0 0 0 0 0 0 0 0 0 0 0 0 0
 ```
+
+### Updating ZFS/Centos
+
 
 # Done
 Enjoy your ZFS !
