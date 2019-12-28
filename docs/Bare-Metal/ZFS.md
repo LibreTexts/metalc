@@ -346,7 +346,25 @@ proc4ops 72 0 0 0 283322 277380 92 2950 0 7998 2976415 159260 147 1471402 0 1115
 ```
 
 ### Updating ZFS/Centos
+If you need to just update the ZFS version, then a simple command like `yum upgrade zfs`. I would check with someone more knowledgeable first before you do this(Richard/Mike/Dean). In this section, I will discuss how to update a ZFS server that is in production, and what are the best practices to update both the Centos OS and the ZFS version running on it.
 
+#### Pre-Update Tasks
+1. Make sure to schedule a time for the services running on the cluster to be down way in adavance. Inform the users of the downtime, and keep them updated with any updates on the status of the cluster.
+1. It is ***strongly*** to use a pair of new SSDs for the OS instead of just updating the OS on the production pair of SSDs.
+1. Take this opportunity to update any major firmware/driver releases.
+1. Download the Centos OS iso and burn it to a usb stick for easy installation.
+
+#### Updating the OS
+Shut the ZFS down, and replace the OS drives in the back of the ZFS. Once the new drives are in, use the usb to install the new version of Centos. Follow instructions in the ["Installing CentOS 7"](#Installing-CentOS-7) section to complete the installation.
+
+#### Install the ZFS
+If installing the released version of ZFS, and not the development version, the instructions [here](https://github.com/zfsonlinux/zfs/wiki/RHEL-and-CentOS) are easy and straightforward.
+
+#### Rebuilding ZFS from Existing Drives
+To import a zpool present in the drives after a new install, we use `sudo zpool import <name of zpool>`.
+
+#### Reintegrating ZFS with Kubernetes
+Follow the steps under [Integrating ZFS with Kubernetes](#Integrating-ZFS-with-Kubernetes).
 
 # Done
 Enjoy your ZFS !
