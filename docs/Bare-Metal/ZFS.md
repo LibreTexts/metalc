@@ -351,7 +351,7 @@ If you need to just update the ZFS version, then a simple command like `yum upgr
 #### Pre-Update Tasks
 1. Make sure to schedule a time for the services running on the cluster to be down way in adavance. Inform the users of the downtime, and keep them updated with any updates on the status of the cluster.
 1. It is ***strongly*** to use a pair of new SSDs for the OS instead of just updating the OS on the production pair of SSDs.
-1. Take this opportunity to update any major firmware/driver releases.
+1. Take this opportunity to update any major firmware/driver releases. Depending on the component, information regarding firmware updates can be found on the manufacturer's website(Intel, Seagate...). More information on how to update some of the critical components can be found in the [Hardware Preparation section](#Hardware-Preparation).
 1. Download the Centos OS iso and burn it to a usb stick for easy installation.
 
 #### Updating the OS
