@@ -346,7 +346,7 @@ proc4ops 72 0 0 0 283322 277380 92 2950 0 7998 2976415 159260 147 1471402 0 1115
 ```
 
 ### Updating ZFS and Centos
-If you need to just update the ZFS version, then a simple command like `yum upgrade zfs`. I would check with someone more knowledgeable first before you do this(Richard/Mike/Dean). In this section, I will discuss how to update a ZFS server that is in production, and what are the best practices to update both the Centos OS and the ZFS version running on it.
+If you need to just update the ZFS version, then a simple command like `yum upgrade zfs` on hen will do. I would check with someone more knowledgeable first before you do this(Richard/Mike/Dean). In this section, I will discuss how to update a ZFS server that is in production, and what are the best practices to update both the Centos OS and the ZFS version running on it.
 
 #### Pre-Update Tasks
 1. Make sure to schedule a time for the services running on the cluster to be down way in adavance. Inform the users of the downtime, and keep them updated with any updates on the status of the cluster.
