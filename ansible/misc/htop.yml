@@ -1,0 +1,16 @@
+---
+#- hosts: all
+#  tasks:
+#  - name: Ansible creates hello.txt
+#    file:
+#      path: "~/hello.txt"
+#      state: touch
+
+- hosts: all
+  sudo: yes
+  tasks:
+   - name: Install htop
+     apt:
+       name: htop
+       update_cache: yes
+

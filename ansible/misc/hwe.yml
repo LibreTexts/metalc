@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install hardware enablement kernel
+      apt:
+        name: linux-generic-hwe-18.04
+        install_recommends: yes
+        update_cache: yes
+ 
+    - name: Reboot machine
+      reboot:
+

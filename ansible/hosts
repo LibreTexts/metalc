@@ -32,7 +32,7 @@ chick0
 [masters]
 
 [workers]
-chick[11:11]
+chick[1:18]
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
