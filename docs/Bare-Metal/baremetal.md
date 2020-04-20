@@ -884,6 +884,11 @@ we setup a Slack channel and an email channel.
 The latest version of Grafana has a built-in templating feature where it allows the user to use a 'template' variable
 instead of a hardcoded one, allowing for a better user experience. However, Grafana doesn't support the use of templates when alerting. A workaround is to create specific dashboards with hardcoded values for alerting, and use separate dashboards with templates for actual monitoring.
 
+The alerts to check whether the website is reachable (DNS, ping, and HTTPS)
+are from this [template](https://grafana.com/grafana/dashboards/1962). You
+may change the thresholds for the alerts by editing the panel, and going to
+Alerts. 
+
 In order to setup the email channel for notifications, it requires a SMTP server. You can use your own SMTP server if you have one on your server, if not, you can use a third party one. We will be using the SMTP server that comes with a gmail account for simplicity. In order to enable email notifications, we need to add some settings to the configuration file for our prometheus-operator:
 ```
 grafana:
@@ -897,9 +902,53 @@ grafana:
 These configurations were enough for us to setup gmail for SMTP. For different SMTP setups, more settings can be found [here](https://grafana.com/docs/installation/configuration/#smtp). After installing prometheus-operator with these settings, one can follow [these](https://grafana.com/docs/alerting/notifications/) instructions to setup the alert channels on Grafana.<br/>
 **NOTE:** If you are running a firewall, make sure to open the ports used by SMTP, we use 587 here.
 
-After the alert channels are setup, one can move on to creating the alerts. We organized our alerts in a separate 'Alerts' folder from the rest of the dashboards used for monitoring.
+To set up a Slack alerts channel, you will need to create a Slack app and
+webhook. [Create a Slack App](https://api.slack.com/messaging/webhooks) or
+edit an existing one already exists. 
+
+![slack](../images/grafana-slack.png)
+
+Activate **Incoming Webhooks** in the Slack App settings, and copy the
+incoming webhook to the Grafana Notification Channel settings. Under
+**OAuth & Permissions** in the Slack App settings, copy the **Bot User
+OAuth Access Token** into the **Token** entry of the Grafana Notification
+Channel form.
+
+![channel](../images/grafana-channel.png)
+
+After the alert channels are setup, one can move on to creating the alerts.
+We organized our alerts in a separate 'Alerts' folder from the rest of the
+dashboards used for monitoring.
+
 ![folders](../images/grafana-folders.png)
 
+We created two different kinds of dashboards:
+1. A dashboard which keep track of pinging our domains to make sure they
+   are still up. This is templated from the WorldPing plugin.
+2. Custom dashboards displaying CPU and memory data for individual nodes
+   and the cluster as a whole.
+
+### WorldPing Alerts
+For pinging the domain names, install and enable the WorldPing plugin if
+you haven't already. This is done by going into **Configurations** in the
+left toolbar and select **Plugins**. After searching for WorldPing, the
+plugin will prompt you to either generate an API key or login to your
+account. Currently, it is using an API key from Celine's account.
+
+Upon enabling WorldPing, you should be able to set up endpoints. In the
+**WorldPing** page on the left toolbar, add a new endpoint pointing to your
+domain name. In our case, we set up two endpoints to our JupyterHub and
+BinderHub domain names. 
+
+WorldPing’s free plan allows one million checks per month. Try to adjust
+the check intervals and the number of probes (the number of locations that
+they will ping from) to fit the limit.
+
+Note that we deleted HTTPS and DNS alerts, only leaving the Ping alerts on.
+This is because the HTTPS and DNS alerts occasionally send 503 error alerts
+daily, but JupyterHub itself is not down.
+
+### Cluster and Node Alerts
 We can use existing dashboards as templates for our alerts. We can click on the name of a panel at the top to get a drop down menu, and selecting 'edit' we can see the settings for a panel.
 ![edit](../images/grafana-edit.png)
 
@@ -909,6 +958,21 @@ By looking at existing panels with template values, the values that look like '$
 We replace the template variables with hardcoded values in our alerting dashboards:
 ![hardcoded](../images/grafana-hardcoded.png)
 
+As an example, the default query of Cluster Alerts Dashboard:
+```
+1 - avg(rate(node_cpu_seconds_total{mode="idle"}[1m]))
+```
+was adapted from the panels in the Dashboard, **Kubernetes / Compute
+Resources / Cluster**.
+
+```
+1 - sum(:node_memory_MemFreeCachedBuffers_bytes:sum{cluster="$cluster"}) / sum(kube_node_status_allocatable_memory_bytes{cluster="$cluster"})
+```
+Was changed to this:
+```
+1 - sum(:node_memory_MemFreeCachedBuffers_bytes:sum{}) / sum(kube_node_status_allocatable_memory_bytes{})
+```
+
 After we setup the panel by coping the templated panels, we can click on the bell to setup an alert. Setting up the alerts is pretty self-explanatory as we can see from this picture:
 ![alerts](../images/grafana-alerts.png)
 
@@ -916,10 +980,16 @@ For our cluster, we have setup these alerts so far:
 
 Data      | Threshold
  ----------- | -----------
- jupyter.libretexts.org  | If it goes down or high ping
+ jupyter.libretexts.org / binder.libretexts.org  | If it goes down or high ping
  Cluster   | CPU/cores/RAM utilization exceeds 80%
  Nodes | CPU/RAM utilization exceeds 80% or a node goes offline
 
+
+## Importing Alerts
+Dashboards are available inside our private configurations repository under
+`grafana-dashboards`. To import, click **Import** from the `+` icon in the
+left toolbar. Upload the `.json` files. New dashboard should be created and
+Alerts should be automatically added under **Alerting**.
 
 # Securing the Cluster
 We followed [*How to Secure a Linux Server*](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server)
