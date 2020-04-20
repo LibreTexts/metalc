@@ -28,7 +28,7 @@ reinstall the newest development release with `install.sh`, the pods seemed
 to become recreated as normal. However, when trying to access BinderHub,
 one would receive this error:
 
-![binderhub-https](../../images/binderhub-https-error.png)
+![binderhub-https](../../images/binderhub-https-error.PNG)
 
 #### Some attempted solutions that did not succeed (other than the ones mentioned above)
 * Deleting the `autohttps-xxx` pod to force respawn
