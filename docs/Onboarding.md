@@ -97,8 +97,9 @@ the cluster.
 * [default-env](https://github.com/LibreTexts/default-env) contains Dockerfiles for
 creating the Default Environment in JupyterHub.
 * [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin) is a plugin which lets
-LibreTexts authors add executable code-blocks into the LibreTexts text editor. LibreTexts uses CKEditor
-for its text editor; thus our plugin uses the CKEditor API.
+LibreTexts authors add executable code blocks into the LibreTexts text editor. LibreTexts uses CKEditor
+for its text editor; thus our plugin uses the CKEditor API. It uses 
+[BinderHub](https://binderhub.readthedocs.io/en/latest/) in the backend to execute these code blocks.
 
 Some less frequently updated repositories:
 * [mechmotum.github.io](https://github.com/LibreTexts/mechmotum.github.io) is our fork 
