@@ -603,7 +603,7 @@ Follow [these instructions](https://zero-to-jupyterhub.readthedocs.io/en/latest/
 for setting up JupyterHub.
 
 Follow [these instructions](https://binderhub.readthedocs.io/en/latest/setup-registry.html) for
-setting up BinderHub. The DockerHub container registry is under @lux12337's account for now.
+setting up BinderHub. The DockerHub container registry is under LibreTexts.
 
 ## Enabling TCP traffic on rooster
 Because of how our cluster is setup with all internet traffic going through rooster before reaching
