@@ -29,6 +29,18 @@ can contact these people about HR:
 
 ## Getting Started
 
+### Overview
+- [ ] [Generate an SSH public key](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html) if you haven't already, or use [PuTTYGen](https://www.ssh.com/ssh/putty/windows/puttygen) if you want to use PuTTY.
+- [ ] Ask for your public key added to Rooster and LibreTexts test server
+- [ ] Be added to:
+  - [ ] jupyterteam mailing list
+  - [ ] Slack
+  - [ ] Zulip (BioCore)
+  - [ ] Google Drive
+  - [ ] Jupyter-team GitHub team
+  - [ ] Private configuration repo
+- [ ] Claim your server room key card, if on campus
+
 ### Connecting to Rooster
 
 The cluster is under a private network, so the only way to access the cluster
@@ -56,7 +68,10 @@ Ask us in person for the username and password.
 We use Slack and Zulip to communicate. Make sure that you get invited to
 both of these channels.
 
-We also have a shared Google Drive (which is pretty inactive).
+Slack is mainly used by students, while Zulip is mainly used by your supervisors.
+
+We also have a shared Google Drive (which is pretty inactive, but contains
+past presentations and general overviews of the cluster).
 
 ### Exchange Phone Numbers and Emails
 
