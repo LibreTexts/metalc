@@ -87,7 +87,7 @@ Note for the enable/disable options, the commands do not start the service in th
 
 `$ systemctl status <service name>`: checks the status of the service
 
-## Basic Tipcs for Kubernetes
+## Basic Tips for Kubernetes
 
 Here are a few helpful tips to deubgging application deployed into Kubernetes:
 
