@@ -30,8 +30,9 @@ then delete it. `kubectl delete <resource>`
 1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
 1. [Removing a node from the cluster](#Removing-a-node-from-the-cluster)
 1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
-1. [`kubectl` doesn't work](#kubectl-doesn't-work)
+1. [`kubectl` doesn't work`](#kubectl-doesn't-work)
 1. [Website is giving an SSL error](#website-is-giving-an-ssl-error)
+1. [Resources](#Resources)
 
 ## JupyterHub is down
 First, scream.
@@ -193,3 +194,15 @@ to be accepted. By default, in NGINX we redirect HTTP requests to
 HTTPS requests. However, if you are installing JupyterHub or BinderHub
 from the beginning, Let's Encrypt will not be able to assign a certificate
 without accepting HTTP requests.
+
+## Resources
+We use the following resources for troubleshooting JupyterHub problems:
+* [Jupyter Discourse Forum](https://discourse.jupyter.org/) 
+  has a lot of questions answered by Jupyter developers
+* Jupyter documentation can also explain what might 
+  be happening if you're stuck
+  * [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest)
+  * [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/)
+  * JupyterHub uses other pieces such as [Kubespawner](https://jupyterhub-kubespawner.readthedocs.io/en/latest/spawner.html).
+* [Zero to JupyterHub GitHub issues](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues)
+* Googling 
