@@ -67,6 +67,11 @@ You can also filter out the logs depending on the service.
 $ journalctl -u <service name>.service
 ```
 
+You can also add the `-r` option to sort logs by most recent first.
+```
+$ journalctl -u <service-name> -r
+```
+
 ## Is this Thing Even On?: Systemctl
 
 ``systemctl`` is a good tool to use to start, stop, restart, check status, and etc. for different services. It is part of ``sytstemd``. ``systemd``
