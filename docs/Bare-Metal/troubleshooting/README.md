@@ -9,7 +9,7 @@ If the troubleshooting that you are doing for a particular problem is ineffectiv
       3. [Maintenance](https://github.com/LibreTexts/metalc/blob/docs/Troubleshooting-Summary/docs/maintenance-tasks.md)
       4. [Adding new packages to the Dockerfile](https://github.com/LibreTexts/default-env/tree/master/rich-default)
 2. Not fully understanding how to change the system such the inputs, outputs, the environment, and etc.
-   * This is similar to the previous example, make sure you have good knowledge on the system you are looking at. Visit any of the above links, and feel free
+   * This is similar to the previous example, make sure you have good knowledge of the system you are looking at. Visit any of the above links, and feel free
    check out any other documentation. The following may potentially be relevant:
       1. [Introduction to Kubernetes](https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes)
       2. [What is Docker?](https://opensource.com/resources/what-docker)
