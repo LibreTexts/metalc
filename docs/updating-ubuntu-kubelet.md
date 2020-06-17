@@ -1,7 +1,6 @@
-
 # Updating Ubuntu
 
-This document lists the procedure for updating ubuntu on the chick nodes, except for chick0.
+This document lists the procedure for updating Ubuntu on the chick nodes, except for chick0.
 
 ## Checking Software Versions on the Nodes
 
@@ -10,9 +9,9 @@ You can check the versions of kubelet, Ubuntu and the kernel as well as the stat
 ## Preparing to Update
 
 1. Before you even begin to update a given node, check which pods are running on it with the command `kubectl get pods -A -o wide | grep 'chick#'`, where # is replaced with the number of the chick ie. chick1, chick2, chick3, etc. If there are non-default pods running on that node, you should wait for them to shutdown. *If* you have permission to do so, you may manually delete them with `kubectl delete pod <insert pod name here> -n <insert namespace here>`.
-2. If the node does not have any critical processes running on it, you may mark the node as unschedulable with the command `kubectl cordon <insert node here>`. This ensures that no new pods are spawned while you are updating the node. 
+2. If the node does not have any critical processes running on it, you may mark the node as unschedulable with the command `kubectl cordon chick#`. This ensures that no new pods are spawned while you are updating the node. 
 	- To make sure this was done correctly, run `kubectl get nodes` and check that the `STATUS` column says `SchedulingDisabled` for that node.
-3. Next you will remove all pods from it with `kubectl drain <insert node here>`. You may have to use flags `--ignore-daemonsets` and `--delete-local-data` with the in order to drain the default  pods. 
+3. Next you will remove all pods from it with `kubectl drain chick#`. You may have to use flags `--ignore-daemonsets` and `--delete-local-data` with the in order to drain the default  pods. 
 	- If you are prompted to use the `--force` command, then you have a non-default pod which you must wait to shutdown or receive permission to delete. You should return to step 1 in this case.
 
 ## Updating the Node
