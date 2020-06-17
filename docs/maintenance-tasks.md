@@ -19,5 +19,5 @@ Additionally, there is a cron job on rooster that runs `sudo unattended-upgrade 
 * Frequency: monthly
 * Command: `sudo zpool scrub nest`
 
-Scrub checks the file system's integrity, and repairs any issues that it finds. After the scrub is finished, it is good to also run `zpool status` to check if there is anything wrong.
+To execute, you must first ssh into hen from rooster with the command `ssh hen`. Scrub checks the file system's integrity, and repairs any issues that it finds. After the scrub is finished, it is good to also run `zpool status` to check if there is anything wrong.
 
