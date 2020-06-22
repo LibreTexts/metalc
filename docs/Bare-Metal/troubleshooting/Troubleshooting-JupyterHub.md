@@ -30,7 +30,9 @@ then delete it. `kubectl delete <resource>`
 1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
 1. [Removing a node from the cluster](#Removing-a-node-from-the-cluster)
 1. [JupyterHub fails to upgrade](#JupyterHub-fails-to-upgrade)
-1. [`kubectl` doesn't work](#kubectl-doesn't-work)
+1. [`kubectl` doesn't work`](#kubectl-doesn't-work)
+1. [Website is giving an SSL error](#website-is-giving-an-ssl-error)
+1. [Resources](#Resources)
 
 ## JupyterHub is down
 First, scream.
@@ -166,14 +168,41 @@ There are a couple possible causes for a failed upgrade, including but not limit
    upgrade.
 
 ## `kubectl` doesn't work
+*Main article: [KubeadmCert.md](KubeadmCert.md)*
 ```
 $ kubectl get nodes
 The connection to the server <host>:6443 was refused - did you specify the right host or port?
 ```
 
-After a server is restarted, sometimes swap is turned back on if it is not specified in
+* After a server is restarted, sometimes swap is turned back on if it is not specified in
 `/etc/fstab`. Swap does not work with Kubernetes, so simply SSH into that server, run
 `sudo swapoff -a`, and wait a couple of seconds.
 
+* More rarely, kubeadm certificates expire after one year exactly if their
+  renewals are not activated, causing the master node to stop responding.
+  More information on how to renew these certificates in
+  [KubeadmCert.md](KubeadmCert.md).
+
 For more information, see [this Kubernetes Forum issue](https://discuss.kubernetes.io/t/the-connection-to-the-server-host-6443-was-refused-did-you-specify-the-right-host-or-port/552/5)
 and possibly [this issue](https://github.com/LibreTexts/metalc/issues/87).
+
+
+## Website is giving an SSL error
+*Main article: [HTTPSonJupyterHub.md](HTTPSonJupyterHub.md)*
+JupyterHub and BinderHub require port 80 to be open in order for certificates
+to be accepted. By default, in NGINX we redirect HTTP requests to
+HTTPS requests. However, if you are installing JupyterHub or BinderHub
+from the beginning, Let's Encrypt will not be able to assign a certificate
+without accepting HTTP requests.
+
+## Resources
+We use the following resources for troubleshooting JupyterHub problems:
+* [Jupyter Discourse Forum](https://discourse.jupyter.org/) 
+  has a lot of questions answered by Jupyter developers
+* Jupyter documentation can also explain what might 
+  be happening if you're stuck
+  * [Zero to JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest)
+  * [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/)
+  * JupyterHub uses other pieces such as [Kubespawner](https://jupyterhub-kubespawner.readthedocs.io/en/latest/spawner.html).
+* [Zero to JupyterHub GitHub issues](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/issues)
+* Googling 
