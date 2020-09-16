@@ -31,7 +31,8 @@ can contact these people about HR:
 
 ### Overview
 - [ ] [Generate an SSH public key](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html) if you haven't already, or use [PuTTYGen](https://www.ssh.com/ssh/putty/windows/puttygen) if you want to use PuTTY.
-- [ ] Ask for your public key added to Rooster and LibreTexts test server
+- [ ] Ask for your public key to be added to Rooster and the LibreTexts test server at query.libretexts.org
+- [ ] Ask for your email account to be added as an Admin on jupyter.libretexts.org and staging.jupyter.libretexts.org
 - [ ] Be added to:
   - [ ] jupyterteam mailing list
   - [ ] Slack
@@ -123,8 +124,6 @@ merge on his repository.
 * [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates) 
 contains custom HTML pages for the website. Updating these on GitHub will
 update the website if JupyterHub gets upgraded.
-* [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
-constains images used on the website.
 
 We track our current tasks on [Issues](https://github.com/LibreTexts/metalc/issues).
 Feel free to assign yourself to an issue!
