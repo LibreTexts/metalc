@@ -1201,9 +1201,11 @@ services are back online.
 ## Whitelisting
 There are two ways to whitelist users: through the configuration file
 or on JupyterHub as an admin user. More information can be found in the
-[documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/authentication.html#adding-a-whitelist).
+[documentation](https://zero-to-jupyterhub.readthedocs.io/en/latest/authentication.html#adding-a-whitelist). 
 
-### Through `config.yaml`
+Currently, we use the JupyterHub admin interface to manage access to our Hub. Before adding users to the whitelist, we must ensure that they are affiliated with UC Davis or LibreTexts. If you are unsure, be sure to ask someone else on the JupyterTeam. Even though we are using the online interface to manage user access, the whitelist must remain within the configuration file or else it will allow *any* users to access the Hub by default. 
+
+### Through `config.yaml` (not used)
 SSH into rooster. Open the JupyterHub configuration file in `~/jupyterhub/config.yaml`.
 There will be a block that looks like this:
 ```
@@ -1253,95 +1255,70 @@ We decided to use [Init Containers](https://kubernetes.io/docs/concepts/workload
 which must run to completion before a pod launches, i.e. a pod has the `Running` status.
 In this setup, the Init Container uses the [alpine/git](https://hub.docker.com/r/alpine/git/)
 Docker image to `git clone` a repository of custom templates and mounts this
-volume to the `hub-xxx` pod. The volume is mounted to `/etc/jupyterhub/custom`
+volume to the `hub-xxx` pod. The volume is mounted to `/etc/jupyterhub/templates`
 of the `hub-xxx` pod.
 
-We mounted two volumes that clone two different repositories:
+We mount two volumes and clone one repository:
 1. [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates),
- containing custom html templates
-1. [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images),
-containing images used in the website. This way, the html files reference
-the images locally rather than on different links online, which could later break.
+ containing custom html templates and static files. We mount `custom-templates` and `custom-templates-static` Check out the README.md within the jupyterhub-templates repo for more information.
 
 Our relevant portion of `config.yaml` looks like this:
 ```
-hub:
-  # Clone custom JupyterHub templates into a volume
+# Clone custom JupyterHub templates into a volume
   initContainers:
     - name: git-clone-templates
       image: alpine/git
+      command:
+        - /bin/sh
+        - -c
       args:
-        - clone
-        - --single-branch
-        - --branch=master
-        - --depth=1
-        - --
-        - https://github.com/LibreTexts/jupyterhub-templates.git
-        - /etc/jupyterhub/custom
-      securityContext:
-        runAsUser: 0
+        - >-
+            git clone --branch=master https://github.com/LibreTexts/jupyterhub-templates.git &&
+            cp -r jupyterhub-templates/templates/* /templates &&
+            cp -r jupyterhub-templates/static/* /static
       volumeMounts:
         - name: custom-templates
-          mountPath: /etc/jupyterhub/custom
-    - name: git-clone-images
-      image: alpine/git
-      args:
-        - clone
-        - --single-branch
-        - --branch=master
-        - --depth=1
-        - --
-        - https://github.com/LibreTexts/jupyterhub-images.git
-        - /usr/local/share/jupyterhub/static/external
-      securityContext:
-        runAsUser: 0
-      volumeMounts:
-        - name: custom-images
-          mountPath: /usr/local/share/jupyterhub/static/external
+          mountPath: /templates
+        - name: custom-templates-static
+          mountPath: /static
   extraVolumes:
     - name: custom-templates
       emptyDir: {}
-    - name: custom-images
+    - name: custom-templates-static
       emptyDir: {}
   extraVolumeMounts:
     - name: custom-templates
-      mountPath: /etc/jupyterhub/custom
-    - name: custom-images
+      mountPath: /etc/jupyterhub/templates
+    - name: custom-templates-static
       mountPath: /usr/local/share/jupyterhub/static/external
   extraConfig:
     templates: |
-      c.JupyterHub.template_paths = ['/etc/jupyterhub/custom/custom']
+      from jupyterhub.handlers.base import BaseHandler
+      class AboutHandler(BaseHandler):
+        def get(self):
+          self.write(self.render_template("about.html"))
+      class FAQHandler(BaseHandler):
+        def get(self):
+          self.write(self.render_template("faq.html"))
+      c.JupyterHub.extra_handlers.extend([
+        (r"about", AboutHandler),
+        (r"faq", FAQHandler),
+      ])
+      c.JupyterHub.template_paths = ['/etc/jupyterhub/templates']
 ```
 
-After adding this to `config.yaml`, run the command below.
+After adding this to `config.yaml`, run the command `./upgrade.sh` from within the `~/jupyterhub/` directory to apply the changes.
 **Important note:** you must upgrade JupyterHub to a development release
 later than [this pull request](https://github.com/jupyterhub/zero-to-jupyterhub-k8s/pull/1274).
 `config.yaml` supports Init Containers after the stable
 release of 0.8.2.
-```
-RELEASE=jhub
-
-helm upgrade $RELEASE jupyterhub/jupyterhub \
-  --version=0.9-2d435d6 \
-  --values config.yaml \
-  --recreate-pods
-```
-
-Note that the `c.JupyterHub.template_paths` variable is set to
-`/etc/jupyterhub/custom/custom`. `/etc/jupyterhub/custom/` refers to the
-folder in which the volume is mounted and `.../custom` (the second `custom`
-folder mentioned) refers to the folder in the repository containing your
-custom templates. (This is also explained in the Discourse post.)
 
 ### Editing custom html pages
 1. Clone [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates).
-If you want to add images, clone [jupyterhub-images](https://github.com/LibreTexts/jupyterhub-images)
-too.
    ```
    git clone https://github.com/LibreTexts/jupyterhub-templates.git
-   git clone https://github.com/LibreTexts/jupyterhub-images.git
    ```
-1. Edit or add html files in the `custom` folder of `jupyterhub-templates`.
+1. Edit or add html files in the `templates` folder of `jupyterhub-templates`.
 
    Useful resources:
    * [Working with templates and UI](https://jupyterhub.readthedocs.io/en/stable/reference/templates.html)
@@ -1351,10 +1328,11 @@ too.
    Additional note:
    The images are mounted at `/usr/local/share/jupyterhub/static/external`.
    If you specify an image locally in an html file, use the prefix
-   `hub/static/external/<path in repo to image`. For example,
+   `/external/images/<path-in-repo-to-image>`. Within the jupyter-templates repo, `/images/` is located in the `/static/` folder. For example,
    ```
-   <img src="/hub/static/external/images/libretexts_logo.png">
+   <img src="{{ static_url("external/images/faq/terminal.png") }}" alt="Finding the Terminal">
    ```
+   The curly brackets are a jinja rendering feature and must be used to load the image properly.
 
 1. After editing your files, commit and push to the master branch of the repositories.
    ```
@@ -1408,11 +1386,6 @@ Note that Python syntax can also be used, as shown in the if-else statement.
 
 {% endblock h1_error %}
 ```
-
-### Adding Static Pages
-Static resources is served under the `jupyterhub-images` directory. To add a static page, copy `jupyterhub-images/pages/example.page.html` to `jupyterhub-images/pages/{file name}.html`. The example page contains the base HTML and CSS for you to start (things like the navbar).
-
-> Note that these are static pages. If you want to change something that reflects on all pages, you should edit ALL pages. For example if you want to modify the navbar, you need to change all the navbar sections in all the static .html files.
 
 # User Stats
 ## Current Specifications
