@@ -34,12 +34,13 @@ can contact these people about HR:
 - [ ] Ask for your public key to be added to Rooster and the LibreTexts test server at query.libretexts.org
 - [ ] Ask for your email account to be added as an Admin on jupyter.libretexts.org and staging.jupyter.libretexts.org
 - [ ] Be added to:
-  - [ ] jupyterteam mailing list
+  - [ ] jupyterteam mailing list: https://lists.ucdavis.edu/sympa/info/jupyterteam
   - [ ] Slack
-  - [ ] Zulip (BioCore)
+  - [ ] Zulip (BioCore): https://chat.genomecenter.ucdavis.edu/#narrow/stream/14-jupyterteam
   - [ ] Google Drive
-  - [ ] Jupyter-team GitHub team
+  - [ ] Jupyter-team GitHub team: https://github.com/orgs/LibreTexts/teams/jupyter-team
   - [ ] Private configuration repo
+  - [ ] Libretexts-Jupyter Forum: https://libretexts-constructionforum.groups.io/g/jupyter/
 - [ ] Claim your server room key card, if on campus
 
 ### Connecting to Rooster
