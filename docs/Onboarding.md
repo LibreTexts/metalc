@@ -163,7 +163,16 @@ You should have a decent understanding of computer networks (if you don't, pleas
 
 To get a full understanding of our network setup, read the networking info documentation in metalc-configurations, the [HA setup used in protogalaxy](https://github.com/LibreTexts/protogalaxy#architecture), and some of the multus configurations in our control repo. You can just read the networking info document to get started, and read the rest later.
 
+### Containers
+A container is like a really lightweight virtual machine (it is not quite a VM). It packages up an application and all of its dependencies, so you get a reproducible image that you can run anywhere.
+
+You should understand two concepts: images and containers. Some reading material: [What is a container](https://www.docker.com/resources/what-container), and [how to get started](https://docs.docker.com/get-started/).
+
+Containers are the building blocks of Kubernetes and all of our services in the cluster, so you will be dealing with them quite a bit. I recommend installing Docker in your Linux or WSL environment, so you can develop / test things locally.
+
 ### Kubernetes
+Kubernetes is a way to run containers across multiple physical machines (nodes), among other things. You can create things like deployments in Kubernetes, and it will automatically schedule containers on your nodes. If a container dies for some reason, it will reschedule the container so your service stays up.
+
 We recommend reading some of the following:
 * [Introduction to Kubernetes](https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes)
 by Digital Ocean gives a good overview of what Kubernetes is and its basic concepts.
@@ -174,6 +183,9 @@ more of a technical introduction to Kubernetes.
 * [Kubernetes Documentation](https://kubernetes.io/docs/concepts/) is an in-depth look at
 Kubernetes. It's a technical, complete documentation of the software. This could or
 could not serve as a good introduction to Kubernetes, depending on the person.
+
+### Helm
+We use Helm to "install" things into our Kubernetes cluster. You can think of Helm as a tool that takes in a recipe (called a Helm chart), some configuration values (Helm values), and generates a bunch of Kubernetes objects to be deployed into our cluster (such as Deployments, PVCs, ConfigMaps, Services, etc). It's an easy way to deploy an application into Kubernetes. We use Helm to install JupyterHub, BinderHub, the Prometheus-Grafana stack, among other things. The Helm values we use are available in the private configuration repos, and a list of all the Helm charts we install are in the cluster-info document in metalc-configurations.
 
 ### JupyterHub
 **JupyterHub** is a service that allows multiple users to create notebooks with code.
@@ -290,7 +302,7 @@ of possible commands.
 
 IPMI is a tool that helps us manage machines remotely. It is essentially a mini-processor sitting alongside the actual server and can help you do a reboot of the system if the main OS becomes unresponsive. It can also be used to reinstall the OS, and control the machine with a mouse/keyboard as if you are in the server room. It's very useful for managing the machines remotely.
 
-If you are using Linux with an X based window manager, Kevin has made a [https://hub.docker.com/r/rkevin/ipmihell](Docker container) that allows you to access the IPMI web interface and remote control the machines.
+If you are using Linux with an X based window manager, Kevin has made a (Docker container)[https://hub.docker.com/r/rkevin/ipmihell] that allows you to access the IPMI web interface and remote control the machines.
 
 Some helpful commands that you can run on the management node (rooster or gravity):
 
