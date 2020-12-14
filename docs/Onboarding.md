@@ -35,7 +35,7 @@ can contact these people about HR:
 - [ ] Ask for your email account to be added as an Admin on jupyter.libretexts.org and staging.jupyter.libretexts.org
 - [ ] Be added to:
   - [ ] jupyterteam mailing list: https://lists.ucdavis.edu/sympa/info/jupyterteam
-  - [ ] Slack
+  - [ ] Discord (we also have a Slack, not in current use)
   - [ ] Zulip (BioCore): https://chat.genomecenter.ucdavis.edu/#narrow/stream/14-jupyterteam
   - [ ] Google Drive
   - [ ] Jupyter-team GitHub team: https://github.com/orgs/LibreTexts/teams/jupyter-team
@@ -111,20 +111,22 @@ information on how to build the bare metal cluster using VMs, Google Cloud, and
 most importantly on bare-metal. [Baremetal.md](https://github.com/LibreTexts/metalc/blob/master/docs/Bare-Metal/baremetal.md)
 is the cumulative document that combines all information about building 
 the cluster.
-* [default-env](https://github.com/LibreTexts/default-env) contains Dockerfiles for
-creating the Default Environment in JupyterHub.
+* [default-env](https://github.com/LibreTexts/default-env) contains files used to create the Default Environment in Jupyt
 * [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin) is a plugin which lets
-LibreTexts authors add executable code blocks into the LibreTexts text editor. LibreTexts uses CKEditor
+LibreTexts authors add executable code blocks into the LibreTexts text editor. LibreTexts uses CKEditor.
 for its text editor; thus our plugin uses the CKEditor API. It uses 
 [BinderHub](https://binderhub.readthedocs.io/en/latest/) in the backend to execute these code blocks.
+* [protogalaxy](https://github.com/LibreTexts/protogalaxy) is a Puppet module we use to spin up a highly available Kubernetes cluster.
+* [widget-testing](https://github.com/LibreTexts/widget-testing) tracks inconsistencies with ipywidgets in [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin) code blocks between [Thebe](https://github.com/executablebooks/thebe), JupyterHub, and LibreTexts.
 
-Some less frequently updated repositories:
+Some less frequently updated or slightly out of scope repositories:
 * [mechmotum.github.io](https://github.com/LibreTexts/mechmotum.github.io) is our fork 
 of Jason's website. We write blog posts on this fork and later make pull requests to 
 merge on his repository.
 * [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates) 
 contains custom HTML pages for the website. Updating these on GitHub will
 update the website if JupyterHub gets upgraded.
+* [executablebooks/thebe](https://github.com/executablebooks/thebe) allows code blocks in HTML pages transform into live, executable code blocks. Thebe is used by the [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin).
 
 We track our current tasks on [Issues](https://github.com/LibreTexts/metalc/issues).
 Feel free to assign yourself to an issue!
