@@ -31,7 +31,7 @@ can contact these people about HR:
 
 ### Overview
 - [ ] [Generate an SSH public key](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html) if you haven't already, or use [PuTTYGen](https://www.ssh.com/ssh/putty/windows/puttygen) if you want to use PuTTY.
-- [ ] Ask for your public key to be added to Rooster and the LibreTexts test server at query.libretexts.org
+- [ ] Ask for your public key to be added to Rooster, the LibreTexts test server at query.libretexts.org, and the galaxy control repo.
 - [ ] Ask for your email account to be added as an Admin on jupyter.libretexts.org and staging.jupyter.libretexts.org
 - [ ] Be added to:
   - [ ] jupyterteam mailing list: https://lists.ucdavis.edu/sympa/info/jupyterteam
@@ -39,7 +39,7 @@ can contact these people about HR:
   - [ ] Zulip (BioCore): https://chat.genomecenter.ucdavis.edu/#narrow/stream/14-jupyterteam
   - [ ] Google Drive
   - [ ] Jupyter-team GitHub team: https://github.com/orgs/LibreTexts/teams/jupyter-team
-  - [ ] Private configuration repo
+  - [ ] Private configuration repo and galaxy control repo
   - [ ] Libretexts-Jupyter Forum: https://libretexts-constructionforum.groups.io/g/jupyter/
 - [ ] Claim your server room key card, if on campus
 
@@ -67,10 +67,10 @@ Ask us in person for the username and password.
 
 ### Joining Our Communication Channels
 
-We use Slack and Zulip to communicate. Make sure that you get invited to
+We use Discord and Zulip to communicate. Make sure that you get invited to
 both of these channels.
 
-Slack is mainly used by students, while Zulip is mainly used by your supervisors.
+Discord is mainly used by students, while Zulip is mainly used by your supervisors.
 
 We also have a shared Google Drive (which is pretty inactive, but contains
 past presentations and general overviews of the cluster).
@@ -109,9 +109,9 @@ There are a couple of repositories we use:
 * [metalc](https://github.com/LibreTexts/metalc/) is the main repository. It contains
 information on how to build the bare metal cluster using VMs, Google Cloud, and 
 most importantly on bare-metal. [Baremetal.md](https://github.com/LibreTexts/metalc/blob/master/docs/Bare-Metal/baremetal.md)
-is the cumulative document that combines all information about building 
-the cluster.
-* [default-env](https://github.com/LibreTexts/default-env) contains files used to create the Default Environment in Jupyt
+is the (out of date) cumulative document that combines all information about building 
+the flock cluster. Note that we track almost all of our issues in this repo unless the issue only pertains to another repo.
+* [default-env](https://github.com/LibreTexts/default-env) contains files used to create the Default Environment in Jupyter. This can be used with repo2docker to generate our default user image for everyone using our JupyterHub and code cells on the LibreTexts website.
 * [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin) is a plugin which lets
 LibreTexts authors add executable code blocks into the LibreTexts text editor. LibreTexts uses CKEditor.
 for its text editor; thus our plugin uses the CKEditor API. It uses 
@@ -119,22 +119,49 @@ for its text editor; thus our plugin uses the CKEditor API. It uses
 * [protogalaxy](https://github.com/LibreTexts/protogalaxy) is a Puppet module we use to spin up a highly available Kubernetes cluster.
 * [widget-testing](https://github.com/LibreTexts/widget-testing) tracks inconsistencies with ipywidgets in [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin) code blocks between [Thebe](https://github.com/executablebooks/thebe), JupyterHub, and LibreTexts.
 
+We also have two important private repositories:
+* metalc-configurations contains all Kubernetes config files for Flock, various service configurations for rooster, documentation on the hardware/networking of the cluster, and credentials.
+* galaxy-control-repo contains the puppet code that applies to every node in the Galaxy cluster, as well as all Kubernetes objects on Galaxy.
+
 Some less frequently updated or slightly out of scope repositories:
 * [mechmotum.github.io](https://github.com/LibreTexts/mechmotum.github.io) is our fork 
 of Jason's website. We write blog posts on this fork and later make pull requests to 
 merge on his repository.
 * [jupyterhub-templates](https://github.com/LibreTexts/jupyterhub-templates) 
-contains custom HTML pages for the website. Updating these on GitHub will
+contains custom HTML pages for the website (the login page, about page and FAQ page). Updating these on GitHub will
 update the website if JupyterHub gets upgraded.
 * [executablebooks/thebe](https://github.com/executablebooks/thebe) allows code blocks in HTML pages transform into live, executable code blocks. Thebe is used by the [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin).
+* [ckeditor-query-plugin](https://github.com/LibreTexts/ckeditor-query-plugin) is a tool we use on the LibreTexts website to embed HTML in textbooks.
+* [ngshare](https://github.com/LibreTexts/ngshare) allows nbgrader to be used in a Kubernetes JupyterHub. We have this installed in our JupyterHub, and future instructors may use this.
+
 
 We track our current tasks on [Issues](https://github.com/LibreTexts/metalc/issues).
 Feel free to assign yourself to an issue!
 
 ## Working With the Cluster
-Our bare-metal cluster consists of one master node named chick0 and 20 children named 
-chick1 through chick19 sequentially. It also contains a management node called rooster, which 
-acts as a proxy between the Internet and the cluster. 
+
+### Flock cluster
+
+Our old bare-metal cluster consists of one master node named chick0 and 10 children named
+chick1 through chick10 sequentially. It also contains a management node called rooster, which
+acts as a proxy between the Internet and the cluster. The network diagram is available in metalc-configurations.
+Note this cluster should be deprecated during the winter break between Fall 2020 and Winter 2021.
+
+### Galaxy development cluster
+
+We are testing a new cluster setup, named Galaxy. It currently has 8 nodes: one management node (gravity), three control-plane (master) nodes (nebula1~nebula3) and 4 worker nodes (star1~star4). The network diagram for this is available in metalc-configurations. We will be moving this to its new home during winter break.
+
+### Galaxy cluster
+
+This will be the cluster you will be working with after winter break. If you are reading this during winter break, you will be helping us build it!
+
+### Networking
+
+You should have a decent understanding of computer networks (if you don't, please do not hesitate asking your peers! Networking is not easy, so it never hurts to get some extra help). Try to make sure you understand what these terms mean: layer 2 (also ARP, MAC addresses), layer 3 (also IP addresses, subnets, CIDR notation), DHCP, routers vs switches, VLAN, layer 4 (TCP), DNS, HTTP/HTTPS, linux network interfaces (using the `ip` command).
+
+(Don't worry if you don't understand these! You will get used to them once you work with our networking setups a bit more. Sorry for dumping a bunch of terms on you. You don't need to know everything coming in, and you can take a couple of months learning things gradually.)
+
+To get a full understanding of our network setup, read the networking info documentation in metalc-configurations, the [HA setup used in protogalaxy](https://github.com/LibreTexts/protogalaxy#architecture), and some of the multus configurations in our control repo. You can just read the networking info document to get started, and read the rest later.
 
 ### Kubernetes
 We recommend reading some of the following:
@@ -159,7 +186,7 @@ You can try to build your own on Google Cloud, but this will cost money
 If you want to know more about what Jupyter is, visit [https://try.jupyter.org](try.jupyter.org).
 
 ### Grafana
-Our alerting and monitoring system is based in grafana.libretexts.org.
+Our alerting and monitoring system is based on Prometheus, with Grafana dashboard powering the front end. You can access the dashboards and in grafana.libretexts.org. To change these dashboards, follow the documentation in our private configuration repos.
 
 ### Quick Guide to Navigating Kubernetes
 `kubectl` is the main way for us to get information from Kubernetes via the command line.
@@ -258,3 +285,23 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
 
 Here's a [reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands)
 of possible commands.
+
+### IPMI
+
+IPMI is a tool that helps us manage machines remotely. It is essentially a mini-processor sitting alongside the actual server and can help you do a reboot of the system if the main OS becomes unresponsive. It can also be used to reinstall the OS, and control the machine with a mouse/keyboard as if you are in the server room. It's very useful for managing the machines remotely.
+
+If you are using Linux with an X based window manager, Kevin has made a [https://hub.docker.com/r/rkevin/ipmihell](Docker container) that allows you to access the IPMI web interface and remote control the machines.
+
+Some helpful commands that you can run on the management node (rooster or gravity):
+
+`ipmitool -H [IP address] -I lanplus -U ADMIN [command]`: Run an IPMI command on a remote host. You will need a password to do this.
+
+`sudo ipmitool [command]`: Run an IPMI command on this machine.
+
+`ipmitool chassis power reset`: Power cycles the machine.
+
+`ipmitool sol activate`: Activates a serial console to talk to the remote machine.
+
+`ipmitool lan print`: Prints out IPMI networking information.
+
+`ipmitool chassis bootdev [cdrom/bios/disk/...]`: Change the boot device temporarily for the next boot.
