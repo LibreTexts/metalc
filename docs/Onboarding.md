@@ -302,7 +302,7 @@ of possible commands.
 
 IPMI is a tool that helps us manage machines remotely. It is essentially a mini-processor sitting alongside the actual server and can help you do a reboot of the system if the main OS becomes unresponsive. It can also be used to reinstall the OS, and control the machine with a mouse/keyboard as if you are in the server room. It's very useful for managing the machines remotely.
 
-If you are using Linux with an X based window manager, Kevin has made a (Docker container)[https://hub.docker.com/r/rkevin/ipmihell] that allows you to access the IPMI web interface and remote control the machines.
+If you are using Linux with an X based window manager, Kevin has made a [Docker container](https://hub.docker.com/r/rkevin/ipmihell) that allows you to access the IPMI web interface and remote control the machines.
 
 Some helpful commands that you can run on the management node (rooster or gravity):
 
