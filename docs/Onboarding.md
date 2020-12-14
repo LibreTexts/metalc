@@ -149,7 +149,7 @@ Note this cluster should be deprecated during the winter break between Fall 2020
 
 ### Galaxy development cluster
 
-We are testing a new cluster setup, named Galaxy. It currently has 8 nodes: one management node (gravity), three control-plane (master) nodes (nebula1~nebula3) and 4 worker nodes (star1~star4). The network diagram for this is available in metalc-configurations. We will be moving this to its new home during winter break.
+We are testing a new cluster setup, named Galaxy. It currently has 8 nodes: one management node (gravity), three control-plane (master) nodes (nebula1-nebula3) and 4 worker nodes (star1-star4). The network diagram for this is available in metalc-configurations. We will be moving this to its new home during winter break.
 
 ### Galaxy cluster
 
