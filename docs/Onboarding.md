@@ -13,8 +13,8 @@ Your immediate supervisors are:
 
 You can reach out to them about any issues you need to discuss. If you don't
 feel comfortable reaching out to them (like if you need to report something
-about them) you can reach out to their supervisors. Jason's is Cristina Davis
-(MAE Chair) and Richard's is Matt Settles.
+about them) you can reach out to their supervisors. Jason's is Delmar Larsen
+(Chemistry Professor) and Richard's is Matt Settles.
 
 If you are hired under the MAE department (paid via LibreTexts grant) then you
 can contact Felicia Smith in MAE to discuss any HR issues. Felicia is Jason's
