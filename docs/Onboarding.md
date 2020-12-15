@@ -16,16 +16,11 @@ feel comfortable reaching out to them (like if you need to report something
 about them) you can reach out to their supervisors. Jason's is Delmar Larsen
 (Chemistry Professor) and Richard's is Matt Settles.
 
-If you are hired under the MAE department (paid via LibreTexts grant) then you
-can contact Felicia Smith in MAE to discuss any HR issues. Felicia is Jason's
-account and department manager. You may also have to interact with Chemistry
-because that is where the funds are located that pay you.
-
-If you are hired under the Bioinformatics Core (paid by their funds) then you
-can contact these people about HR:
-
-- Matt Settles (Richard's Supervisor and your hours approver)
-- Ernie Hoftyzer eahoftyzer@ucdavis.edu (Setup your hiring)
+You will be hired under the Chemistry Department and paid through LibreTexts
+related funds. You can contact Hongfei Wang <hfwwang@ucdavis.edu> about any 
+HR issues (getting paid, trs hour submission, etc.). Delmar Larsen
+<dlarsen@ucdavis.edu> runs the LibreTexts project and you can contact him about
+any high level issues with the project or Department of Education grant.
 
 ## Getting Started
 
