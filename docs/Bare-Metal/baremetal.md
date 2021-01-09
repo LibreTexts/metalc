@@ -1,7 +1,7 @@
 # Bare Metal Stuff
 
 This is everything that we need to know to work on the baremetal kubernetes
-cluster.
+cluster. This information is considered out of date and pertains to the old flock cluster. This document remains for archival purposes.
 
 # Summary
 
