@@ -46,7 +46,7 @@ is by SSHing into rooster, our management server.
 If you have Windows, it would probably be easier to 
 install [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
 PuTTY makes it easier for you to SSH into rooster. Otherwise, you can
-use the command line.
+use the command line. For Windows, another very good alternative to using PuTTY, is installing a [WSL](https://www.windowscentral.com/install-windows-subsystem-linux-windows-10). It lets you run Linux alongside Windows without the need to install a virtual machine.
 
 You need to give your public key to someone who currently has access
 to rooster so that you can SSH into the server. 
