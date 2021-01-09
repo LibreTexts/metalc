@@ -26,7 +26,7 @@ any high level issues with the project or Department of Education grant.
 
 ### Overview
 - [ ] [Generate an SSH public key](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html) if you haven't already, or use [PuTTYGen](https://www.ssh.com/ssh/putty/windows/puttygen) if you want to use PuTTY.
-- [ ] Ask for your public key to be added to Rooster, the LibreTexts test server at query.libretexts.org, and the galaxy control repo.
+- [ ] Ask for your public key to be added to Gravity, the LibreTexts test server at query.libretexts.org, and the galaxy control repo.
 - [ ] Ask for your email account to be added as an Admin on jupyter.libretexts.org and staging.jupyter.libretexts.org
 - [ ] Be added to:
   - [ ] jupyterteam mailing list: https://lists.ucdavis.edu/sympa/info/jupyterteam
@@ -38,24 +38,24 @@ any high level issues with the project or Department of Education grant.
   - [ ] Libretexts-Jupyter Forum: https://libretexts-constructionforum.groups.io/g/jupyter/
 - [ ] Claim your server room key card, if on campus
 
-### Connecting to Rooster
+### Connecting to Gravity
 
 The cluster is under a private network, so the only way to access the cluster
-is by SSHing into rooster, our management server.
+is by SSHing into Gravity, our management server.
 
 If you have Windows, it would probably be easier to 
 install [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
-PuTTY makes it easier for you to SSH into rooster. Otherwise, you can
+PuTTY makes it easier for you to SSH into gravity. Otherwise, you can
 use the command line. For Windows, another very good alternative to using PuTTY, is installing a [WSL](https://www.windowscentral.com/install-windows-subsystem-linux-windows-10). It lets you run Linux alongside Windows without the need to install a virtual machine.
 
 You need to give your public key to someone who currently has access
-to rooster so that you can SSH into the server. 
+to gravity so that you can SSH into the server. 
 [Generate your SSH key](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html)
 if you haven't already. If you are using PuTTY, generate your SSH key
 using [PuTTYGen](https://www.ssh.com/ssh/putty/windows/puttygen). 
 
 Afterwards, email your public key (should be the file `id_rsa.pub`
-or something similar) to someone who has access to rooster. **Do not
+or something similar) to someone who has access to gravity. **Do not
 email your private key.**
 
 Ask us in person for the username and password.
@@ -131,24 +131,14 @@ update the website if JupyterHub gets upgraded.
 
 
 We track our current tasks on [Issues](https://github.com/LibreTexts/metalc/issues).
-Feel free to assign yourself to an issue!
+Feel free to assign yourself to an issue! It is recommended that you start with the issues labelled as "good first issue". They will probably be a little less technical and easier to deal with.
 
 ## Working With the Cluster
 
-### Flock cluster
-
-Our old bare-metal cluster consists of one master node named chick0 and 10 children named
-chick1 through chick10 sequentially. It also contains a management node called rooster, which
-acts as a proxy between the Internet and the cluster. The network diagram is available in metalc-configurations.
-Note this cluster should be deprecated during the winter break between Fall 2020 and Winter 2021.
-
-### Galaxy development cluster
-
-We are testing a new cluster setup, named Galaxy. It currently has 8 nodes: one management node (gravity), three control-plane (master) nodes (nebula1-nebula3) and 4 worker nodes (star1-star4). The network diagram for this is available in metalc-configurations. We will be moving this to its new home during winter break.
-
 ### Galaxy cluster
 
-This will be the cluster you will be working with after winter break. If you are reading this during winter break, you will be helping us build it!
+Our cluster setup is named Galaxy. It currently has 8 nodes: one management node (gravity), three control-plane (master) nodes (nebula1-nebula3) and 4 worker nodes (star1-star4). The network diagram for this is available in metalc-configurations. 
+
 
 ### Networking
 
@@ -197,38 +187,33 @@ Our alerting and monitoring system is based on Prometheus, with Grafana dashboar
 
 ### Quick Guide to Navigating Kubernetes
 `kubectl` is the main way for us to get information from Kubernetes via the command line.
-After you SSH into rooster, try out a few of the following `kubectl` commands:
+After you SSH into gravity, try out a few of the following `kubectl` commands:
 
-1. `kubectl get nodes`
-  ```
-  NAME      STATUS                     ROLES    AGE    VERSION
-  chick0    Ready                      master   121d   v1.16.1
-  chick1    Ready                      <none>   121d   v1.14.0
-  chick10   Ready                      <none>   114d   v1.14.0
-  chick11   Ready                      <none>   9d     v1.14.0
-  chick12   Ready                      <none>   8d     v1.14.0
-  chick13   Ready                      <none>   8d     v1.14.0
-  chick14   Ready                      <none>   8d     v1.14.0
-  chick15   Ready                      <none>   8d     v1.14.0
-  chick16   Ready                      <none>   8d     v1.14.0
-  chick17   Ready                      <none>   8d     v1.14.0
-  chick18   Ready                      <none>   8d     v1.14.0
-  chick2    Ready                      <none>   121d   v1.14.0
-  chick3    Ready                      <none>   121d   v1.14.0
-  chick4    Ready,SchedulingDisabled   <none>   121d   v1.14.0
-  chick5    Ready,SchedulingDisabled   <none>   121d   v1.14.0
-  chick6    Ready,SchedulingDisabled   <none>   121d   v1.14.0
-  chick7    Ready                      <none>   121d   v1.14.0
-  chick8    Ready                      <none>   121d   v1.14.0
-  chick9    Ready                      <none>   121d   v1.14.0
-  ...
-  ```
+1.  `kubectl get nodes`
+```
+NAME      STATUS   ROLES                  AGE   VERSION
+nebula1   Ready    control-plane,master   9d    v1.20.1
+nebula2   Ready    control-plane,master   9d    v1.20.1
+nebula3   Ready    control-plane,master   9d    v1.20.1
+nebula4   Ready    control-plane,master   9d    v1.20.1
+nebula5   Ready    control-plane,master   9d    v1.20.1
+star10    Ready    <none>                 9d    v1.20.1
+star11    Ready    <none>                 9d    v1.20.1
+star12    Ready    <none>                 9d    v1.20.1
+star13    Ready    <none>                 9d    v1.20.1
+star2     Ready    <none>                 9d    v1.20.1
+star3     Ready    <none>                 9d    v1.20.1
+star4     Ready    <none>                 9d    v1.20.1
+star5     Ready    <none>                 9d    v1.20.1
+star6     Ready    <none>                 9d    v1.20.1
+star7     Ready    <none>                 9d    v1.20.1
+star8     Ready    <none>                 9d    v1.20.1
+star9     Ready    <none>                 9d    v1.20.1
+```
+
   This shows all of the nodes on the cluster. You can see the status of each.
-  Note that chick0 is labeled as `master`.
-  Also note that some chicks are labeled `SchedulingDisabled`; this means that
-  no pods can get scheduled onto these nodes.
 
-1. `kubectl get pods -A`
+2. `kubectl get pods -A`
    ```
    NAMESPACE        NAME                                                        READY   STATUS        RESTARTS   AGE
    binderhub        autohttps-59dd446c76-59mbn                                  2/2     Running       0          52d
@@ -238,7 +223,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    ```
    This outputs all of the pods currently on the cluster.
   
-1. `kubectl get pods -n jhub`
+3. `kubectl get pods -n jhub`
    ```
    NAME                                 READY   STATUS    RESTARTS   AGE
    autohttps-7b4fb9dd6b-gb6td           2/2     Running   0          25d
@@ -249,7 +234,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    This outputs all the pods in the `jhub` namespace. The `jhub` namespace contains
    pods related to our JupyterHub instance.
   
-1. Now try logging into JupyterHub and spawn a server. Run `kubectl get pods -n jhub` again.
+4. Now try logging into JupyterHub and spawn a server. Run `kubectl get pods -n jhub` again.
    You should see a new pod with the name `jupyter-<your email>`.
    ```
    NAME                                            READY   STATUS    RESTARTS   AGE
@@ -258,7 +243,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    ...
    ```
   
-1. `kubectl describe pod hub-<fill in random string you get from kubectl get pods here> -n jhub`
+5. `kubectl describe pod hub-<fill in random string you get from kubectl get pods here> -n jhub`
    ```
    Name:               hub-84595b4df9-2tn6h
    Namespace:          jhub
@@ -271,7 +256,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    don't include `-n jhub` in the command; Kubernetes usually requires for you to specify a
    namespace if its not in the default one.
    
-1. `kubectl exec hub-<fill in random string you get from kubectl get pods here> -n jhub -ti bash`
+6. `kubectl exec hub-<fill in random string you get from kubectl get pods here> -n jhub -ti bash`
    ```
    jovyan@hub-<random string>:/srv/jupyterhub$
    ```
@@ -280,7 +265,7 @@ After you SSH into rooster, try out a few of the following `kubectl` commands:
    [JupyterHub](https://jupyterhub.readthedocs.io/en/stable/) without knowledge of Kubernetes.
    Type `exit` to exit the pod.
   
-1. `kubectl logs hub-<fill in random string you get from kubectl get pods here> -n jhub`
+7. `kubectl logs hub-<fill in random string you get from kubectl get pods here> -n jhub`
    ```
    ...
    [I 2019-10-13 19:26:56.957 JupyterHub log:174] 200 GET /hub/health (@10.0.0.113) 1.57ms
