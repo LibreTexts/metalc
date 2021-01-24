@@ -4,10 +4,10 @@ If the troubleshooting that you are doing for a particular problem is ineffectiv
 
 1. You may be looking at symptoms unrelated to the problem.
    * Fixing this is a matter of becoming better aquainted with the system. The following are some resources that you may want to review:
-      1. [Bare-Metal](https://github.com/LibreTexts/metalc/blob/docs/Troubleshooting-Summary/docs/Bare-Metal/baremetal.md)
-      2. [BinderHub](https://github.com/LibreTexts/metalc/blob/docs/Troubleshooting-Summary/docs/Binder-on-GCloud/01-BinderHub.md)
-      3. [Maintenance](https://github.com/LibreTexts/metalc/blob/docs/Troubleshooting-Summary/docs/maintenance-tasks.md)
-      4. [Adding new packages to the Dockerfile](https://github.com/LibreTexts/default-env/tree/master/rich-default)
+      1. Documentation in galaxy-control-repo
+      2. [BinderHub](./docs/Binder-on-GCloud/01-BinderHub.md)
+      3. [Maintenance](./docs/maintenance-tasks.md)
+      4. [Adding new packages to the Dockerfile](https://github.com/LibreTexts/default-env/)
 2. Not fully understanding how to change the system such the inputs, outputs, the environment, and etc.
    * This is similar to the previous example, make sure you have good knowledge of the system you are looking at. Visit any of the above links, and feel free
    check out any other documentation. The following may potentially be relevant:
@@ -16,7 +16,7 @@ If the troubleshooting that you are doing for a particular problem is ineffectiv
       3. [BinderHub FAQ](https://mybinder.readthedocs.io/en/latest/faq.html) 
 3. Assuming that the problem you are facing is the same as one you have previously dealt with given that the symptoms are the same. 
    * If you are dealing with similar symptoms definitly look into how you have previously handled the issue, or how solutions have been documented
-   [here](https://github.com/LibreTexts/metalc/tree/docs/Troubleshooting-Summary/docs/Bare-Metal/troubleshooting). Howevever, if you have tried everything you 
+   [here](./docs/Bare-Metal/troubleshooting/). Howevever, if you have tried everything you 
    have done before, it might be worth trying something different. A good example of this kind of dilema is [this issue](https://github.com/LibreTexts/metalc/blob/master/docs/Bare-Metal/troubleshooting/KubeadmCert.md)
    we had.
       
