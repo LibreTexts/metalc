@@ -1,10 +1,17 @@
 # Updating Ubuntu and Kubernetes
 
-This document lists the procedure for updating Ubuntu and Kubernetes on the chick nodes.
+This document lists the procedure for updating Ubuntu and 
+Kubernetes on the chick nodes.
 
 ## Checking Software Versions on the Nodes
 
-You can check the versions of kubernetes, Ubuntu and the kernel as well as the status of each node by executing the command `kubectl get nodes -o wide` from rooster. When you do Kubernetes upgrades, make sure that you do not upgrade more than one minor version at a time. For example, if the cluster is at verison 1.19 and the latest available version is 1.21, you should first upgrade everything to 1.20, then 1.21.
+You can check the versions of kubernetes, Ubuntu and the 
+kernel as well as the status of each node by executing the 
+command `kubectl get nodes -o wide` from rooster. When you 
+do Kubernetes upgrades, make sure that you do not upgrade 
+more than one minor version at a time. For example, if the 
+cluster is at verison 1.19 and the latest available version 
+is 1.21, you should first upgrade everything to 1.20, then 1.21.
 
 ## Preparing to Update
 
@@ -16,7 +23,13 @@ You can check the versions of kubernetes, Ubuntu and the kernel as well as the s
 
 ## Updating Kubernetes
 
-The official documentation for upgrading Kubernetes is available [here](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/). You will first have to upgrade kubeadm and then use it to upgrade kubelet and kubectl. The processis pretty straightforward if you follow the official documentation. Also checkout `maintenance-tasks.md` for more information about cluster upgrades and nuances. 
+The official documentation for upgrading Kubernetes is available 
+[here](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/). 
+You will first have to upgrade kubeadm and then use it to 
+upgrade kubelet and kubectl. The processis pretty straightforward 
+if you follow the official documentation. Also checkout 
+`maintenance-tasks.md` for more information about cluster 
+upgrades and nuances. 
 
 ## Updating Ubuntu
 
