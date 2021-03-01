@@ -1,5 +1,7 @@
 # Common Practices For Troubleshooting 
 
+NOTE: This file and others in this folder may be outdated for the [current galaxy cluster](https://github.com/LibreTexts/galaxy-control-repo/tree/production/kubernetes/).
+
 If the troubleshooting that you are doing for a particular problem is ineffective it can largely be due to any of the following reasons:
 
 1. You may be looking at symptoms unrelated to the problem.
