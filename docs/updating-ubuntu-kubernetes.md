@@ -1,5 +1,7 @@
 # Updating Ubuntu and Kubernetes
 
+Note: This document is mostly outdated for the [current galaxy cluster](https://github.com/LibreTexts/galaxy-control-repo/#upgrading-the-kubernetes-cluster).
+
 This document lists the procedure for updating Ubuntu and 
 Kubernetes on the chick nodes.
 
