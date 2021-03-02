@@ -7,16 +7,16 @@ This document lists all tasks that should be done regularly.
 * Frequency: monthly
 * Command: `sudo zpool scrub nest`
 
-To execute manually, you must first ssh into blackhole 
+To execute manually, you must first ssh into blackhole. 
 Scrub checks the file system's integrity, and repairs 
 any issues that it finds. After the scrub is finished, 
 it is good to also run `zpool status` to check if there 
 is anything wrong.
 
-This command was previously run on a cronjob. The cronjob ran at 8:00AM 
-the first day of every month. Gravity would also send out an 
+This command is run on a cronjob. The cronjob runs at 8:00AM 
+the first day of every month. Gravity also sends out an 
 email at 8:10AM on the same day with the results. If the 
-scrub is fine, the email would be titled 
+scrub is fine, the email is titled 
 `[All clear] Hen monthly ZFS report`. If the title 
 says `[POTENTIAL ZFS ISSUE]` instead, there may be 
 something wrong with the disk, and the email contains 
@@ -27,7 +27,7 @@ private configuration repo, under `cronjob/monthly-zfs-report.py`.
 ## Cluster control plane upgrade
 
 The Kubernetes control plane should be upgraded regularly. 
-There used to be a cronjob sending out a triyearly reminder 
+There is a cronjob sending out a triyearly reminder 
 (Jan, May, Sept 1st of every year) reminding you to do the 
 upgrade. (The cronjob can be found in galaxy-control-repo.) 
 
