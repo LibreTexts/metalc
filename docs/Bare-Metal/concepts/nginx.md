@@ -1,5 +1,7 @@
 # NGINX
 
+NOTE: This file is outdated for the [current galaxy cluster](https://github.com/LibreTexts/galaxy-control-repo/tree/production/router-configs).
+
 *Relevant files: `/etc/nginx`*
 *Summary: http://nginx.org/en/docs/http/load_balancing.html*
 

@@ -1,4 +1,7 @@
 # Networking
+
+NOTE: This file is outdated for the [current galaxy cluster](https://github.com/LibreTexts/galaxy-control-repo/tree/production/router-configs). 
+
 *Relevant files: `/etc/netplan/`* *Summary: https://netplan.io/examples*
 
 We use [netplan](https://netplan.io/) to configure networking on rooster.

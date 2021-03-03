@@ -1,17 +1,17 @@
 # Metal Cluster
 
-This is our repo for everything involving our bare-metal Kubernetes cluster. At this moment, 
+This is our repo for everything related to the now-depreciated "flock" Kubernetes cluster. At this moment, 
 it also contains documentation for setting up Kubernetes, JupyterHub, and BinderHub on Google Cloud. 
 The folder [docs](./docs) contains all documentation related to these topics. 
-The root of this repository contains files relating to the set-up of the bare-metal cluster, 
+The folder [flock-archive](./flock-archive) contains files relating to the set-up of the flock cluster.
 
 ## Table of Contents
 This discusses the table of contents of [documentation](./docs) folder based on the following topics.
 
 ### Bare-Metal
-1. [Bare Metal Cluster Setup](./docs/Bare-Metal/baremetal.md) has what you should read first about
-  the cluster. The file gives an overview of the cluster set-up, including networking, publishing services,
-  instructions on adding nodes, and useful resources.
+1. [Bare Metal Cluster Setup](./docs/Bare-Metal/baremetal.md) has reading material on nearly every 
+aspect of the flock cluster. The file gives an overview of the cluster set-up, including networking, publishing services, 
+instructions on adding nodes, and useful resources.
 
 #### Concepts
 1. [RAID.md](./docs/Bare-Metal/concepts/RAID.md) describes the purpose and different levels of RAID.
@@ -36,8 +36,6 @@ setting up JupyterHub on a virtual machine. It contains solutions to the problem
 when installing JupyterHub through the [jupyterhub-deploy-teaching](https://github.com/mechmotum/jupyterhub-deploy-teaching)
 repository. We keep this as a reference for those who might encounter the same problems in the future.
 
-
-
 ### JupyterHub on GCloud
 This section teaches how to set-up and configure JupyterHub on Google Cloud.
 
@@ -57,5 +55,3 @@ on a Kubernetes cluster on Google Cloud.
 We created a development [cluster of vms](./dev-env) using Vagrant that is nice
 for testing stuff without having it on the main cluster. This section contains files 
 and instructions implementing the test cluster.
-
-

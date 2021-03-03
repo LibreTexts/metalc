@@ -1,10 +1,7 @@
 # Login
 This JupyterHub serves LibreTexts instructors and their students, as well as UC Davis faculty, staff, and students.
 
-## Request an account
-If you are a LibreTexts or UC Davis student, please request an account by sending your 
-Google OAuth enabled email to <email>. Your email address must have a Google Account 
-that can be used with Google OAuth, like `@gmail.com` or `@ucdavis.edu`.
+If you are a UC Davis student, access to this JupyterHub is already granted. Just login with your school email.
 
 ## Getting started with Jupyter
 [Jupyter](https://jupyter.org/index.html) is an environment where you can
