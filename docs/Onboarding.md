@@ -86,12 +86,12 @@ has everyone's contact information; feel free to add yours.
 Everyone working in Jason's lab sends weekly AIO's over email. We typically
 send one email as a team. AIO stands for "Accomplishments, Issues, and
 Objectives." More info about AIO's can be found
-[here](https://mechmotum.github.io/guide.html).
+[here](https://mechmotum.github.io/guide.html#aio-weekly-emails).
 
 ## Logging Your Hours
 
 Once you get hired, you will log your hours on
-[trs-ucpath.ucdavis.edu](https://trs-ucpath.ucdavis.edu). You should also
+[trs.ucdavis.edu](https://trs.ucdavis.edu). You should also
 receive a key card which can get you access to the server room. Matt Settles
 can give you key card access.
 
@@ -101,12 +101,12 @@ We document our work on GitHub. This is so that any current or future workers
 can refer back to the work already done.
 
 There are a couple of repositories we use:
-* [metalc](https://github.com/LibreTexts/metalc/) is the main repository. It contains
-information on how to build the bare metal cluster using VMs, Google Cloud, and 
-most importantly on bare-metal. [Baremetal.md](https://github.com/LibreTexts/metalc/blob/master/docs/Bare-Metal/baremetal.md)
-is the (out of date) cumulative document that combines all information about building 
-the flock cluster. Note that we track almost all of our issues in this repo unless the issue only pertains to another repo.
-* [default-env](https://github.com/LibreTexts/default-env) contains files used to create the Default Environment in Jupyter. This can be used with repo2docker to generate our default user image for everyone using our JupyterHub and code cells on the LibreTexts website.
+* [metalc](https://github.com/LibreTexts/metalc/) is the main repository for issue tracking.
+There are also many miscellaneous documents of varied relevance scattered throughout the repo.
+Unless an issue is very specific to another repository, it should be posted here.
+* [default-env](https://github.com/LibreTexts/default-env) contains files used to create the Default Environment in Jupyter. 
+This can be used with repo2docker to generate our default user 
+image for everyone using our JupyterHub and code cells on the LibreTexts website.
 * [ckeditor-binder-plugin](https://github.com/LibreTexts/ckeditor-binder-plugin) is a plugin which lets
 LibreTexts authors add executable code blocks into the LibreTexts text editor. LibreTexts uses CKEditor.
 for its text editor; thus our plugin uses the CKEditor API. It uses 
@@ -137,8 +137,7 @@ Feel free to assign yourself to an issue! It is recommended that you start with 
 
 ### Galaxy cluster
 
-Our cluster setup is named Galaxy. It currently has 8 nodes: one management node (gravity), three control-plane (master) nodes (nebula1-nebula3) and 4 worker nodes (star1-star4). The network diagram for this is available in metalc-configurations. 
-
+Our cluster setup is named Galaxy. It currently has 8 nodes: one management node (gravity), five control-plane (master) nodes (nebula1-nebula5) and 12 (functional) worker nodes (star2-star13). The network diagram for this is available in metalc-configurations.
 
 ### Networking
 
