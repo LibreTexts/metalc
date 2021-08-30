@@ -38,3 +38,15 @@ Disable swap by running `sudo swapoff -a`.
 Check if the node is active by running `systemctl status kubelet.service`.
 
 Exit ssh and run `kubectl get nodes` to check the status of your node.
+
+## Rejoining from fresh install
+Puppet will want the node to join the cluster immediately. However, it may not be able to immediately due to several possible issues.
+
+Firstly, `sudo puppet agent -t --debug --verbose` will start a puppet run with a lot of extra debugging features. 
+Always use this to figure out what is going on.
+
+In order for nodes to communicate with the puppet master, it will require correct certificates. 
+`sudo puppet node clean {node name}.galaxy` will clear old certificates.
+
+Kubernetes also needs tokens to have nodes join the cluster. On a nebula node, one can run 
+`sudo kubeadm token create galaxy.bab852737673e5a4 --v=5` to generate a new token for the node to use.
