@@ -1,6 +1,17 @@
-# Common Practices For Troubleshooting 
+# Troubleshooting 
 
 NOTE: This file and others in this folder may be outdated for the [current galaxy cluster](https://github.com/LibreTexts/galaxy-control-repo/tree/production/kubernetes/).
+
+## Table of Contents (incomplete)
+
+1. [Adding Not Ready Node](./docs/Bare-Metal/troubleshooting/AddingNotReadyNode.md) troubleshoots adding a node
+in a NotReady state, with error code 255. The process works best for adding a node that is considered
+to be part of the cluster.
+1. [Deleted Kube DNS Service](./docs/Bare-Metal/troubleshooting/DeletedKubeDNSService.md) troubleshoots
+accidentally deleting and readding a service from the cluster. In this case, the `kube-dns` service is deleted;
+this could be useful for other services that may be deleted.
+
+## Common Practices
 
 If the troubleshooting that you are doing for a particular problem is ineffective it can largely be due to any of the following reasons:
 
