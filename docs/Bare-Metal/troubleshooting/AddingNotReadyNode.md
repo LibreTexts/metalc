@@ -16,7 +16,7 @@ chick8    Ready      <none>   5d1h   v1.14.0
 chick9    NotReady   <none>   5d1h   v1.14.0
 ```
 
-## Solution
+## Potential Solution
 The trouble shooting section of [this documentation](https://opensource.ncsa.illinois.edu/confluence/display/~lambert8/Kubernetes)
 revealed that the `kubelet` service should be restarted to 
 add chick9 back into the cluster.
@@ -39,10 +39,15 @@ Check if the node is active by running `systemctl status kubelet.service`.
 
 Exit ssh and run `kubectl get nodes` to check the status of your node.
 
+## Another Potential Solution
+It may be the case that kubelet is trying to use the default docker daemon instead of the containerd one.
+
+Modify `/var/lib/kubelet/kubeadm-flags.env` to read `KUBELET_KUBEADM_ARGS="--container-runtime=remote --container-runtime-endpoint=/run/containerd/containerd.sock"`, then restart kubelet.
+
 ## Rejoining from fresh install
 Puppet will want the node to join the cluster immediately. However, it may not be able to immediately due to several possible issues.
 
-Firstly, `sudo puppet agent -t --debug --verbose` will start a puppet run with a lot of extra debugging features. 
+Firstly, `sudo puppet agent -t --debug` will start a puppet run with a lot of extra debugging features. 
 Always use this to figure out what is going on.
 
 In order for nodes to communicate with the puppet master, it will require correct certificates. 
