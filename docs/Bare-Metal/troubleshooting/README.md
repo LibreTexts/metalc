@@ -4,12 +4,14 @@ NOTE: This file and others in this folder may be outdated for the [current galax
 
 ## Table of Contents (incomplete)
 
-1. [Adding Not Ready Node](./docs/Bare-Metal/troubleshooting/AddingNotReadyNode.md) troubleshoots adding a node
+1. [Adding Not Ready Node](AddingNotReadyNode.md) troubleshoots adding a node
 in a NotReady state, with error code 255. The process works best for adding a node that is considered
 to be part of the cluster.
-1. [Deleted Kube DNS Service](./docs/Bare-Metal/troubleshooting/DeletedKubeDNSService.md) troubleshoots
+1. [Deleted Kube DNS Service](DeletedKubeDNSService.md) troubleshoots
 accidentally deleting and readding a service from the cluster. In this case, the `kube-dns` service is deleted;
 this could be useful for other services that may be deleted.
+1. [Restoring Kubernetes Objects](RestoringKubernetesObjects.md) troubleshoots a loss of Kubernetes objects. 
+This happened when migrating the cluster from one location to another.
 
 ## Common Practices
 
