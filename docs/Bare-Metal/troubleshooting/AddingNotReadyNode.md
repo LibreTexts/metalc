@@ -55,3 +55,15 @@ In order for nodes to communicate with the puppet master, it will require correc
 
 Kubernetes also needs tokens to have nodes join the cluster. On a nebula node, one can run 
 `sudo kubeadm token create galaxy.bab852737673e5a4 --v=5` to generate a new token for the node to use.
+
+## Cluster Certificate Disagreement
+In moving the cluster, the k8s CA cert got messed up somehow. 
+This prevented new nodes from being added to the cluster. 
+In short, the ca.crt on the control plane node disagreed with the CA in the cluster-info configmap. 
+This is probably because the cluster-info config map was copied straight over from the old cluster, 
+but a new ca.crt was generated in the new cluster. This would also explain why nodes already 
+added to the cluster stayed added, but new nodes were prevented from joining. 
+This was fixed by:
+
+1. Get base64 encoded string of ca.crt from the control plane node
+1. Edit the cluster-info configmap; Replace the certificate-authority-data with the new encoded string.
