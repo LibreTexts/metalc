@@ -28,3 +28,17 @@ sudo apt-mark hold nvidia-driver-510
 ```
 
 Again, the commands may need to be updated for corresponding package versions.
+
+## Integration with Kubernetes
+
+Nvidia has provided some helpful documentation on integrating GPU nodes into a Kubernetes cluseter, viewable [here](https://docs.nvidia.com/datacenter/cloud-native/kubernetes/install-k8s.htm).
+
+The main steps, assuming a k8s cluster is already set up, boils down to:
+
+1. Installing CUDA
+1. Installing the NVIDIA Container Toolkit
+1. Installing the NVIDIA Device Plugin via Helm
+1. Set proper labels and taints on GPU nodes
+
+The last step is necessary only if GPU and non-GPUs are to perform non-overlapping tasks.
+For example, if GPU nodes are meant to only run GPU jobs and non-GPU nodes are meant to exclusively run non-GPU jobs.
