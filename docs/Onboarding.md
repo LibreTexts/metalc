@@ -8,13 +8,11 @@ LibreTexts and UC Davis users.
 
 Your immediate supervisors are:
 
-- Jason K. Moore
 - Richard Feltstykket
 
 You can reach out to them about any issues you need to discuss. If you don't
 feel comfortable reaching out to them (like if you need to report something
-about them) you can reach out to their supervisors. Jason's is Delmar Larsen
-(Chemistry Professor) and Richard's is Matt Settles.
+about them) you can reach out to their supervisors. Richard's is Matt Settles.
 
 You will be hired under the Chemistry Department and paid through LibreTexts
 related funds. You can contact Hongfei Wang <hfwwang@ucdavis.edu> about any 
@@ -31,7 +29,6 @@ any high level issues with the project or Department of Education grant.
 - [ ] Be added to:
   - [ ] jupyterteam mailing list: https://lists.ucdavis.edu/sympa/info/jupyterteam
   - [ ] Discord (we also have a Slack, not in current use)
-  - [ ] Zulip (BioCore): https://chat.genomecenter.ucdavis.edu/#narrow/stream/14-jupyterteam
   - [ ] Google Drive
   - [ ] Jupyter-team GitHub team: https://github.com/orgs/LibreTexts/teams/jupyter-team
   - [ ] Private configuration repo and galaxy control repo
@@ -62,13 +59,13 @@ Ask us in person for the username and password.
 
 ### Joining Our Communication Channels
 
-We use Discord and Zulip to communicate. Make sure that you get invited to
+We use Discord and Google Chat to communicate. Make sure that you get invited to
 both of these channels.
 
-Discord is mainly used by students, while Zulip is mainly used by your supervisors.
+Discord is mainly used by students, while Google is mainly used by your supervisors.
 
-We also have a shared Google Drive (which is pretty inactive, but contains
-past presentations and general overviews of the cluster).
+We also have a shared Google Drive (which is pretty inactive) containing
+past presentations and general overviews of the cluster.
 
 ### Exchange Phone Numbers and Emails
 
@@ -83,10 +80,9 @@ has everyone's contact information; feel free to add yours.
 
 ### AIOs
 
-Everyone working in Jason's lab sends weekly AIO's over email. We typically
-send one email as a team. AIO stands for "Accomplishments, Issues, and
-Objectives." More info about AIO's can be found
-[here](https://mechmotum.github.io/guide.html#aio-weekly-emails).
+AIO stands for "Accomplishments, Issues, and Objectives." The concept
+comes from former supervisor Jason Moore's lab. Weekly AIO emails are to be sent to keep track of progress and objectives.
+More info about AIO's can be found [here](https://mechmotum.github.io/guide.html#aio-weekly-emails).
 
 ## Logging Your Hours
 
