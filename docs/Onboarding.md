@@ -57,6 +57,14 @@ email your private key.**
 
 Ask us in person for the username and password.
 
+(For those with access to the server) 
+To add the key into gravity, follow these steps:
+  1. ssh into the server using ssh gravity
+  2. cd ~/.ssh
+  3. nano authorized_keys
+  4. Scroll to the bottom of the nano file and paste your key in
+  5. Save the file using Ctrl + O
+
 ### Joining Our Communication Channels
 
 We use Discord and Google Chat to communicate. Make sure that you get invited to
